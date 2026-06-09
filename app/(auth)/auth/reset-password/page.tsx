@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { resetPasswordAction } from '@/actions/auth'
 import { resetPasswordSchema, type ResetPasswordInput } from '@/lib/validations/auth'
+import { useLang } from '@/lib/auth-i18n'
 import { cn } from '@/lib/utils'
 
 export default function ResetPasswordPage() {
+  const { t } = useLang()
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -29,14 +31,13 @@ export default function ResetPasswordPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-black text-gray-900 mb-2">Nueva contraseña</h1>
-        <p className="text-gray-500 text-sm">Elige una contraseña segura para tu cuenta.</p>
+        <h1 className="text-2xl font-black text-gray-900 mb-2">{t('reset_title')}</h1>
+        <p className="text-gray-500 text-sm">{t('reset_desc')}</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Password */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700">Nueva contraseña</label>
+          <label className="text-sm font-medium text-gray-700">{t('reset_new_password')}</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -60,12 +61,12 @@ export default function ResetPasswordPage() {
           </div>
           {errors.password
             ? <p className="text-sm text-red-500">{errors.password.message}</p>
-            : <p className="text-xs text-gray-400">Mínimo 8 caracteres, una mayúscula y un número</p>
+            : <p className="text-xs text-gray-400">{t('reset_password_hint')}</p>
           }
         </div>
 
         <FormField
-          label="Confirmar contraseña"
+          label={t('reset_confirm')}
           type="password"
           autoComplete="new-password"
           placeholder="••••••••"
@@ -85,9 +86,9 @@ export default function ResetPasswordPage() {
           className="w-full h-11 bg-[#009C3B] hover:bg-[#007a2f] text-white font-semibold rounded-xl"
         >
           {isSubmitting ? (
-            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Guardando...</>
+            <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('reset_loading')}</>
           ) : (
-            'Guardar contraseña'
+            t('reset_submit')
           )}
         </Button>
       </form>

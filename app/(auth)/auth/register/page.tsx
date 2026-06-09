@@ -10,24 +10,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { FormField } from '@/components/ui/form-field'
 import { registerAction } from '@/actions/auth'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
+import { useLang } from '@/lib/auth-i18n'
 import { cn } from '@/lib/utils'
 
-const ROLES = [
-  {
-    value: 'user' as const,
-    label: 'Soy profesional',
-    description: 'Busco empleo o quiero conectar con la comunidad',
-    icon: Briefcase,
-  },
-  {
-    value: 'company' as const,
-    label: 'Tengo una empresa',
-    description: 'Quiero publicar empleos o registrar mi negocio',
-    icon: Building2,
-  },
-]
-
 export default function RegisterPage() {
+  const { t } = useLang()
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -62,39 +49,50 @@ export default function RegisterPage() {
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle2 className="w-8 h-8 text-[#009C3B]" />
         </div>
-        <h2 className="text-2xl font-black text-gray-900 mb-3">¡Cuenta creada!</h2>
-        <p className="text-gray-500 mb-6">
-          Revisa tu email y confirma el registro para poder entrar.
-        </p>
+        <h2 className="text-2xl font-black text-gray-900 mb-3">{t('reg_success_title')}</h2>
+        <p className="text-gray-500 mb-6">{t('reg_success_desc')}</p>
         <Link href="/auth/login">
           <Button className="bg-[#009C3B] hover:bg-[#007a2f] text-white">
-            Ir al login
+            {t('reg_go_login')}
           </Button>
         </Link>
       </div>
     )
   }
 
+  const roles = [
+    {
+      value: 'user' as const,
+      label: t('reg_role_user'),
+      description: t('reg_role_user_desc'),
+      icon: Briefcase,
+    },
+    {
+      value: 'company' as const,
+      label: t('reg_role_company'),
+      description: t('reg_role_company_desc'),
+      icon: Building2,
+    },
+  ]
+
   return (
     <div>
-      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-black text-gray-900 mb-1">Crea tu cuenta</h1>
+        <h1 className="text-2xl font-black text-gray-900 mb-1">{t('reg_title')}</h1>
         <p className="text-gray-500 text-sm">
-          ¿Ya tienes cuenta?{' '}
+          {t('reg_sub')}{' '}
           <Link href="/auth/login" className="text-[#009C3B] font-semibold hover:underline">
-            Inicia sesión
+            {t('reg_sub_link')}
           </Link>
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
         {/* Role selector */}
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700">Tipo de cuenta</p>
+          <p className="text-sm font-medium text-gray-700">{t('reg_account_type')}</p>
           <div className="grid grid-cols-2 gap-3">
-            {ROLES.map((role) => {
+            {roles.map((role) => {
               const Icon = role.icon
               const isSelected = selectedRole === role.value
               return (
@@ -122,7 +120,7 @@ export default function RegisterPage() {
         </div>
 
         <FormField
-          label="Nombre completo"
+          label={t('reg_full_name')}
           type="text"
           autoComplete="name"
           placeholder="Ana Oliveira"
@@ -131,7 +129,7 @@ export default function RegisterPage() {
         />
 
         <FormField
-          label="Email"
+          label={t('reg_email')}
           type="email"
           autoComplete="email"
           placeholder="tu@email.com"
@@ -139,9 +137,8 @@ export default function RegisterPage() {
           {...register('email')}
         />
 
-        {/* Password */}
         <div className="space-y-1.5">
-          <label className="text-sm font-medium text-gray-700">Contraseña</label>
+          <label className="text-sm font-medium text-gray-700">{t('reg_password')}</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -165,12 +162,12 @@ export default function RegisterPage() {
           </div>
           {errors.password
             ? <p className="text-sm text-red-500">{errors.password.message}</p>
-            : <p className="text-xs text-gray-400">Mínimo 8 caracteres, una mayúscula y un número</p>
+            : <p className="text-xs text-gray-400">{t('reg_password_hint')}</p>
           }
         </div>
 
         <FormField
-          label="Confirmar contraseña"
+          label={t('reg_confirm_password')}
           type="password"
           autoComplete="new-password"
           placeholder="••••••••"
@@ -178,7 +175,6 @@ export default function RegisterPage() {
           {...register('password_confirm')}
         />
 
-        {/* Terms */}
         <div className="flex items-start gap-3">
           <Checkbox
             id="terms"
@@ -187,15 +183,14 @@ export default function RegisterPage() {
             className="mt-0.5"
           />
           <label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
-            Acepto los{' '}
-            <Link href="/terminos" className="text-[#009C3B] hover:underline">términos de uso</Link>
-            {' '}y la{' '}
-            <Link href="/privacidad" className="text-[#009C3B] hover:underline">política de privacidad</Link>
+            {t('reg_terms_pre')}
+            <Link href="/terminos" className="text-[#009C3B] hover:underline">{t('reg_terms_link')}</Link>
+            {t('reg_terms_mid')}
+            <Link href="/privacidad" className="text-[#009C3B] hover:underline">{t('reg_privacy_link')}</Link>
           </label>
         </div>
         {errors.terms && <p className="text-sm text-red-500 -mt-3">{errors.terms.message}</p>}
 
-        {/* Server error */}
         {serverError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <p className="text-red-600 text-sm">{serverError}</p>
@@ -208,9 +203,9 @@ export default function RegisterPage() {
           className="w-full h-11 bg-[#009C3B] hover:bg-[#007a2f] text-white font-semibold rounded-xl"
         >
           {isSubmitting ? (
-            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creando cuenta...</>
+            <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('reg_loading')}</>
           ) : (
-            'Crear cuenta gratis'
+            t('reg_submit')
           )}
         </Button>
       </form>

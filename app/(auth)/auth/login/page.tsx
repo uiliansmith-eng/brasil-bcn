@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { loginAction } from '@/actions/auth'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
+import { useLang } from '@/lib/auth-i18n'
 
 export default function LoginPage() {
+  const { t } = useLang()
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -28,21 +30,19 @@ export default function LoginPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-black text-gray-900 mb-1">Bienvenido de vuelta</h1>
+        <h1 className="text-2xl font-black text-gray-900 mb-1">{t('login_title')}</h1>
         <p className="text-gray-500 text-sm">
-          ¿No tienes cuenta?{' '}
+          {t('login_sub')}{' '}
           <Link href="/auth/register" className="text-[#009C3B] font-semibold hover:underline">
-            Regístrate gratis
+            {t('login_sub_link')}
           </Link>
         </p>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <FormField
-          label="Email"
+          label={t('login_email')}
           type="email"
           autoComplete="email"
           placeholder="tu@email.com"
@@ -52,12 +52,9 @@ export default function LoginPage() {
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">Contraseña</label>
-            <Link
-              href="/auth/forgot-password"
-              className="text-xs text-[#009C3B] hover:underline font-medium"
-            >
-              ¿Olvidaste tu contraseña?
+            <label className="text-sm font-medium text-gray-700">{t('login_password')}</label>
+            <Link href="/auth/forgot-password" className="text-xs text-[#009C3B] hover:underline font-medium">
+              {t('login_forgot')}
             </Link>
           </div>
           <div className="relative">
@@ -83,7 +80,6 @@ export default function LoginPage() {
           {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
         </div>
 
-        {/* Server error */}
         {serverError && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <p className="text-red-600 text-sm">{serverError}</p>
@@ -96,24 +92,16 @@ export default function LoginPage() {
           className="w-full h-11 bg-[#009C3B] hover:bg-[#007a2f] text-white font-semibold rounded-xl transition-all"
         >
           {isSubmitting ? (
-            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Entrando...</>
+            <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('login_loading')}</>
           ) : (
-            'Iniciar sesión'
+            t('login_submit')
           )}
         </Button>
       </form>
 
-      {/* Divider */}
-      <div className="flex items-center gap-4 my-6">
-        <div className="flex-1 h-px bg-gray-100" />
-        <span className="text-gray-400 text-xs">ou continue com</span>
-        <div className="flex-1 h-px bg-gray-100" />
-      </div>
-
-      {/* Flags hint */}
-      <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
+      <div className="flex items-center justify-center gap-2 mt-8 text-gray-400 text-sm">
         <span>🇧🇷</span>
-        <span>Comunidade brasileira em Barcelona</span>
+        <span>{t('login_community')}</span>
         <span>🏴󠁥󠁳󠁣󠁴󠁿</span>
       </div>
     </div>
