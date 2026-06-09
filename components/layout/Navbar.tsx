@@ -48,13 +48,9 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Brasil BCN" className="w-9 h-9 rounded-xl object-cover object-top group-hover:opacity-90 transition-opacity" />
-            <div className="hidden sm:block">
-              <span className="font-black text-xl tracking-tight text-gray-900">Brasil</span>
-              <span className="font-black text-xl tracking-tight text-[#009C3B]">BCN</span>
-            </div>
+            <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto rounded-xl object-contain group-hover:opacity-90 transition-opacity" />
           </Link>
 
           {/* Desktop Nav */}
@@ -147,13 +143,9 @@ export function Navbar() {
               <div className="flex flex-col h-full">
                 {/* Mobile Header */}
                 <div className="flex items-center justify-between p-6 border-b">
-                  <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+                  <Link href="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.png" alt="Brasil BCN" className="w-8 h-8 rounded-xl object-cover object-top" />
-                    <span className="font-black text-lg">
-                      <span className="text-gray-900">Brasil</span>
-                      <span className="text-[#009C3B]">BCN</span>
-                    </span>
+                    <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain" />
                   </Link>
                 </div>
 

@@ -45,12 +45,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
           <div className="relative z-10 flex flex-col h-full p-12">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Brasil BCN" className="w-9 h-9 rounded-xl object-cover object-top" />
-              <span className="font-black text-xl text-white tracking-tight">
-                Brasil<span className="text-[#FFDF00]">BCN</span>
-              </span>
+              <img src="/logo.png" alt="Brasil BCN" className="h-16 w-auto rounded-2xl object-contain" />
             </Link>
 
             {/* Main copy */}
@@ -95,13 +92,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="flex flex-col min-h-screen bg-white">
           {/* Top bar */}
           <div className="flex items-center justify-between p-6 border-b">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Brasil BCN" className="w-8 h-8 rounded-xl object-cover object-top" />
-              <span className="font-black text-lg">
-                <span className="text-gray-900">Brasil</span>
-                <span className="text-[#009C3B]">BCN</span>
-              </span>
+              <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain" />
             </Link>
 
             {/* Language selector */}
