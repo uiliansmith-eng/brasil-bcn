@@ -46,9 +46,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="relative z-10 flex flex-col h-full p-12">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
-                <span className="text-white font-black text-sm">BR</span>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="w-9 h-9 rounded-xl object-cover object-top" />
               <span className="font-black text-xl text-white tracking-tight">
                 Brasil<span className="text-[#FFDF00]">BCN</span>
               </span>
@@ -97,9 +96,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* Top bar */}
           <div className="flex items-center justify-between p-6 border-b">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#009C3B] to-[#002776] flex items-center justify-center">
-                <span className="text-white font-black text-xs">BR</span>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="w-8 h-8 rounded-xl object-cover object-top" />
               <span className="font-black text-lg">
                 <span className="text-gray-900">Brasil</span>
                 <span className="text-[#009C3B]">BCN</span>
