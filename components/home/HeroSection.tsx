@@ -112,46 +112,21 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right: Feature grid */}
-          <div className="hidden lg:grid grid-cols-2 gap-4">
+          {/* Right: Stats / social proof */}
+          <div className="hidden lg:flex flex-col gap-4">
             {[
-              {
-                icon: Briefcase,
-                color: 'bg-[#009C3B]',
-                title: 'Empleos',
-                desc: 'Ofertas de trabajo para brasileños en Barcelona y Cataluña',
-                href: '/empleos',
-              },
-              {
-                icon: Building2,
-                color: 'bg-[#002776]',
-                title: 'Empresas',
-                desc: 'Directorio de negocios y empresas brasileñas',
-                href: '/empresas',
-              },
-              {
-                icon: Calendar,
-                color: 'bg-[#FFDF00]',
-                iconColor: 'text-[#002776]',
-                title: 'Eventos',
-                desc: 'Fiestas, reuniones y encuentros de la comunidade',
-                href: '/eventos',
-              },
-              {
-                icon: ArrowRight,
-                color: 'bg-white/10',
-                title: 'Comunidade',
-                desc: 'Grupos de WhatsApp, guías y recursos para vivir en BCN',
-                href: '/comunidad',
-              },
-            ].map(({ icon: Icon, color, iconColor, title, desc, href }) => (
-              <Link key={title} href={href} className="group bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/10 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5">
-                <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center mb-4`}>
-                  <Icon className={`w-5 h-5 ${iconColor ?? 'text-white'}`} />
+              { emoji: '🇧🇷', value: '2.400+', label: 'Brasileños en BCN' },
+              { emoji: '💼', value: '180+', label: 'Ofertas de empleo activas' },
+              { emoji: '🏢', value: '320+', label: 'Empresas registradas' },
+              { emoji: '📅', value: '45+', label: 'Eventos este mes' },
+            ].map(({ emoji, value, label }) => (
+              <div key={label} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4">
+                <span className="text-3xl">{emoji}</span>
+                <div>
+                  <p className="text-2xl font-black text-white">{value}</p>
+                  <p className="text-blue-200 text-sm">{label}</p>
                 </div>
-                <p className="font-bold text-white text-sm mb-1">{title}</p>
-                <p className="text-blue-200 text-xs leading-relaxed">{desc}</p>
-              </Link>
+              </div>
             ))}
           </div>
 
