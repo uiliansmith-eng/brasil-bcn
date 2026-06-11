@@ -1,7 +1,5 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
-
 export interface BrazilNewsItem {
   id: string
   title: string
@@ -14,16 +12,30 @@ export interface BrazilNewsItem {
 
 export async function getLatestNews(limit = 5): Promise<BrazilNewsItem[]> {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    const url = new URL(
+      `/rest/v1/brazil_news`,
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
     )
-    const { data, error } = await supabase
-      .from('brazil_news')
-      .select('id, title, description, image_url, source, published_at, article_url')
-      .order('published_at', { ascending: false })
-      .limit(limit)
-    if (error) { console.error('[news]', error.message); return [] }
+    url.searchParams.set('select', 'id,title,description,image_url,source,published_at,article_url')
+    url.searchParams.set('order', 'published_at.desc.nullslast')
+    url.searchParams.set('limit', String(limit))
+
+    const res = await fetch(url.toString(), {
+      headers: {
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        Accept: 'application/json',
+      },
+      cache: 'no-store',
+    })
+
+    if (!res.ok) {
+      const body = await res.text()
+      console.error('[news] REST error', res.status, body)
+      return []
+    }
+
+    const data = await res.json()
     return (data ?? []) as BrazilNewsItem[]
   } catch (e) {
     console.error('[news] fetch failed', e)
