@@ -10,7 +10,7 @@ const footerLinks = {
   ],
   recursos: [
     { label: 'Guía del Brasileño', href: '/guia', icon: BookOpen },
-    { label: 'Compra y Venta', href: '/anuncios', icon: ShoppingBag },
+    { label: 'Compra y Venta', href: '/compraventa', icon: ShoppingBag },
     { label: 'Publicar Empleo', href: '/empleos/publicar', icon: Briefcase },
     { label: 'Registrar Empresa', href: '/empresas/registrar', icon: Building2 },
   ],
