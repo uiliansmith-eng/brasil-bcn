@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
 const PATHS = [
@@ -196,12 +197,12 @@ export function RouteDecisionCards() {
             <p className="text-xs text-amber-700 leading-relaxed">{selectedPath.warning}</p>
           </div>
 
-          <a
+          <Link
             href="/ruta-brasileno/situacion-migratoria"
             className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#002776] hover:text-[#009C3B] transition-colors"
           >
             Ver guía completa <ArrowRight className="w-3 h-3" />
-          </a>
+          </Link>
         </div>
       )}
     </div>
