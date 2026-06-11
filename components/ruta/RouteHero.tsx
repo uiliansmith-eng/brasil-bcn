@@ -1,8 +1,9 @@
 interface Props {
   totalSteps: number
+  totalStages: number
 }
 
-export function RouteHero({ totalSteps }: Props) {
+export function RouteHero({ totalSteps, totalStages }: Props) {
   return (
     <section className="relative bg-[#002776] overflow-hidden pt-24 pb-20">
       <div className="absolute inset-0 pointer-events-none">
@@ -11,18 +12,18 @@ export function RouteHero({ totalSteps }: Props) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.02]" />
       </div>
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <div className="text-6xl sm:text-7xl mb-6">🇧🇷</div>
+        <div className="text-6xl sm:text-7xl mb-6">🗺️</div>
         <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-5">
-          Acabo de llegar a{' '}
-          <span className="text-[#FFDF00]">Barcelona</span>
+          Ruta del Brasileño
+          <span className="block text-[#FFDF00]">en Barcelona</span>
         </h1>
         <p className="text-blue-200 text-lg sm:text-xl leading-relaxed mb-8 max-w-xl mx-auto">
-          Te acompañamos paso a paso durante tus primeras semanas en España.
+          De recién llegado a plenamente integrado. Una guía paso a paso para organizarte y crecer en España.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           {[
-            { icon: '✅', text: `${totalSteps} pasos esenciales` },
-            { icon: '⏱', text: '~2 semanas' },
+            { icon: '🗓', text: `${totalStages} etapas` },
+            { icon: '✅', text: `${totalSteps} pasos` },
             { icon: '🆓', text: 'Completamente gratuito' },
           ].map(({ icon, text }) => (
             <span
