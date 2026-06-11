@@ -50,10 +50,9 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="flex justify-center">
 
-          {/* Left: Content */}
-          <div>
+          <div className="max-w-2xl w-full">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
               <span className="text-lg" role="img" aria-label="Brasil">🇧🇷</span>
@@ -112,23 +111,6 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right: Value props */}
-          <div className="hidden lg:flex flex-col gap-4">
-            {[
-              { emoji: '💼', label: 'Empleos', desc: 'Ofertas de trabajo para la comunidad brasileña en BCN' },
-              { emoji: '🏢', label: 'Empresas', desc: 'Directorio de negocios y profesionales brasileños' },
-              { emoji: '📅', label: 'Eventos', desc: 'Festas, meetups y encuentros culturales' },
-              { emoji: '🗺️', label: 'Ruta Brasileño', desc: 'Guía paso a paso para organizarte en España' },
-            ].map(({ emoji, label, desc }) => (
-              <div key={label} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4">
-                <span className="text-3xl shrink-0">{emoji}</span>
-                <div>
-                  <p className="font-black text-white">{label}</p>
-                  <p className="text-blue-200 text-sm leading-snug">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
 
         </div>
       </div>
