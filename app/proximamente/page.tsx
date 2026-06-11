@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Próximamente · Brasil BCN',
@@ -22,9 +23,18 @@ export default function ProximamentePage() {
       </div>
 
       <div className="relative z-10 text-center max-w-lg mx-auto">
-        {/* Flag */}
-        <div className="text-7xl mb-6 animate-bounce" style={{ animationDuration: '2s' }}>
-          🇧🇷
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-white rounded-2xl px-8 py-5 shadow-2xl shadow-black/30">
+            <Image
+              src="/brand/logo-oficial.png"
+              alt="Brasil BCN"
+              width={320}
+              height={100}
+              priority
+              className="h-20 w-auto"
+            />
+          </div>
         </div>
 
         {/* Badge */}
@@ -33,10 +43,7 @@ export default function ProximamentePage() {
           <span className="text-white/80 text-xs font-semibold uppercase tracking-widest">Em construção</span>
         </div>
 
-        {/* Title */}
-        <h1 className="text-5xl sm:text-6xl font-black text-white mb-4 leading-tight">
-          Brasil<span className="text-[#009C3B]">BCN</span>
-        </h1>
+        {/* Message */}
         <p className="text-[#FFDF00] font-bold text-lg sm:text-xl mb-3">
           Próximamente
         </p>

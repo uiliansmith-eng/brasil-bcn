@@ -50,7 +50,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto rounded-xl object-contain group-hover:opacity-90 transition-opacity" />
+            <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain bg-white px-2 py-1 group-hover:opacity-90 transition-opacity" />
           </Link>
 
           {/* Desktop Nav */}
@@ -157,7 +157,7 @@ export function Navbar() {
                 <div className="flex items-center justify-between p-6 border-b">
                   <Link href="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain" />
+                    <img src="/logo.png" alt="Brasil BCN" className="h-10 w-auto rounded-xl object-contain bg-white px-2 py-1" />
                   </Link>
                 </div>
 

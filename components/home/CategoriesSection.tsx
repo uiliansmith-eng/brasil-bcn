@@ -66,7 +66,7 @@ const categories = [
     icon: ShoppingBag,
     label: 'Compra y Venta',
     description: 'Anuncios de particulares. Compra y vende en la comunidad.',
-    href: '/anuncios',
+    href: '/compraventa',
     count: '95+ anuncios',
     color: 'from-rose-500 to-rose-600',
     bgLight: 'bg-rose-50 hover:bg-rose-100',

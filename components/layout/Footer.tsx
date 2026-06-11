@@ -10,7 +10,7 @@ const footerLinks = {
   ],
   recursos: [
     { label: 'Guía del Brasileño', href: '/guia', icon: BookOpen },
-    { label: 'Compra y Venta', href: '/anuncios', icon: ShoppingBag },
+    { label: 'Compra y Venta', href: '/compraventa', icon: ShoppingBag },
     { label: 'Publicar Empleo', href: '/empleos/publicar', icon: Briefcase },
     { label: 'Registrar Empresa', href: '/empresas/registrar', icon: Building2 },
   ],
@@ -33,7 +33,7 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Brasil BCN" className="h-16 w-auto object-contain" />
+              <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto object-contain bg-white rounded-xl px-3 py-1.5" />
             </Link>
             <p className="text-blue-200 text-sm leading-relaxed mb-6">
               La comunidad de referencia para brasileños en Barcelona y Cataluña.
