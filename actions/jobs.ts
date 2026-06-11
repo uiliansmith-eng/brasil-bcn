@@ -68,12 +68,17 @@ export async function getJobById(id: string) {
 }
 
 // ─── CREATE JOB ──────────────────────────────────────────────
-export async function createJobAction(data: CreateJobInput): Promise<{ error: string } | never> {
+export async function createJobAction(data: CreateJobInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
   const parsed = createJobSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0].message
+    console.error('[createJobAction] validation failed:', msg)
+    return { error: msg }
+  }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) console.error('[createJobAction] auth error:', authError.message)
   if (!user) return { error: 'Debes iniciar sesión para publicar empleos' }
 
   const { error } = await supabase.from('jobs').insert({
@@ -88,10 +93,13 @@ export async function createJobAction(data: CreateJobInput): Promise<{ error: st
     location: parsed.data.location || null,
   })
 
-  if (error) return { error: 'Error al publicar el empleo. Inténtalo de nuevo.' }
+  if (error) {
+    console.error('[createJobAction] insert error:', error.message, error.code)
+    return { error: `Error al publicar: ${error.message}` }
+  }
 
   revalidatePath('/empleos')
-  redirect('/empleos?publicado=true')
+  return { ok: true, redirectTo: '/empleos?publicado=true' }
 }
 
 // ─── DELETE JOB ──────────────────────────────────────────────

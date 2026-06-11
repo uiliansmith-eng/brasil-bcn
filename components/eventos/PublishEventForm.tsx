@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Info } from 'lucide-react'
@@ -18,6 +19,7 @@ import { cn } from '@/lib/utils'
 const CATEGORIES = Object.entries(EVENT_CATEGORY_LABELS) as [string, string][]
 
 export function PublishEventForm() {
+  const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
 
@@ -40,12 +42,29 @@ export function PublishEventForm() {
 
   const onSubmit = async (data: CreateEventInput) => {
     setServerError(null)
-    const result = await createEventAction({ ...data, image_url: imageUrl ?? undefined })
-    if (result && 'error' in result) setServerError(result.error)
+    try {
+      const result = await createEventAction({ ...data, image_url: imageUrl ?? undefined })
+      if (result && 'error' in result) { setServerError(result.error); return }
+      if (result && 'ok' in result) router.push(result.redirectTo)
+    } catch (e) {
+      setServerError('Error inesperado. Por favor recarga la página e inténtalo de nuevo.')
+      console.error('[PublishEventForm] unexpected error:', e)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+
+      {/* Server error */}
+      {serverError && (
+        <div className="bg-red-50 border border-red-300 rounded-xl p-4 flex gap-3">
+          <span className="text-red-500 text-lg leading-none mt-0.5">⚠</span>
+          <div>
+            <p className="font-semibold text-red-700 text-sm">Error al publicar</p>
+            <p className="text-red-600 text-sm mt-0.5">{serverError}</p>
+          </div>
+        </div>
+      )}
 
       {/* Basic info */}
       <section className="bg-white rounded-2xl border border-gray-100 p-8">
@@ -228,13 +247,6 @@ export function PublishEventForm() {
           Tu evento será revisado por el equipo de BrasilBCN antes de publicarse. Normalmente tardamos menos de 24h.
         </p>
       </div>
-
-      {/* Server error */}
-      {serverError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p className="text-red-600 text-sm">{serverError}</p>
-        </div>
-      )}
 
       <Button
         type="submit"

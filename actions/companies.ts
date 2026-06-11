@@ -64,12 +64,17 @@ export async function getCompanyBySlug(slug: string) {
 }
 
 // ─── CREATE COMPANY ───────────────────────────────────────────
-export async function createCompanyAction(data: CreateCompanyInput): Promise<{ error: string } | never> {
+export async function createCompanyAction(data: CreateCompanyInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
   const parsed = createCompanySchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0].message
+    console.error('[createCompanyAction] validation failed:', msg)
+    return { error: msg }
+  }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) console.error('[createCompanyAction] auth error:', authError.message)
   if (!user) return { error: 'Debes iniciar sesión para registrar una empresa' }
 
   const { error } = await supabase.from('companies').insert({
@@ -84,12 +89,13 @@ export async function createCompanyAction(data: CreateCompanyInput): Promise<{ e
   })
 
   if (error) {
+    console.error('[createCompanyAction] insert error:', error.message, error.code)
     if (error.message.includes('duplicate') || error.message.includes('unique')) {
       return { error: 'Ya tienes una empresa registrada con ese nombre.' }
     }
-    return { error: 'Error al registrar la empresa. Inténtalo de nuevo.' }
+    return { error: `Error al registrar: ${error.message}` }
   }
 
   revalidatePath('/empresas')
-  redirect('/empresas?registrada=true')
+  return { ok: true, redirectTo: '/empresas?registrada=true' }
 }
