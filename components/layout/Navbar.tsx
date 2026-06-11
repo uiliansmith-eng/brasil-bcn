@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Menu, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings } from 'lucide-react'
+import { Menu, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings, Map } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -17,6 +17,7 @@ const navIcons = {
   Empresas: Building2,
   Eventos: Calendar,
   Guía: BookOpen,
+  'Ruta Brasileño': Map,
   Comunidad: Users,
 } as const
 
