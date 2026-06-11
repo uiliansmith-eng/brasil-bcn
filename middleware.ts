@@ -48,16 +48,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Admin route protection — requires role check via profile
-  const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
-  if (isAdminRoute && user) {
+  // Block banned users from accessing the platform
+  if (user && !pathname.startsWith('/bloqueado') && !pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, is_blocked')
       .eq('id', user.id)
       .single()
 
-    if (!profile || profile.role !== 'admin') {
+    if (profile?.is_blocked && profile.role !== 'admin') {
+      return NextResponse.redirect(new URL('/bloqueado', request.url))
+    }
+
+    // Admin route protection
+    const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
+    if (isAdminRoute && profile?.role !== 'admin') {
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

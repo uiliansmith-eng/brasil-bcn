@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight } from 'lucide-react'
+import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/usuarios', label: 'Usuarios', icon: Users },
   { href: '/admin/empleos', label: 'Empleos', icon: Briefcase },
   { href: '/admin/empresas', label: 'Empresas', icon: Building2 },
   { href: '/admin/eventos', label: 'Eventos', icon: CalendarDays },

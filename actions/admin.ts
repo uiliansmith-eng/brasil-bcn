@@ -212,3 +212,45 @@ export async function createGuideAction(data: CreateGuideInput): Promise<{ error
   revalidatePath('/guia')
   return { success: true }
 }
+
+// ─── USUARIOS ─────────────────────────────────────────────────
+
+export async function getUsers(page = 1, search = '') {
+  const supabase = await createClient()
+  const perPage = 20
+  const from = (page - 1) * perPage
+  let query = supabase
+    .from('profiles')
+    .select('id, email, full_name, role, is_blocked, blocked_at, blocked_reason, created_at', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, from + perPage - 1)
+  if (search) query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`)
+  const { data, count, error } = await query
+  if (error) { console.error(error); return { users: [], total: 0 } }
+  return { users: data ?? [], total: count ?? 0 }
+}
+
+export async function blockUser(userId: string, reason: string): Promise<{ error: string | null }> {
+  const ctx = await requireAdmin()
+  if (!ctx) return { error: 'No autorizado' }
+  const { error } = await ctx.supabase
+    .from('profiles')
+    .update({ is_blocked: true, blocked_at: new Date().toISOString(), blocked_reason: reason || null })
+    .eq('id', userId)
+    .neq('role', 'admin')
+  if (error) return { error: error.message }
+  revalidatePath('/admin/usuarios')
+  return { error: null }
+}
+
+export async function unblockUser(userId: string): Promise<{ error: string | null }> {
+  const ctx = await requireAdmin()
+  if (!ctx) return { error: 'No autorizado' }
+  const { error } = await ctx.supabase
+    .from('profiles')
+    .update({ is_blocked: false, blocked_at: null, blocked_reason: null })
+    .eq('id', userId)
+  if (error) return { error: error.message }
+  revalidatePath('/admin/usuarios')
+  return { error: null }
+}
