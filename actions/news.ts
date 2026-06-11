@@ -1,5 +1,6 @@
 'use server'
 
+import { unstable_noStore as noStore } from 'next/cache'
 import { createClient } from '@supabase/supabase-js'
 
 export interface BrazilNewsItem {
@@ -13,6 +14,7 @@ export interface BrazilNewsItem {
 }
 
 export async function getLatestNews(limit = 5): Promise<BrazilNewsItem[]> {
+  noStore()
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
