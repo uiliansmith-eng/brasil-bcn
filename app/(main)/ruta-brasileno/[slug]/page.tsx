@@ -48,8 +48,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const { createClient } = await import('@/lib/supabase/server')
-  const supabase = await createClient()
+  const { createClient } = await import('@supabase/supabase-js')
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const { data } = await supabase.from('route_steps').select('slug')
   return (data ?? []).map((s: { slug: string }) => ({ slug: s.slug }))
 }
