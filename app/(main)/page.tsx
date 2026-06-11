@@ -8,6 +8,9 @@ import { FeaturedCompaniesSection } from '@/components/home/FeaturedCompaniesSec
 import { BrazilNewsSection } from '@/components/home/BrazilNewsSection'
 import { CTASection } from '@/components/home/CTASection'
 import { AdSlot } from '@/components/ads/AdSlot'
+
+export const revalidate = 1800
+
 export default function HomePage() {
   return (
     <>
