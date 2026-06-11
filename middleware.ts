@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Block banned users from accessing the platform
+  // Block banned users + admin route protection
   if (user && !pathname.startsWith('/bloqueado') && !pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -60,7 +60,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/bloqueado', request.url))
     }
 
-    // Admin route protection
     const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
     if (isAdminRoute && profile?.role !== 'admin') {
       return NextResponse.redirect(new URL('/', request.url))
