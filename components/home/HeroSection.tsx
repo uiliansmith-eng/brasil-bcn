@@ -112,19 +112,19 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right: Stats / social proof */}
+          {/* Right: Value props */}
           <div className="hidden lg:flex flex-col gap-4">
             {[
-              { emoji: '🇧🇷', value: '2.400+', label: 'Brasileños en BCN' },
-              { emoji: '💼', value: '180+', label: 'Ofertas de empleo activas' },
-              { emoji: '🏢', value: '320+', label: 'Empresas registradas' },
-              { emoji: '📅', value: '45+', label: 'Eventos este mes' },
-            ].map(({ emoji, value, label }) => (
+              { emoji: '💼', label: 'Empleos', desc: 'Ofertas de trabajo para la comunidad brasileña en BCN' },
+              { emoji: '🏢', label: 'Empresas', desc: 'Directorio de negocios y profesionales brasileños' },
+              { emoji: '📅', label: 'Eventos', desc: 'Festas, meetups y encuentros culturales' },
+              { emoji: '🗺️', label: 'Ruta Brasileño', desc: 'Guía paso a paso para organizarte en España' },
+            ].map(({ emoji, label, desc }) => (
               <div key={label} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4">
-                <span className="text-3xl">{emoji}</span>
+                <span className="text-3xl shrink-0">{emoji}</span>
                 <div>
-                  <p className="text-2xl font-black text-white">{value}</p>
-                  <p className="text-blue-200 text-sm">{label}</p>
+                  <p className="font-black text-white">{label}</p>
+                  <p className="text-blue-200 text-sm leading-snug">{desc}</p>
                 </div>
               </div>
             ))}
