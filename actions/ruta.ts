@@ -130,6 +130,86 @@ export async function getStage1Steps(): Promise<Step[]> {
   return data ?? []
 }
 
+// ── Admin CRUD ────────────────────────────────────────────────────────────────
+
+export async function getArticleById(id: string): Promise<(Article & {
+  content: string
+  seo_title: string | null
+  seo_description: string | null
+  step_id: string
+}) | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('guide_articles')
+    .select('*')
+    .eq('id', id)
+    .single()
+  if (error) { console.error(error); return null }
+  return data
+}
+
+export async function updateArticle(id: string, payload: {
+  title?: string
+  slug?: string
+  excerpt?: string | null
+  content?: string
+  seo_title?: string | null
+  seo_description?: string | null
+  published?: boolean
+  last_verified_at?: string | null
+}): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('guide_articles')
+    .update({ ...payload, updated_at: new Date().toISOString() })
+    .eq('id', id)
+  return { error: error?.message ?? null }
+}
+
+export async function deleteArticle(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('guide_articles').delete().eq('id', id)
+  return { error: error?.message ?? null }
+}
+
+export async function createResource(payload: {
+  step_id: string
+  title: string
+  url: string
+  type: string
+  description?: string | null
+  position?: number
+}): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('guide_resources').insert(payload)
+  return { error: error?.message ?? null }
+}
+
+export async function deleteResource(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('guide_resources').delete().eq('id', id)
+  return { error: error?.message ?? null }
+}
+
+export async function createFAQ(payload: {
+  step_id: string
+  question: string
+  answer: string
+  position?: number
+}): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('faq_items').insert(payload)
+  return { error: error?.message ?? null }
+}
+
+export async function deleteFAQ(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('faq_items').delete().eq('id', id)
+  return { error: error?.message ?? null }
+}
+
+// ── Public getters ─────────────────────────────────────────────────────────────
+
 export async function getArticleBySlug(slug: string): Promise<(Article & {
   step: Step & { stage: Stage }
   faqs: FAQ[]
