@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Briefcase, Building2, Calendar, BookOpen, ShoppingBag, Rocket } from 'lucide-react'
 import { LangContext, translations, type Lang, type TKey } from '@/lib/auth-i18n'
-import { BrandLogo } from '@/components/brand/BrandLogo'
 
 const LANG_FLAGS: { lang: Lang; flag: string; label: string }[] = [
   { lang: 'pt', flag: '🇧🇷', label: 'PT' },
@@ -49,7 +48,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* Logo */}
             <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <BrandLogo variant="full" theme="white" className="h-14" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto rounded-2xl object-contain bg-white px-3 py-1.5" />
             </Link>
 
             {/* Main copy */}
@@ -101,7 +101,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="flex items-center justify-between p-6 border-b">
             <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <BrandLogo variant="compact" className="h-10" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain" />
             </Link>
 
             {/* Language selector */}

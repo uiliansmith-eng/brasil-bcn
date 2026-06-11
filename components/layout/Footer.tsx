@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Briefcase, Building2, Calendar, BookOpen, Users, ShoppingBag, MessageCircle, Mail, MapPin, Share2 } from 'lucide-react'
-import { BrandLogo } from '@/components/brand/BrandLogo'
 
 const footerLinks = {
   plataforma: [
@@ -33,7 +32,8 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-4">
-              <BrandLogo variant="full" theme="white" className="h-16" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto object-contain bg-white rounded-xl px-3 py-1.5" />
             </Link>
             <p className="text-blue-200 text-sm leading-relaxed mb-6">
               La comunidad de referencia para brasileños en Barcelona y Cataluña.

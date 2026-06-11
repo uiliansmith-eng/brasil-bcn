@@ -11,7 +11,6 @@ import { cn } from '@/lib/utils'
 import { navItems } from '@/lib/config'
 import { useUser } from '@/hooks/useUser'
 import { logoutAction } from '@/actions/auth'
-import { BrandLogo } from '@/components/brand/BrandLogo'
 
 const navIcons = {
   Empleos: Briefcase,
@@ -49,12 +48,9 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center group-hover:opacity-90 transition-opacity">
-            <BrandLogo
-              variant="compact"
-              theme={isScrolled ? 'default' : 'white'}
-              className="h-10"
-            />
+          <Link href="/" className="flex items-center group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain bg-white px-2 py-1 group-hover:opacity-90 transition-opacity" />
           </Link>
 
           {/* Desktop Nav */}
@@ -160,7 +156,8 @@ export function Navbar() {
                 {/* Mobile Header */}
                 <div className="flex items-center justify-between p-6 border-b">
                   <Link href="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
-                    <BrandLogo variant="compact" className="h-9" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/logo.png" alt="Brasil BCN" className="h-10 w-auto rounded-xl object-contain bg-white px-2 py-1" />
                   </Link>
                 </div>
 

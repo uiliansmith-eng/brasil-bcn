@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { BrandLogo } from '@/components/brand/BrandLogo'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Próximamente · Brasil BCN',
@@ -25,7 +25,16 @@ export default function ProximamentePage() {
       <div className="relative z-10 text-center max-w-lg mx-auto">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <BrandLogo variant="full" theme="white" className="h-20" />
+          <div className="bg-white rounded-2xl px-8 py-5 shadow-2xl shadow-black/30">
+            <Image
+              src="/brand/logo-oficial.png"
+              alt="Brasil BCN"
+              width={320}
+              height={100}
+              priority
+              className="h-20 w-auto"
+            />
+          </div>
         </div>
 
         {/* Badge */}
