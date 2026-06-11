@@ -48,7 +48,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* Logo */}
             <Link href="/">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Brasil BCN" className="h-16 w-auto rounded-2xl object-contain" />
+              <img src="/logo.png" alt="Brasil BCN" className="h-14 w-auto rounded-2xl object-contain bg-white px-3 py-1.5" />
             </Link>
 
             {/* Main copy */}
