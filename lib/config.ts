@@ -16,7 +16,7 @@ export const navItems = [
   { label: 'Empresas', href: '/empresas' },
   { label: 'Eventos', href: '/eventos' },
   { label: 'Guía', href: '/guia' },
-  { label: 'Ruta BCN', href: '/ruta-brasileno' },
+  { label: 'Ruta Brasileño', href: '/ruta-brasileno' },
   { label: 'Comunidad', href: '/comunidad' },
   { label: 'Compra & Venta', href: '/compraventa' },
 ] as const
