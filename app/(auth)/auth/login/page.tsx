@@ -42,7 +42,13 @@ export default function LoginPage() {
     }
 
     const params = new URLSearchParams(window.location.search)
-    window.location.href = params.get('redirect') || '/admin'
+    if (params.get('redirect')) {
+      window.location.href = params.get('redirect')!
+      return
+    }
+    const supabase2 = createClient()
+    const { data: profile } = await supabase2.from('profiles').select('role').single()
+    window.location.href = profile?.role === 'admin' ? '/admin' : '/dashboard'
   }
 
   return (
