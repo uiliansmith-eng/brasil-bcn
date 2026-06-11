@@ -9,6 +9,7 @@ import { FormField } from '@/components/ui/form-field'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { ImageUpload } from '@/components/ui/ImageUpload'
 import { createEventAction } from '@/actions/events'
 import { createEventSchema, type CreateEventInput } from '@/lib/validations/events'
 import { EVENT_CATEGORY_LABELS, CITIES } from '@/lib/constants'
@@ -18,6 +19,7 @@ const CATEGORIES = Object.entries(EVENT_CATEGORY_LABELS) as [string, string][]
 
 export function PublishEventForm() {
   const [serverError, setServerError] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
 
   const {
     register,
@@ -38,7 +40,7 @@ export function PublishEventForm() {
 
   const onSubmit = async (data: CreateEventInput) => {
     setServerError(null)
-    const result = await createEventAction(data)
+    const result = await createEventAction({ ...data, image_url: imageUrl ?? undefined })
     if (result && 'error' in result) setServerError(result.error)
   }
 
@@ -49,6 +51,15 @@ export function PublishEventForm() {
       <section className="bg-white rounded-2xl border border-gray-100 p-8">
         <h2 className="font-black text-gray-900 text-lg mb-6">Información del evento</h2>
         <div className="space-y-5">
+
+          <ImageUpload
+            bucket="events"
+            value={imageUrl}
+            onChange={setImageUrl}
+            label="Imagen del evento"
+            hint="Recomendado: formato apaisado, mínimo 800×400px"
+            aspectRatio="wide"
+          />
 
           <FormField
             label="Nombre del evento *"

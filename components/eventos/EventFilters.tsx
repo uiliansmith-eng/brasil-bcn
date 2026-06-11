@@ -71,7 +71,7 @@ export function EventFilters() {
                 'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
                 (value === null ? !showPast : showPast)
                   ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
               )}
             >
               {label}
@@ -92,7 +92,7 @@ export function EventFilters() {
                 'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
                 currentCategory === value
                   ? 'bg-[#009C3B] text-white border-[#009C3B]'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#009C3B] hover:text-[#009C3B]'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-[#009C3B] hover:text-[#009C3B]'
               )}
             >
               {label}
@@ -113,7 +113,7 @@ export function EventFilters() {
                 'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
                 currentCity === city
                   ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
               )}
             >
               {city}

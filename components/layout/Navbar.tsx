@@ -61,9 +61,14 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-[#009C3B] hover:bg-green-50 transition-all duration-200 group"
+                  className={cn(
+                    'flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 group',
+                    isScrolled
+                      ? 'text-gray-600 hover:text-[#009C3B] hover:bg-green-50'
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  )}
                 >
-                  {Icon && <Icon className="w-4 h-4 text-gray-400 group-hover:text-[#009C3B] transition-colors" />}
+                  {Icon && <Icon className={cn('w-4 h-4 transition-colors', isScrolled ? 'text-gray-400 group-hover:text-[#009C3B]' : 'text-white/70 group-hover:text-white')} />}
                   {item.label}
                 </Link>
               )
@@ -115,14 +120,21 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white hover:bg-white/15'}
+                  >
                     Entrar
                   </Button>
                 </Link>
                 <Link href="/auth/register">
                   <Button
                     size="sm"
-                    className="bg-[#009C3B] hover:bg-[#007a2f] text-white shadow-md hover:shadow-lg transition-all duration-200 font-semibold"
+                    className={isScrolled
+                      ? 'bg-[#009C3B] hover:bg-[#007a2f] text-white shadow-md hover:shadow-lg transition-all duration-200 font-semibold'
+                      : 'bg-white hover:bg-gray-100 text-[#002776] font-semibold shadow-md transition-all duration-200'
+                    }
                   >
                     Únete gratis
                   </Button>

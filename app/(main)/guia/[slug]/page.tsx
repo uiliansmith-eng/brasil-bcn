@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Eye, Calendar, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Clock, Eye, Calendar, ChevronRight, BookOpen } from 'lucide-react'
 import { getGuideBySlug, getGuidesByCategory } from '@/actions/guides'
-import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_EMOJI, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
+import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { GuideCategory } from '@/types'
 
@@ -43,7 +43,6 @@ export default async function GuideDetailPage({ params }: PageProps) {
   const related = await getGuidesByCategory(guide.category as GuideCategory, slug)
 
   const catLabel = GUIDE_CATEGORY_LABELS[guide.category as GuideCategory] ?? guide.category
-  const catEmoji = GUIDE_CATEGORY_EMOJI[guide.category as GuideCategory] ?? '📋'
   const catColor = GUIDE_CATEGORY_COLORS[guide.category as GuideCategory] ?? GUIDE_CATEGORY_COLORS.otro
   const author = guide.author as { full_name?: string } | null
 
@@ -67,7 +66,7 @@ export default async function GuideDetailPage({ params }: PageProps) {
                 <img src={guide.cover_url} alt={guide.title} className="w-full h-64 object-cover" />
               ) : (
                 <div className="h-48 bg-gradient-to-br from-[#002776]/10 to-[#002776]/5 flex items-center justify-center">
-                  <span className="text-8xl opacity-40">{catEmoji}</span>
+                  <BookOpen className="w-16 h-16 text-[#002776]/20" />
                 </div>
               )}
 
@@ -138,7 +137,7 @@ export default async function GuideDetailPage({ params }: PageProps) {
                       href={`/guia/${r.slug}`}
                       className="flex items-start gap-3 group hover:bg-gray-50 p-2 rounded-xl transition-colors -mx-2"
                     >
-                      <span className="text-xl mt-0.5">{catEmoji}</span>
+                      <BookOpen className="w-4 h-4 text-[#002776]/40 mt-0.5 shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 group-hover:text-[#002776] transition-colors line-clamp-2 leading-snug">
                           {r.title}
@@ -176,7 +175,7 @@ export default async function GuideDetailPage({ params }: PageProps) {
                         : 'text-gray-600 hover:bg-gray-50 hover:text-[#002776]'
                     )}
                   >
-                    <span>{GUIDE_CATEGORY_EMOJI[cat]}</span>
+                    <BookOpen className="w-3.5 h-3.5 shrink-0" />
                     {label}
                   </Link>
                 ))}

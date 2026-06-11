@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Clock, Eye } from 'lucide-react'
-import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_EMOJI, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
+import { Clock, Eye, BookOpen } from 'lucide-react'
+import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { GuideCategory } from '@/types'
 
@@ -25,7 +25,6 @@ function formatPublishedDate(dateStr: string | null): string {
 
 export function GuideCard({ guide }: GuideCardProps) {
   const catLabel = GUIDE_CATEGORY_LABELS[guide.category] ?? guide.category
-  const catEmoji = GUIDE_CATEGORY_EMOJI[guide.category] ?? '📋'
   const catColor = GUIDE_CATEGORY_COLORS[guide.category] ?? GUIDE_CATEGORY_COLORS.otro
 
   return (
@@ -39,7 +38,7 @@ export function GuideCard({ guide }: GuideCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={guide.cover_url} alt={guide.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
-          <span className="text-6xl opacity-60">{catEmoji}</span>
+          <BookOpen className="w-12 h-12 text-[#002776]/20" />
         )}
       </div>
 

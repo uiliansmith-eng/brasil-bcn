@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MapPin, CheckCircle2 } from 'lucide-react'
+import { MapPin, CheckCircle2, Building2 } from 'lucide-react'
 import { COMPANY_CATEGORY_LABELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
@@ -31,15 +31,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   otro: 'bg-gray-50 text-gray-600',
 }
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  restaurantes: '🍽️', abogados: '⚖️', peluquerias: '✂️', tiendas: '🛍️',
-  construccion: '🏗️', contables: '📊', transporte: '🚗', educacion: '📚',
-  salud: '🏥', tecnologia: '💻', otro: '🏢',
-}
-
 export function CompanyCard({ company }: CompanyCardProps) {
   const catColor = CATEGORY_COLORS[company.category] ?? CATEGORY_COLORS.otro
-  const catEmoji = CATEGORY_EMOJI[company.category] ?? '🏢'
   const catLabel = COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category
 
   return (
@@ -53,7 +46,9 @@ export function CompanyCard({ company }: CompanyCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={company.logo_url} alt={company.name} className="w-20 h-20 object-contain rounded-xl" />
         ) : (
-          <span className="text-5xl">{catEmoji}</span>
+          <div className="w-16 h-16 rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+            <Building2 className="w-7 h-7 text-gray-400" />
+          </div>
         )}
         {company.is_verified && (
           <div className="absolute top-3 right-3 flex items-center gap-1 bg-white rounded-full px-2 py-1 shadow-sm text-xs font-semibold text-[#009C3B]">
@@ -86,7 +81,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
             <MapPin className="w-3 h-3" />
             {company.city}
           </div>
-          <span className="text-xs text-[#009C3B] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-xs text-[#009C3B] font-semibold group-hover:translate-x-0.5 transition-transform">
             Ver perfil →
           </span>
         </div>

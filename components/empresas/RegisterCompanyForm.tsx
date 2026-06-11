@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { ImageUpload } from '@/components/ui/ImageUpload'
 import { createCompanyAction } from '@/actions/companies'
 import { createCompanySchema, type CreateCompanyInput } from '@/lib/validations/companies'
 import { COMPANY_CATEGORY_LABELS, CITIES } from '@/lib/constants'
@@ -17,6 +18,7 @@ const CATEGORIES = Object.entries(COMPANY_CATEGORY_LABELS) as [string, string][]
 
 export function RegisterCompanyForm() {
   const [serverError, setServerError] = useState<string | null>(null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
 
   const {
     register,
@@ -35,7 +37,7 @@ export function RegisterCompanyForm() {
 
   const onSubmit = async (data: CreateCompanyInput) => {
     setServerError(null)
-    const result = await createCompanyAction(data)
+    const result = await createCompanyAction({ ...data, logo_url: logoUrl ?? undefined })
     if (result && 'error' in result) setServerError(result.error)
   }
 
@@ -46,6 +48,15 @@ export function RegisterCompanyForm() {
       <section className="bg-white rounded-2xl border border-gray-100 p-8">
         <h2 className="font-black text-gray-900 text-lg mb-6">Información básica</h2>
         <div className="space-y-5">
+
+          <ImageUpload
+            bucket="companies"
+            value={logoUrl}
+            onChange={setLogoUrl}
+            label="Logo de la empresa"
+            hint="Recomendado: imagen cuadrada, mínimo 200×200px"
+            aspectRatio="square"
+          />
 
           <FormField
             label="Nombre de la empresa *"

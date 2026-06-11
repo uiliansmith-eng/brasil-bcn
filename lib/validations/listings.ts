@@ -15,6 +15,7 @@ export const createListingSchema = z.object({
   condition: z.enum(LISTING_CONDITIONS, { error: 'Selecciona el estado del artículo' }),
   city: z.string().min(1, 'Selecciona una ciudad'),
   whatsapp: z.string().optional(),
+  images: z.array(z.string().url()).max(5).optional(),
 })
 
 export type CreateListingInput = z.infer<typeof createListingSchema>

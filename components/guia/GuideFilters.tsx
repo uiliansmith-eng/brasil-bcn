@@ -2,8 +2,8 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
-import { Search, X } from 'lucide-react'
-import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_EMOJI } from '@/lib/constants'
+import { Search, X, BookOpen } from 'lucide-react'
+import { GUIDE_CATEGORY_LABELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { GuideCategory } from '@/types'
 
@@ -69,7 +69,7 @@ export function GuideFilters() {
                   : 'text-gray-600 hover:bg-gray-50 hover:text-[#002776]'
               )}
             >
-              <span>{GUIDE_CATEGORY_EMOJI[value]}</span>
+              <BookOpen className="w-3.5 h-3.5 shrink-0" />
               {label}
             </button>
           ))}

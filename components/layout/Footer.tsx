@@ -31,13 +31,9 @@ export function Footer() {
 
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm">
-                <span className="text-white font-black text-sm">BR</span>
-              </div>
-              <span className="font-black text-2xl tracking-tight">
-                Brasil<span className="text-[#FFDF00]">BCN</span>
-              </span>
+            <Link href="/" className="inline-block mb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="h-16 w-auto object-contain" />
             </Link>
             <p className="text-blue-200 text-sm leading-relaxed mb-6">
               La comunidad de referencia para brasileños en Barcelona y Cataluña.

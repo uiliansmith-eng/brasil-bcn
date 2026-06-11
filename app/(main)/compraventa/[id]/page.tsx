@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Clock, ArrowLeft, MessageCircle, Tag, Star } from 'lucide-react'
+import { MapPin, Clock, ArrowLeft, MessageCircle, Tag, Star, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getListingById } from '@/actions/listings'
 import { buildMetadata } from '@/lib/seo'
 import {
   LISTING_CATEGORY_LABELS,
-  LISTING_CATEGORY_EMOJI,
   LISTING_CONDITION_LABELS,
   LISTING_CONDITION_COLORS,
   formatPrice,
@@ -47,7 +46,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const category = listing.category as ListingCategory
   const condition = listing.condition as ListingCondition
   const conditionColor = LISTING_CONDITION_COLORS[condition] ?? 'bg-gray-50 text-gray-600'
-  const emoji = LISTING_CATEGORY_EMOJI[category] ?? '📦'
   const seller = listing.seller as { id: string; full_name: string | null; avatar_url: string | null; whatsapp: string | null } | null
   const whatsapp = listing.whatsapp ?? seller?.whatsapp
   const whatsappUrl = whatsapp
@@ -84,7 +82,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 </div>
               ) : (
                 <div className="h-72 flex items-center justify-center bg-gray-50">
-                  <span className="text-8xl">{emoji}</span>
+                  <Package className="w-16 h-16 text-gray-300" />
                 </div>
               )}
             </div>

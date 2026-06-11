@@ -17,6 +17,7 @@ export const createEventSchema = z.object({
   capacity: z.coerce.number().min(1).optional(),
   whatsapp: z.string().optional(),
   url: z.string().url('URL inválida').optional().or(z.literal('')),
+  image_url: z.string().url().optional(),
 })
 
 export type CreateEventInput = z.infer<typeof createEventSchema>

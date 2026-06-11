@@ -5,13 +5,15 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { MultiImageUpload } from '@/components/ui/ImageUpload'
 import { createListingSchema, type CreateListingInput, LISTING_CATEGORIES, LISTING_CONDITIONS } from '@/lib/validations/listings'
 import { createListingAction } from '@/actions/listings'
-import { LISTING_CATEGORY_LABELS, LISTING_CATEGORY_EMOJI, LISTING_CONDITION_LABELS, CITIES } from '@/lib/constants'
+import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS, CITIES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 export function PublishListingForm() {
   const [serverError, setServerError] = useState<string | null>(null)
+  const [images, setImages] = useState<string[]>([])
 
   const {
     register,
@@ -39,7 +41,7 @@ export function PublishListingForm() {
 
   async function onSubmit(data: CreateListingInput) {
     setServerError(null)
-    const result = await createListingAction(data)
+    const result = await createListingAction({ ...data, images })
     if (result && 'error' in result) {
       setServerError(result.error)
     }
@@ -47,6 +49,15 @@ export function PublishListingForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+
+      {/* Images */}
+      <MultiImageUpload
+        bucket="listings"
+        value={images}
+        onChange={setImages}
+        max={5}
+        label="Fotos del artículo"
+      />
 
       {/* Title */}
       <div>
@@ -93,7 +104,6 @@ export function PublishListingForm() {
                   : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
               )}
             >
-              <span className="text-xl">{LISTING_CATEGORY_EMOJI[cat]}</span>
               {LISTING_CATEGORY_LABELS[cat]}
             </button>
           ))}

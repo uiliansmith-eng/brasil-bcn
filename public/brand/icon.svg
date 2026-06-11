@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
+  <!-- Shadow/glow -->
+  <circle cx="40" cy="33" r="28" fill="#002776" opacity="0.15"/>
+  <!-- Pin shape -->
+  <path d="M40 6C25.6 6 14 17.6 14 32c0 18 26 46 26 46s26-28 26-46C66 17.6 54.4 6 40 6z" fill="#002776"/>
+  <!-- Inner circle highlight -->
+  <circle cx="40" cy="30" r="14" fill="white" opacity="0.1"/>
+  <!-- Flag band green -->
+  <path d="M17.5 35 Q40 27 62.5 35 Q40 45 17.5 35z" fill="#009C3B"/>
+  <!-- Flag band yellow -->
+  <path d="M17.5 39 Q40 33 62.5 39 Q40 47 17.5 39z" fill="#FFDF00"/>
+  <!-- Sagrada Familia silhouette -->
+  <g fill="white" opacity="0.95">
+    <!-- Central tower -->
+    <rect x="38.5" y="12" width="3" height="17" rx="0.6"/>
+    <polygon points="40,8.5 37.5,12 42.5,12"/>
+    <!-- Left tower -->
+    <rect x="30" y="16" width="3" height="12" rx="0.6"/>
+    <polygon points="31.5,12.5 29,16 34,16"/>
+    <!-- Right tower -->
+    <rect x="47" y="16" width="3" height="12" rx="0.6"/>
+    <polygon points="48.5,12.5 46,16 51,16"/>
+    <!-- Facade base -->
+    <rect x="27" y="28" width="26" height="2.5" rx="0.6"/>
+    <!-- Windows -->
+    <rect x="30.5" y="21" width="2.5" height="4" rx="0.5" opacity="0.65"/>
+    <rect x="38.5" y="18.5" width="3" height="7" rx="0.5" opacity="0.65"/>
+    <rect x="47" y="21" width="2.5" height="4" rx="0.5" opacity="0.65"/>
+  </g>
+</svg>

@@ -1,9 +1,8 @@
 import Link from 'next/link'
-import { MapPin, Clock } from 'lucide-react'
+import { MapPin, Clock, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   LISTING_CATEGORY_LABELS,
-  LISTING_CATEGORY_EMOJI,
   LISTING_CONDITION_LABELS,
   LISTING_CONDITION_COLORS,
   formatPrice,
@@ -37,7 +36,6 @@ export function ListingCard({ listing }: ListingCardProps) {
   const category = listing.category as ListingCategory
   const condition = listing.condition as ListingCondition
   const conditionColor = LISTING_CONDITION_COLORS[condition] ?? 'bg-gray-50 text-gray-600'
-  const emoji = LISTING_CATEGORY_EMOJI[category] ?? '📦'
   const image = listing.images[0]
 
   return (
@@ -51,7 +49,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={image} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
-          <span className="text-5xl">{emoji}</span>
+          <Package className="w-10 h-10 text-gray-300" />
         )}
         <div className={cn('absolute top-2 right-2 text-xs font-semibold px-2 py-1 rounded-lg', conditionColor)}>
           {LISTING_CONDITION_LABELS[condition]}

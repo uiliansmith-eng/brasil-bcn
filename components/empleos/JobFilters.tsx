@@ -77,7 +77,7 @@ export function JobFilters() {
                 'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
                 currentCategory === value
                   ? 'bg-[#009C3B] text-white border-[#009C3B]'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#009C3B] hover:text-[#009C3B]'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-[#009C3B] hover:text-[#009C3B]'
               )}
             >
               {label}
@@ -98,7 +98,7 @@ export function JobFilters() {
                 'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
                 currentType === value
                   ? 'bg-[#002776] text-white border-[#002776]'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-[#002776] hover:text-[#002776]'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-[#002776] hover:text-[#002776]'
               )}
             >
               {label}

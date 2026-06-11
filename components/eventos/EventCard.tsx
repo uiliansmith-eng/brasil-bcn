@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { MapPin, Calendar, Users, Ticket } from 'lucide-react'
-import { EVENT_CATEGORY_LABELS, EVENT_CATEGORY_EMOJI } from '@/lib/constants'
+import { MapPin, Calendar, Users, Ticket, CalendarDays } from 'lucide-react'
+import { EVENT_CATEGORY_LABELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { EventCategory } from '@/types'
 
@@ -41,7 +41,6 @@ function formatEventDate(dateStr: string): string {
 
 export function EventCard({ event }: EventCardProps) {
   const catColor = CATEGORY_COLORS[event.category] ?? CATEGORY_COLORS.otro
-  const catEmoji = EVENT_CATEGORY_EMOJI[event.category as EventCategory] ?? '📅'
   const catLabel = EVENT_CATEGORY_LABELS[event.category as EventCategory] ?? event.category
 
   const priceLabel = event.is_free || !event.price
@@ -61,7 +60,7 @@ export function EventCard({ event }: EventCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={event.image_url} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
-          <span className="text-6xl">{catEmoji}</span>
+          <CalendarDays className="w-12 h-12 text-gray-300" />
         )}
         {/* Price badge */}
         <div className={cn(
@@ -106,7 +105,7 @@ export function EventCard({ event }: EventCardProps) {
             <Ticket className="w-3 h-3" />
             {priceLabel}
           </div>
-          <span className="text-xs text-[#009C3B] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="text-xs text-[#009C3B] font-semibold group-hover:translate-x-0.5 transition-transform">
             Ver evento →
           </span>
         </div>

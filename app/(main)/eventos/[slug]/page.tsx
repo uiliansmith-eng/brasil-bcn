@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Calendar, Clock, Users, Ticket, Globe, MessageCircle, ExternalLink } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Clock, Users, Ticket, Globe, MessageCircle, ExternalLink, CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getEventBySlug } from '@/actions/events'
-import { EVENT_CATEGORY_LABELS, EVENT_CATEGORY_EMOJI } from '@/lib/constants'
+import { EVENT_CATEGORY_LABELS } from '@/lib/constants'
 import type { EventCategory } from '@/types'
+import { buildMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -14,12 +15,19 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const event = await getEventBySlug(slug)
-  if (!event) return { title: 'Evento no encontrado' }
+  if (!event) return { title: 'Evento no encontrado — BrasilBCN' }
 
-  return {
-    title: `${event.title} — BrasilBCN`,
-    description: event.description.slice(0, 160),
-  }
+  const category = EVENT_CATEGORY_LABELS[event.category as EventCategory] ?? event.category
+  const date = new Date(event.date_start).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+
+  return buildMetadata({
+    title: `${event.title} — ${date}`,
+    description: `${category} en ${event.city} · ${event.description.slice(0, 120)}`,
+    path: `/eventos/${slug}`,
+    image: event.image_url ?? undefined,
+    type: 'article',
+    keywords: [event.title, category, event.city, 'evento brasileños Barcelona'],
+  })
 }
 
 function formatDate(dateStr: string): string {
@@ -38,7 +46,6 @@ export default async function EventDetailPage({ params }: PageProps) {
   if (!event) notFound()
 
   const catLabel = EVENT_CATEGORY_LABELS[event.category as EventCategory] ?? event.category
-  const catEmoji = EVENT_CATEGORY_EMOJI[event.category as EventCategory] ?? '📅'
 
   const isPast = new Date(event.date_start) < new Date()
   const isFree = event.is_free || !event.price || event.price === 0
@@ -69,7 +76,7 @@ export default async function EventDetailPage({ params }: PageProps) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-8xl opacity-40">{catEmoji}</span>
+                  <CalendarDays className="w-16 h-16 text-[#002776]/20" />
                 )}
                 {isPast && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

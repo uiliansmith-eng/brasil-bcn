@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { Briefcase, Building2, Calendar, BookOpen, ShoppingBag, Rocket } from 'lucide-react'
 import { LangContext, translations, type Lang, type TKey } from '@/lib/auth-i18n'
 
 const LANG_FLAGS: { lang: Lang; flag: string; label: string }[] = [
@@ -26,11 +27,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   const t = (key: TKey) => translations[lang][key]
 
   const features = [
-    { emoji: '💼', key: 'layout_f1' as TKey },
-    { emoji: '🏢', key: 'layout_f2' as TKey },
-    { emoji: '🎉', key: 'layout_f3' as TKey },
-    { emoji: '📖', key: 'layout_f4' as TKey },
-    { emoji: '🛒', key: 'layout_f5' as TKey },
+    { icon: Briefcase, key: 'layout_f1' as TKey },
+    { icon: Building2, key: 'layout_f2' as TKey },
+    { icon: Calendar, key: 'layout_f3' as TKey },
+    { icon: BookOpen, key: 'layout_f4' as TKey },
+    { icon: ShoppingBag, key: 'layout_f5' as TKey },
   ]
 
   return (
@@ -52,7 +53,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
             {/* Main copy */}
             <div className="flex-1 flex flex-col justify-center">
-              <div className="mb-8 text-5xl">🇧🇷</div>
+              <div className="flex items-center gap-2 mb-8">
+                <span className="text-4xl" role="img" aria-label="Brasil">🇧🇷</span>
+                <span className="text-4xl" role="img" aria-label="Barcelona">🏴󠁥󠁳󠁣󠁴󠁿</span>
+              </div>
               <h2 className="text-4xl font-black text-white leading-tight mb-4">
                 {t('layout_heading').split(' ').slice(0, 3).join(' ')}
                 <span className="block text-[#FFDF00]">
@@ -69,17 +73,19 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <ul className="space-y-4">
                 {features.map((f) => (
                   <li key={f.key} className="flex items-center gap-3">
-                    <span className="text-xl">{f.emoji}</span>
+                    <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                      <f.icon className="w-4 h-4 text-[#FFDF00]" />
+                    </div>
                     <span className="text-blue-100 font-medium">{t(f.key)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Launch badge instead of fake testimonial */}
+            {/* Launch badge */}
             <div className="bg-[#FFDF00]/10 border border-[#FFDF00]/30 rounded-2xl p-5">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🚀</span>
+                <Rocket className="w-5 h-5 text-[#FFDF00] shrink-0" />
                 <p className="text-[#FFDF00] font-semibold text-sm leading-relaxed">
                   {t('layout_new')}
                 </p>

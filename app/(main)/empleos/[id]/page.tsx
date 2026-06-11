@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { getJobById } from '@/actions/jobs'
 import { formatSalary, JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
+import { buildMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -14,12 +15,19 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
   const job = await getJobById(id)
-  if (!job) return { title: 'Empleo no encontrado' }
+  if (!job) return { title: 'Empleo no encontrado — BrasilBCN' }
 
-  return {
-    title: `${job.title} — ${job.company?.name ?? 'Empresa confidencial'}`,
-    description: job.description.slice(0, 160),
-  }
+  const company = job.company as { name?: string; logo_url?: string } | null
+  const category = JOB_CATEGORY_LABELS[job.category as keyof typeof JOB_CATEGORY_LABELS] ?? job.category
+
+  return buildMetadata({
+    title: `${job.title} — ${company?.name ?? 'Empresa confidencial'}`,
+    description: `${category} · ${job.city} · ${job.description.slice(0, 120)}`,
+    path: `/empleos/${id}`,
+    image: company?.logo_url ?? undefined,
+    type: 'article',
+    keywords: [job.title, category, job.city, 'empleo Barcelona brasileños'],
+  })
 }
 
 export default async function JobDetailPage({ params }: PageProps) {

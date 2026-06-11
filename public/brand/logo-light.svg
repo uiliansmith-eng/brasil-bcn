@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" fill="none">
+  <!-- Pin shape -->
+  <path d="M38 8C25.3 8 15 18.3 15 31c0 16.5 23 49 23 49s23-32.5 23-49C61 18.3 50.7 8 38 8z" fill="#002776"/>
+  <!-- Flag band green -->
+  <path d="M18 34 Q38 28 58 34 Q38 42 18 34z" fill="#009C3B"/>
+  <!-- Flag band yellow -->
+  <path d="M18 37 Q38 33 58 37 Q38 43 18 37z" fill="#FFDF00"/>
+  <!-- Sagrada Familia silhouette inside pin -->
+  <g fill="white" opacity="0.92">
+    <!-- Central tower -->
+    <rect x="36.5" y="14" width="3" height="14" rx="0.5"/>
+    <polygon points="38,11 36,14 40,14" />
+    <!-- Left tower -->
+    <rect x="30" y="17" width="2.5" height="10" rx="0.5"/>
+    <polygon points="31.25,14.5 29.5,17 33,17" />
+    <!-- Right tower -->
+    <rect x="43.5" y="17" width="2.5" height="10" rx="0.5"/>
+    <polygon points="44.75,14.5 43,17 46.5,17" />
+    <!-- Base facade -->
+    <rect x="28" y="27" width="20" height="2" rx="0.5"/>
+    <!-- Windows -->
+    <rect x="30" y="22" width="2" height="3" rx="0.5" opacity="0.7"/>
+    <rect x="37" y="20" width="2" height="5" rx="0.5" opacity="0.7"/>
+    <rect x="44" y="22" width="2" height="3" rx="0.5" opacity="0.7"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="76" y="44" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="28" fill="#002776" letter-spacing="-0.5">Brasil</text>
+  <text x="76" y="44" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="28" fill="#009C3B" letter-spacing="-0.5" dx="84">BCN</text>
+  <!-- Tagline -->
+  <text x="77" y="62" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="11" fill="#64748b" letter-spacing="1.5">COMUNIDADE • BARCELONA</text>
+
+  <!-- Accent line under wordmark -->
+  <rect x="76" y="68" width="220" height="2.5" rx="1.25" fill="#FFDF00"/>
+</svg>

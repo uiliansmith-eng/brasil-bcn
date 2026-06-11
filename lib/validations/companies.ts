@@ -13,6 +13,7 @@ export const createCompanySchema = z.object({
   email: z.string().email('Email inválido').optional().or(z.literal('')),
   address: z.string().max(200).optional(),
   city: z.string().default('Barcelona'),
+  logo_url: z.string().url().optional(),
 })
 
 export type CreateCompanyInput = z.infer<typeof createCompanySchema>

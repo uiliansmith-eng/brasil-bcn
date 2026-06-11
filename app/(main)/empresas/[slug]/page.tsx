@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, CheckCircle2, Briefcase, ChevronRight } from 'lucide-react'
+import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, CheckCircle2, Briefcase, ChevronRight, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getCompanyBySlug } from '@/actions/companies'
 import { COMPANY_CATEGORY_LABELS, JOB_TYPE_LABELS, formatSalary } from '@/lib/constants'
+import { buildMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -13,18 +14,18 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const company = await getCompanyBySlug(slug)
-  if (!company) return { title: 'Empresa no encontrada' }
+  if (!company) return { title: 'Empresa no encontrada — BrasilBCN' }
 
-  return {
-    title: `${company.name} — ${COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category} en Barcelona`,
-    description: company.description?.slice(0, 160) ?? `${company.name} en Barcelona`,
-  }
-}
+  const category = COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  restaurantes: '🍽️', abogados: '⚖️', peluquerias: '✂️', tiendas: '🛍️',
-  construccion: '🏗️', contables: '📊', transporte: '🚗', educacion: '📚',
-  salud: '🏥', tecnologia: '💻', otro: '🏢',
+  return buildMetadata({
+    title: `${company.name} — ${category} en Barcelona`,
+    description: company.description?.slice(0, 160) ?? `${company.name}, empresa brasileña en ${company.city}`,
+    path: `/empresas/${slug}`,
+    image: company.logo_url ?? undefined,
+    type: 'article',
+    keywords: [company.name, category, company.city, 'empresa brasileña Barcelona'],
+  })
 }
 
 export default async function CompanyDetailPage({ params }: PageProps) {
@@ -33,7 +34,6 @@ export default async function CompanyDetailPage({ params }: PageProps) {
   if (!company) notFound()
 
   const catLabel = COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category
-  const catEmoji = CATEGORY_EMOJI[company.category] ?? '🏢'
   const whatsappUrl = company.whatsapp
     ? `https://wa.me/${company.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${company.name}! Te encontré en BrasilBCN.`)}`
     : null
@@ -64,7 +64,7 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={company.cover_url} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-7xl opacity-30">{catEmoji}</span>
+                  <Building2 className="w-14 h-14 text-[#002776]/20" />
                 )}
               </div>
 
@@ -76,7 +76,7 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={company.logo_url} alt={company.name} className="w-full h-full object-contain rounded-xl" />
                     ) : (
-                      <span>{catEmoji}</span>
+                      <Building2 className="w-8 h-8 text-gray-400" />
                     )}
                   </div>
                   {company.is_verified && (

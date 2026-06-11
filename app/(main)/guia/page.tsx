@@ -7,7 +7,7 @@ import { GuideCard } from '@/components/guia/GuideCard'
 import { GuideFilters } from '@/components/guia/GuideFilters'
 import { Pagination } from '@/components/shared/Pagination'
 import { getGuides } from '@/actions/guides'
-import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_EMOJI } from '@/lib/constants'
+import { GUIDE_CATEGORY_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
 import type { GuideCategory } from '@/types'
 
@@ -71,7 +71,6 @@ export default async function GuiaPage({ searchParams }: PageProps) {
                   href={`/guia?categoria=${cat}`}
                   className="shrink-0 flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl border border-gray-200 hover:border-[#002776] hover:text-[#002776] text-gray-600 transition-all whitespace-nowrap"
                 >
-                  <span>{GUIDE_CATEGORY_EMOJI[cat]}</span>
                   {GUIDE_CATEGORY_LABELS[cat]}
                 </Link>
               ))}

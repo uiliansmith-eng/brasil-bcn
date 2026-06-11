@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
-import { loginAction } from '@/actions/auth'
+import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { useLang } from '@/lib/auth-i18n'
 
@@ -24,8 +24,25 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginInput) => {
     setServerError(null)
-    const result = await loginAction(data)
-    if (result && 'error' in result) setServerError(result.error)
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    })
+
+    if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        setServerError('Email o contraseña incorrectos')
+      } else if (error.message.includes('Email not confirmed')) {
+        setServerError('Confirma tu email antes de entrar. Revisa tu bandeja de entrada.')
+      } else {
+        setServerError('Error al iniciar sesión. Inténtalo de nuevo.')
+      }
+      return
+    }
+
+    const params = new URLSearchParams(window.location.search)
+    window.location.href = params.get('redirect') || '/admin'
   }
 
   return (

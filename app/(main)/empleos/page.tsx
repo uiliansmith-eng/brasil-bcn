@@ -134,6 +134,30 @@ export default async function EmpleosPage({ searchParams }: PageProps) {
                   ))}
                 </div>
 
+                {/* CTA contratar */}
+                <Link href="/empleos/publicar" className="group block mt-6">
+                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#002776] to-[#003a99] px-7 py-7 flex flex-col sm:flex-row items-center justify-between gap-5 hover:shadow-xl transition-shadow duration-300">
+                    {/* Accents */}
+                    <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#009C3B]/20 blur-2xl pointer-events-none" />
+                    <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-[#FFDF00]/10 blur-2xl pointer-events-none" />
+                    <div className="relative text-center sm:text-left">
+                      <p className="text-[#FFDF00] text-xs font-bold uppercase tracking-widest mb-1">Para empresas</p>
+                      <h3 className="text-white font-black text-xl sm:text-2xl leading-tight mb-1.5">
+                        ¿Necesitas contratar?
+                      </h3>
+                      <p className="text-blue-200 text-sm">
+                        Publica tu oferta y encuentra candidatos rápidamente.
+                      </p>
+                    </div>
+                    <div className="relative shrink-0">
+                      <span className="inline-flex items-center gap-2 bg-[#009C3B] group-hover:bg-[#007a2f] text-white font-bold px-6 py-3 rounded-xl transition-colors duration-200 text-sm whitespace-nowrap shadow-lg">
+                        <Plus className="w-4 h-4" />
+                        Publicar empleo
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+
                 <Suspense>
                   <Pagination currentPage={page} totalPages={pages} />
                 </Suspense>
