@@ -113,6 +113,23 @@ export async function getStepsByStage(stageSlug: string): Promise<Step[]> {
   return data ?? []
 }
 
+export async function getStage1Steps(): Promise<Step[]> {
+  const supabase = await createClient()
+  const { data: stage } = await supabase
+    .from('route_stages')
+    .select('id')
+    .eq('position', 1)
+    .single()
+  if (!stage) return []
+  const { data, error } = await supabase
+    .from('route_steps')
+    .select('*')
+    .eq('stage_id', stage.id)
+    .order('position')
+  if (error) { console.error(error); return [] }
+  return data ?? []
+}
+
 export async function getArticleBySlug(slug: string): Promise<(Article & {
   step: Step & { stage: Stage }
   faqs: FAQ[]
