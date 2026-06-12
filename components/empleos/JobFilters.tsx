@@ -3,7 +3,8 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { Search, X } from 'lucide-react'
-import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS, CITIES } from '@/lib/constants'
+import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
+import { CitySelect } from '@/components/shared/CitySelect'
 import { cn } from '@/lib/utils'
 import type { JobCategory, JobType } from '@/types'
 
@@ -170,16 +171,11 @@ export function JobFilters() {
       {/* City filter */}
       <div>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Ciudad</p>
-        <select
+        <CitySelect
           value={currentCity ?? ''}
-          onChange={(e) => updateParam('ciudad', e.target.value || null)}
-          className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#009C3B] focus:ring-2 focus:ring-[#009C3B]/20 transition-colors"
-        >
-          <option value="">Todas las ciudades</option>
-          {CITIES.map((city) => (
-            <option key={city} value={city}>{city}</option>
-          ))}
-        </select>
+          onChange={(v) => updateParam('ciudad', v || null)}
+          className="h-10"
+        />
       </div>
     </div>
   )

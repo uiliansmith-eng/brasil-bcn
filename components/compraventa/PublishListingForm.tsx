@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { MultiImageUpload } from '@/components/ui/ImageUpload'
 import { createListingSchema, type CreateListingInput, LISTING_CATEGORIES, LISTING_CONDITIONS } from '@/lib/validations/listings'
 import { createListingAction } from '@/actions/listings'
-import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS, CITIES } from '@/lib/constants'
+import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 export function PublishListingForm() {
@@ -199,8 +199,10 @@ export function PublishListingForm() {
             {...register('city')}
             className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#009C3B]/20 focus:border-[#009C3B] bg-white"
           >
-            {CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
+            {CITIES_BY_PROVINCE.map(({ region, cities }) => (
+              <optgroup key={region} label={region}>
+                {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+              </optgroup>
             ))}
           </select>
           {errors.city && <p className="mt-1 text-xs text-red-500">{errors.city.message}</p>}

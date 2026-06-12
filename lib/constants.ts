@@ -123,38 +123,27 @@ export const BARCELONA_DISTRICTS = [
   'Poblenou',
 ]
 
-export const CITIES = [
-  // Cataluña
-  'Barcelona', 'Badalona', "L'Hospitalet", 'Terrassa', 'Sabadell', 'Mataró', 'Girona', 'Tarragona', 'Lleida', 'Reus', 'Manresa', 'Castelldefels', 'Gavà', 'Viladecans', 'Cornellà', 'Sant Boi', 'Granollers', 'Vic', 'Figueres',
-  // Madrid
-  'Madrid', 'Alcalá de Henares', 'Alcorcón', 'Fuenlabrada', 'Getafe', 'Leganés', 'Móstoles', 'Torrejón de Ardoz', 'Alcobendas', 'Las Rozas', 'Pozuelo',
-  // Valencia
-  'Valencia', 'Alicante', 'Castellón', 'Elche', 'Torrevieja', 'Benidorm', 'Gandía',
-  // Andalucía
-  'Sevilla', 'Málaga', 'Granada', 'Córdoba', 'Cádiz', 'Almería', 'Huelva', 'Jaén', 'Marbella', 'Jerez de la Frontera', 'Torremolinos', 'Fuengirola',
-  // País Vasco
-  'Bilbao', 'San Sebastián', 'Vitoria',
-  // Galicia
-  'A Coruña', 'Vigo', 'Santiago de Compostela', 'Pontevedra',
-  // Aragón
-  'Zaragoza', 'Huesca', 'Teruel',
-  // Castilla y León
-  'Valladolid', 'Burgos', 'Salamanca', 'León', 'Palencia', 'Ávila', 'Segovia', 'Soria', 'Zamora',
-  // Castilla-La Mancha
-  'Toledo', 'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara',
-  // Murcia
-  'Murcia', 'Cartagena',
-  // Canarias
-  'Las Palmas', 'Santa Cruz de Tenerife', 'Tenerife', 'Gran Canaria', 'Lanzarote', 'Fuerteventura',
-  // Baleares
-  'Palma', 'Ibiza', 'Menorca',
-  // Navarra y La Rioja
-  'Pamplona', 'Logroño',
-  // Asturias y Cantabria
-  'Oviedo', 'Gijón', 'Santander',
-  // Extremadura
-  'Badajoz', 'Cáceres',
+export const CITIES_BY_PROVINCE: { region: string; cities: string[] }[] = [
+  { region: 'Cataluña', cities: ['Barcelona', 'Badalona', "L'Hospitalet", 'Terrassa', 'Sabadell', 'Mataró', 'Girona', 'Tarragona', 'Lleida', 'Reus', 'Manresa', 'Castelldefels', 'Gavà', 'Viladecans', 'Cornellà', 'Sant Boi', 'Granollers', 'Vic', 'Figueres'] },
+  { region: 'Comunidad de Madrid', cities: ['Madrid', 'Alcalá de Henares', 'Alcorcón', 'Fuenlabrada', 'Getafe', 'Leganés', 'Móstoles', 'Torrejón de Ardoz', 'Alcobendas', 'Las Rozas', 'Pozuelo'] },
+  { region: 'Comunidad Valenciana', cities: ['Valencia', 'Alicante', 'Castellón', 'Elche', 'Torrevieja', 'Benidorm', 'Gandía'] },
+  { region: 'Andalucía', cities: ['Sevilla', 'Málaga', 'Granada', 'Córdoba', 'Cádiz', 'Almería', 'Huelva', 'Jaén', 'Marbella', 'Jerez de la Frontera', 'Torremolinos', 'Fuengirola'] },
+  { region: 'País Vasco', cities: ['Bilbao', 'San Sebastián', 'Vitoria'] },
+  { region: 'Galicia', cities: ['A Coruña', 'Vigo', 'Santiago de Compostela', 'Pontevedra'] },
+  { region: 'Aragón', cities: ['Zaragoza', 'Huesca', 'Teruel'] },
+  { region: 'Castilla y León', cities: ['Valladolid', 'Burgos', 'Salamanca', 'León', 'Palencia', 'Ávila', 'Segovia', 'Soria', 'Zamora'] },
+  { region: 'Castilla-La Mancha', cities: ['Toledo', 'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara'] },
+  { region: 'Región de Murcia', cities: ['Murcia', 'Cartagena'] },
+  { region: 'Canarias', cities: ['Las Palmas', 'Santa Cruz de Tenerife', 'Tenerife', 'Gran Canaria', 'Lanzarote', 'Fuerteventura'] },
+  { region: 'Islas Baleares', cities: ['Palma', 'Ibiza', 'Menorca'] },
+  { region: 'Navarra', cities: ['Pamplona'] },
+  { region: 'La Rioja', cities: ['Logroño'] },
+  { region: 'Asturias', cities: ['Oviedo', 'Gijón'] },
+  { region: 'Cantabria', cities: ['Santander'] },
+  { region: 'Extremadura', cities: ['Badajoz', 'Cáceres'] },
 ]
+
+export const CITIES = CITIES_BY_PROVINCE.flatMap((p) => p.cities)
 
 export const LISTING_CATEGORY_LABELS: Record<ListingCategory, string> = {
   electronica: 'Electrónica',

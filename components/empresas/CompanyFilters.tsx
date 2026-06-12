@@ -3,7 +3,8 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { Search, X } from 'lucide-react'
-import { COMPANY_CATEGORY_LABELS, CITIES } from '@/lib/constants'
+import { COMPANY_CATEGORY_LABELS } from '@/lib/constants'
+import { CitySelect } from '@/components/shared/CitySelect'
 import { cn } from '@/lib/utils'
 import type { CompanyCategory } from '@/types'
 
@@ -79,22 +80,11 @@ export function CompanyFilters() {
       {/* City */}
       <div>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Ciudad</p>
-        <div className="flex flex-wrap gap-2">
-          {CITIES.map((city) => (
-            <button
-              key={city}
-              onClick={() => updateParam('ciudad', currentCity === city ? null : city)}
-              className={cn(
-                'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
-                currentCity === city
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
-              )}
-            >
-              {city}
-            </button>
-          ))}
-        </div>
+        <CitySelect
+          value={currentCity ?? ''}
+          onChange={(v) => updateParam('ciudad', v || null)}
+          className="h-10"
+        />
       </div>
     </div>
   )

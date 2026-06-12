@@ -2,7 +2,8 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Search, SlidersHorizontal } from 'lucide-react'
-import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS, CITIES } from '@/lib/constants'
+import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS } from '@/lib/constants'
+import { CitySelect } from '@/components/shared/CitySelect'
 
 export function ListingFilters() {
   const router = useRouter()
@@ -77,16 +78,11 @@ export function ListingFilters() {
       {/* City */}
       <div>
         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ciudad</label>
-        <select
+        <CitySelect
           value={ciudad}
-          onChange={(e) => update('ciudad', e.target.value)}
-          className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#009C3B]/20 focus:border-[#009C3B] bg-white"
-        >
-          <option value="">Todas las ciudades</option>
-          {CITIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
+          onChange={(v) => update('ciudad', v)}
+          className="py-2.5"
+        />
       </div>
     </div>
   )

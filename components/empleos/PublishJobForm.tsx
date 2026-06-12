@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createJobAction } from '@/actions/jobs'
 import { createJobSchema, type CreateJobInput } from '@/lib/validations/jobs'
-import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS, CITIES } from '@/lib/constants'
+import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const CATEGORIES = Object.entries(JOB_CATEGORY_LABELS) as [string, string][]
@@ -161,8 +161,10 @@ export function PublishJobForm() {
                 className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#009C3B] focus:ring-2 focus:ring-[#009C3B]/20 transition-colors"
                 {...register('city')}
               >
-                {CITIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                {CITIES_BY_PROVINCE.map(({ region, cities }) => (
+                  <optgroup key={region} label={region}>
+                    {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </optgroup>
                 ))}
               </select>
             </div>
