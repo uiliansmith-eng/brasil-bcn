@@ -67,12 +67,17 @@ export async function getEventBySlug(slug: string) {
 }
 
 // ─── CREATE EVENT ──────────────────────────────────────────────
-export async function createEventAction(data: CreateEventInput): Promise<{ error: string } | never> {
+export async function createEventAction(data: CreateEventInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
   const parsed = createEventSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0].message
+    console.error('[createEventAction] validation failed:', msg)
+    return { error: msg }
+  }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) console.error('[createEventAction] auth error:', authError.message)
   if (!user) return { error: 'Debes iniciar sesión para publicar un evento' }
 
   const { error } = await supabase.from('events').insert({
@@ -87,8 +92,11 @@ export async function createEventAction(data: CreateEventInput): Promise<{ error
     url: parsed.data.url || null,
   })
 
-  if (error) return { error: 'Error al publicar el evento. Inténtalo de nuevo.' }
+  if (error) {
+    console.error('[createEventAction] insert error:', error.message, error.code)
+    return { error: `Error al publicar: ${error.message}` }
+  }
 
   revalidatePath('/eventos')
-  redirect('/eventos?publicado=true')
+  return { ok: true, redirectTo: '/eventos?publicado=true' }
 }

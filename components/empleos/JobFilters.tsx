@@ -10,6 +10,19 @@ import type { JobCategory, JobType } from '@/types'
 const CATEGORIES = Object.entries(JOB_CATEGORY_LABELS) as [JobCategory, string][]
 const TYPES = Object.entries(JOB_TYPE_LABELS) as [JobType, string][]
 
+const SALARY_OPTIONS = [
+  { label: 'Más de 1.000€', value: '1000' },
+  { label: 'Más de 1.500€', value: '1500' },
+  { label: 'Más de 2.000€', value: '2000' },
+  { label: 'Más de 2.500€', value: '2500' },
+]
+
+const SOURCE_OPTIONS: { label: string; value: string | null }[] = [
+  { label: 'Todos', value: null },
+  { label: 'BrasilBCN', value: 'brasil_bcn' },
+  { label: 'Importados', value: 'importados' },
+]
+
 export function JobFilters() {
   const router = useRouter()
   const pathname = usePathname()
@@ -19,7 +32,9 @@ export function JobFilters() {
   const currentType = searchParams.get('tipo') as JobType | null
   const currentCity = searchParams.get('ciudad')
   const currentQ = searchParams.get('q') ?? ''
-  const hasFilters = currentCategory || currentType || currentCity || currentQ
+  const currentSalario = searchParams.get('salarioMin')
+  const currentSource = searchParams.get('source')
+  const hasFilters = !!(currentCategory || currentType || currentCity || currentQ || currentSalario || currentSource)
 
   const updateParam = useCallback((key: string, value: string | null) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -64,6 +79,51 @@ export function JobFilters() {
           </button>
         </div>
       )}
+
+      {/* Source filter */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Fuente</p>
+        <div className="flex gap-2">
+          {SOURCE_OPTIONS.map(({ label, value }) => {
+            const isActive = value === null ? !currentSource : currentSource === value
+            return (
+              <button
+                key={label}
+                onClick={() => updateParam('source', value === null || currentSource === value ? null : value)}
+                className={cn(
+                  'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
+                  isActive
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                )}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Salary filter */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Salario mínimo</p>
+        <div className="flex flex-wrap gap-2">
+          {SALARY_OPTIONS.map(({ label, value }) => (
+            <button
+              key={value}
+              onClick={() => updateParam('salarioMin', currentSalario === value ? null : value)}
+              className={cn(
+                'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
+                currentSalario === value
+                  ? 'bg-[#009C3B] text-white border-[#009C3B]'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-[#009C3B] hover:text-[#009C3B]'
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Category filter */}
       <div>

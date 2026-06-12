@@ -1,27 +1,38 @@
 'use client'
 
 import { useState } from 'react'
-import { ShieldOff, ShieldCheck, Loader2 } from 'lucide-react'
 import { blockUser, unblockUser } from '@/actions/admin'
+import { useRouter } from 'next/navigation'
+import { Ban, CheckCircle, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
-export function UserActions({ userId, isBlocked }: { userId: string; isBlocked: boolean }) {
+type Props = {
+  userId: string
+  isBlocked: boolean
+  blockedReason: string
+}
+
+export function UserActions({ userId, isBlocked, blockedReason }: Props) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [showReasonModal, setShowReasonModal] = useState(false)
+  const [showModal, setShowModal] = useState(false)
   const [reason, setReason] = useState('')
 
-  async function handleUnblock() {
+  const handleBlock = async () => {
     setLoading(true)
-    await unblockUser(userId)
+    const { error } = await blockUser(userId, reason)
     setLoading(false)
+    if (error) { alert(error); return }
+    setShowModal(false)
+    router.refresh()
   }
 
-  async function handleBlock() {
-    if (!reason.trim()) return
+  const handleUnblock = async () => {
     setLoading(true)
-    setShowReasonModal(false)
-    await blockUser(userId, reason.trim())
-    setReason('')
+    const { error } = await unblockUser(userId)
     setLoading(false)
+    if (error) { alert(error); return }
+    router.refresh()
   }
 
   if (isBlocked) {
@@ -29,9 +40,9 @@ export function UserActions({ userId, isBlocked }: { userId: string; isBlocked: 
       <button
         onClick={handleUnblock}
         disabled={loading}
-        className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors disabled:opacity-50"
+        className="flex items-center gap-1 text-xs font-medium text-green-600 hover:text-green-700 disabled:opacity-50"
       >
-        {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+        {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
         Desbloquear
       </button>
     )
@@ -40,40 +51,34 @@ export function UserActions({ userId, isBlocked }: { userId: string; isBlocked: 
   return (
     <>
       <button
-        onClick={() => setShowReasonModal(true)}
-        disabled={loading}
-        className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors disabled:opacity-50"
+        onClick={() => setShowModal(true)}
+        className="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-600"
       >
-        {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldOff className="w-3.5 h-3.5" />}
+        <Ban className="w-3 h-3" />
         Bloquear
       </button>
 
-      {showReasonModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <h3 className="font-black text-gray-900 mb-1">Bloquear usuario</h3>
-            <p className="text-sm text-gray-500 mb-4">El usuario no podrá acceder a la plataforma.</p>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="font-bold text-gray-900 mb-2">Bloquear usuario</h3>
+            <p className="text-sm text-gray-500 mb-4">El usuario no podrá acceder a la plataforma. Indica el motivo:</p>
             <textarea
+              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-200 mb-4"
+              rows={3}
+              placeholder="Ej: publicó contenido inapropiado"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Motivo (ej: contenido ofensivo, spam...)"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400"
-              autoFocus
             />
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => { setShowReasonModal(false); setReason('') }}
-                className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowModal(false)}>Cancelar</Button>
+              <Button
                 onClick={handleBlock}
-                disabled={!reason.trim()}
-                className="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-40"
+                disabled={loading || !reason.trim()}
+                className="bg-red-500 hover:bg-red-600 text-white"
               >
-                Confirmar bloqueo
-              </button>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar bloqueo'}
+              </Button>
             </div>
           </div>
         </div>

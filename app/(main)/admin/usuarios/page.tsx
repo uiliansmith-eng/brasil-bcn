@@ -1,112 +1,92 @@
-import type { Metadata } from 'next'
 import { getUsers } from '@/actions/admin'
 import { UserActions } from './UserActions'
-import { Users, ShieldOff } from 'lucide-react'
-
-export const metadata: Metadata = { title: 'Admin · Usuarios' }
-export const dynamic = 'force-dynamic'
 
 export default async function AdminUsuariosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; page?: string }>
+  searchParams: Promise<{ page?: string; search?: string }>
 }) {
-  const { search = '', page = '1' } = await searchParams
-  const currentPage = Math.max(1, parseInt(page))
-  const { users, total } = await getUsers(currentPage, search)
+  const sp = await searchParams
+  const page = Number(sp.page ?? 1)
+  const search = sp.search ?? ''
+  const { users, total } = await getUsers(page, search)
   const totalPages = Math.ceil(total / 20)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900">Usuarios</h1>
-          <p className="text-gray-500 text-sm mt-1">{total} usuarios registrados</p>
-        </div>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-black text-gray-900">Usuarios</h1>
+        <p className="text-gray-500 text-sm mt-1">{total} usuarios registrados</p>
       </div>
 
       {/* Search */}
-      <form method="GET" className="flex gap-2">
+      <form className="mb-6">
         <input
           name="search"
           defaultValue={search}
-          placeholder="Buscar por email o nombre..."
-          className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#002776]/20 focus:border-[#002776]"
+          placeholder="Buscar por nombre o email…"
+          className="w-full max-w-sm rounded-xl border border-gray-200 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002776]/30"
         />
-        <button
-          type="submit"
-          className="px-4 py-2.5 bg-[#002776] text-white rounded-xl text-sm font-semibold hover:bg-[#001a5c] transition-colors"
-        >
-          Buscar
-        </button>
-        {search && (
-          <a href="/admin/usuarios" className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-200 transition-colors">
-            Limpiar
-          </a>
-        )}
       </form>
 
-      {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        {users.length === 0 ? (
-          <div className="py-16 text-center text-gray-400">
-            <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">No se encontraron usuarios</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {users.map((user) => (
-              <div key={user.id} className="flex items-center gap-4 px-5 py-4">
-                {/* Avatar placeholder */}
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${user.is_blocked ? 'bg-red-100 text-red-500' : 'bg-[#002776]/10 text-[#002776]'}`}>
-                  {user.full_name?.[0]?.toUpperCase() ?? user.email[0].toUpperCase()}
-                </div>
-
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
-                      {user.full_name ?? '(sin nombre)'}
-                    </p>
-                    {user.role === 'admin' && (
-                      <span className="text-[10px] font-bold bg-[#002776] text-white px-1.5 py-0.5 rounded">ADMIN</span>
-                    )}
-                    {user.is_blocked && (
-                      <span className="flex items-center gap-1 text-[10px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded">
-                        <ShieldOff className="w-2.5 h-2.5" /> BLOQUEADO
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 truncate">{user.email}</p>
-                  {user.is_blocked && user.blocked_reason && (
-                    <p className="text-xs text-red-400 mt-0.5 truncate">Motivo: {user.blocked_reason}</p>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Usuario</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Rol</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Estado</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide">Registro</th>
+              <th className="px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {users.map((u) => (
+              <tr key={u.id} className="hover:bg-gray-50/50">
+                <td className="px-4 py-3">
+                  <p className="font-medium text-gray-900">{u.full_name || '—'}</p>
+                  <p className="text-gray-400 text-xs">{u.email}</p>
+                </td>
+                <td className="px-4 py-3">
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
+                    u.role === 'admin' ? 'bg-[#002776]/10 text-[#002776]' : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {u.role}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  {u.is_blocked ? (
+                    <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-600">
+                      Bloqueado
+                    </span>
+                  ) : (
+                    <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-600">
+                      Activo
+                    </span>
                   )}
-                </div>
-
-                {/* Date */}
-                <p className="text-xs text-gray-400 shrink-0 hidden sm:block">
-                  {new Date(user.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })}
-                </p>
-
-                {/* Actions */}
-                {user.role !== 'admin' && (
-                  <UserActions userId={user.id} isBlocked={user.is_blocked ?? false} />
-                )}
-              </div>
+                </td>
+                <td className="px-4 py-3 text-gray-400 text-xs">
+                  {new Date(u.created_at).toLocaleDateString('es-ES')}
+                </td>
+                <td className="px-4 py-3">
+                  {u.role !== 'admin' && (
+                    <UserActions userId={u.id} isBlocked={!!u.is_blocked} blockedReason={u.blocked_reason ?? ''} />
+                  )}
+                </td>
+              </tr>
             ))}
-          </div>
-        )}
+          </tbody>
+        </table>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex gap-2 mt-4 justify-end">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <a
               key={p}
-              href={`/admin/usuarios?search=${search}&page=${p}`}
-              className={`w-8 h-8 rounded-lg text-sm font-semibold flex items-center justify-center transition-colors ${
-                p === currentPage ? 'bg-[#002776] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#002776]'
+              href={`?page=${p}${search ? `&search=${search}` : ''}`}
+              className={`w-8 h-8 rounded-lg text-sm font-medium flex items-center justify-center ${
+                p === page ? 'bg-[#002776] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#002776]'
               }`}
             >
               {p}

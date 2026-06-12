@@ -55,14 +55,17 @@ export async function getListingById(id: string) {
   return listing
 }
 
-export async function createListingAction(data: CreateListingInput): Promise<{ error: string } | never> {
+export async function createListingAction(data: CreateListingInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
   const parsed = createListingSchema.safeParse(data)
   if (!parsed.success) {
-    return { error: parsed.error?.issues[0]?.message ?? 'Datos inválidos' }
+    const msg = parsed.error?.issues[0]?.message ?? 'Datos inválidos'
+    console.error('[createListingAction] validation failed:', msg)
+    return { error: msg }
   }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) console.error('[createListingAction] auth error:', authError.message)
   if (!user) return { error: 'Debes iniciar sesión' }
 
   const { error } = await supabase.from('listings').insert({
@@ -71,10 +74,13 @@ export async function createListingAction(data: CreateListingInput): Promise<{ e
     price: parsed.data.price ?? null,
   })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[createListingAction] insert error:', error.message, error.code)
+    return { error: error.message }
+  }
 
   revalidatePath('/compraventa')
-  redirect('/compraventa')
+  return { ok: true, redirectTo: '/compraventa?publicado=true' }
 }
 
 // ---------- Admin ----------

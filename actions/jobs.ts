@@ -12,6 +12,8 @@ export interface JobFilters {
   ciudad?: string
   q?: string
   page?: number
+  salarioMin?: number
+  source?: 'brasil_bcn' | 'adzuna' | 'jooble' | 'importados'
 }
 
 // ─── GET JOBS (for listing page) ─────────────────────────────
@@ -28,6 +30,8 @@ export async function getJobs(filters: JobFilters = {}) {
     .eq('is_active', true)
     .eq('is_approved', true)
     .gt('expires_at', new Date().toISOString())
+    // Brasil BCN jobs first, then urgent, then by date
+    .order('source', { ascending: true })
     .order('is_urgent', { ascending: false })
     .order('created_at', { ascending: false })
     .range(from, to)
@@ -36,6 +40,12 @@ export async function getJobs(filters: JobFilters = {}) {
   if (filters.tipo) query = query.eq('job_type', filters.tipo)
   if (filters.ciudad) query = query.ilike('city', `%${filters.ciudad}%`)
   if (filters.q) query = query.ilike('title', `%${filters.q}%`)
+  if (filters.salarioMin) query = query.gte('salary_min', filters.salarioMin)
+  if (filters.source === 'importados') {
+    query = query.in('source', ['adzuna', 'jooble'])
+  } else if (filters.source) {
+    query = query.eq('source', filters.source)
+  }
 
   const { data, count, error } = await query
   if (error) return { jobs: [], total: 0, pages: 0 }
@@ -45,6 +55,24 @@ export async function getJobs(filters: JobFilters = {}) {
     total: count ?? 0,
     pages: Math.ceil((count ?? 0) / PAGE_SIZE),
   }
+}
+
+// ─── COUNT JOBS BY SOURCE (for stats) ────────────────────────
+export async function getJobSourceCounts() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('jobs')
+    .select('source')
+    .eq('is_active', true)
+    .eq('is_approved', true)
+    .gt('expires_at', new Date().toISOString())
+
+  const counts = { brasil_bcn: 0, imported: 0 }
+  for (const row of data ?? []) {
+    if (row.source === 'brasil_bcn') counts.brasil_bcn++
+    else counts.imported++
+  }
+  return counts
 }
 
 // ─── GET JOB BY ID ───────────────────────────────────────────
@@ -68,12 +96,17 @@ export async function getJobById(id: string) {
 }
 
 // ─── CREATE JOB ──────────────────────────────────────────────
-export async function createJobAction(data: CreateJobInput): Promise<{ error: string } | never> {
+export async function createJobAction(data: CreateJobInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
   const parsed = createJobSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0].message
+    console.error('[createJobAction] validation failed:', msg)
+    return { error: msg }
+  }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) console.error('[createJobAction] auth error:', authError.message)
   if (!user) return { error: 'Debes iniciar sesión para publicar empleos' }
 
   const { error } = await supabase.from('jobs').insert({
@@ -88,10 +121,13 @@ export async function createJobAction(data: CreateJobInput): Promise<{ error: st
     location: parsed.data.location || null,
   })
 
-  if (error) return { error: 'Error al publicar el empleo. Inténtalo de nuevo.' }
+  if (error) {
+    console.error('[createJobAction] insert error:', error.message, error.code)
+    return { error: `Error al publicar: ${error.message}` }
+  }
 
   revalidatePath('/empleos')
-  redirect('/empleos?publicado=true')
+  return { ok: true, redirectTo: '/empleos?publicado=true' }
 }
 
 // ─── DELETE JOB ──────────────────────────────────────────────

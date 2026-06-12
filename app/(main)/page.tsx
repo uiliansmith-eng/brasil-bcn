@@ -7,21 +7,27 @@ import { FeaturedCompaniesSection } from '@/components/home/FeaturedCompaniesSec
 import { BrazilNewsSection } from '@/components/home/BrazilNewsSection'
 import { CTASection } from '@/components/home/CTASection'
 import { AdSlot } from '@/components/ads/AdSlot'
+import { getSettings } from '@/actions/settings'
 
 export const revalidate = 1800
 
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await getSettings()
+  const sec = settings.sections
+
   return (
     <>
-      <HeroSection />
-      <ElectionBanner />
-      <LaunchSection />
-      <StatsSection />
-      <AdSlot position="home_hero" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-4" />
-      <FeaturedJobsSection />
-      <FeaturedCompaniesSection />
-      <BrazilNewsSection />
-      <CTASection />
+      <HeroSection settings={settings.hero} brand={settings.brand} />
+      {sec.election_banner && <ElectionBanner />}
+      {sec.launch_section && <LaunchSection settings={settings.launch} />}
+      {sec.stats && <StatsSection />}
+      {sec.ad_slot && (
+        <AdSlot position="home_hero" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 mb-4" />
+      )}
+      {sec.jobs && <FeaturedJobsSection />}
+      {sec.companies && <FeaturedCompaniesSection />}
+      {sec.news && <BrazilNewsSection />}
+      {sec.cta && <CTASection />}
     </>
   )
 }

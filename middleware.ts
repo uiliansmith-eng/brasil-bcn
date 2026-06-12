@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PROTECTED_ROUTES = ['/dashboard', '/admin', '/perfil', '/empleos/publicar', '/empresas/registrar', '/eventos/publicar', '/compraventa/publicar']
 const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password']
 const ADMIN_ROUTES = ['/admin']
+const MAINTENANCE_BYPASS = ['/mantenimiento', '/auth', '/admin', '/_next', '/favicon', '/api']
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -63,6 +64,29 @@ export async function middleware(request: NextRequest) {
     const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
     if (isAdminRoute && profile?.role !== 'admin') {
       return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
+
+  // Maintenance mode — bypass for admins and exempt paths
+  const bypassMaintenance = MAINTENANCE_BYPASS.some((r) => pathname.startsWith(r))
+  if (!bypassMaintenance) {
+    const { data: settings } = await supabase
+      .from('site_settings')
+      .select('maintenance_mode')
+      .eq('id', 1)
+      .single()
+
+    if (settings?.maintenance_mode) {
+      // Allow logged-in admins through
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        if (profile?.role === 'admin') return supabaseResponse
+      }
+      return NextResponse.redirect(new URL('/mantenimiento', request.url))
     }
   }
 

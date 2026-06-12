@@ -6,16 +6,16 @@ import { Button } from '@/components/ui/button'
 import { JobCard } from '@/components/empleos/JobCard'
 import { JobFilters } from '@/components/empleos/JobFilters'
 import { Pagination } from '@/components/shared/Pagination'
-import { getJobs } from '@/actions/jobs'
+import { getJobs, getJobSourceCounts } from '@/actions/jobs'
 import { buildMetadata } from '@/lib/seo'
 import { AdSlot } from '@/components/ads/AdSlot'
 import type { JobCategory, JobType } from '@/types'
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Empleos para brasileños en Barcelona',
-  description: 'Encuentra trabajo en Barcelona. Ofertas de empleo verificadas para brasileños en Cataluña: hostelería, construcción, limpieza, belleza y más.',
+  title: 'Empleos para brasileños en Barcelona | BrasilBCN',
+  description: 'Encuentra trabajo en Barcelona y Cataluña. Cientos de ofertas verificadas para la comunidad brasileña: hostelería, construcción, limpieza, tecnología y más. Actualizado diariamente.',
   path: '/empleos',
-  keywords: ['ofertas trabajo Barcelona', 'empleo brasileños Barcelona', 'trabajo hostelería Barcelona', 'empleo Cataluña'],
+  keywords: ['ofertas trabajo Barcelona', 'empleo brasileños Barcelona', 'trabajo hostelería Barcelona', 'empleo Cataluña', 'trabajo Barcelona brasileños', 'empleo extranjeros Barcelona'],
 })
 
 interface PageProps {
@@ -25,6 +25,8 @@ interface PageProps {
     ciudad?: string
     q?: string
     page?: string
+    salarioMin?: string
+    source?: string
     publicado?: string
   }>
 }
@@ -32,14 +34,20 @@ interface PageProps {
 export default async function EmpleosPage({ searchParams }: PageProps) {
   const params = await searchParams
   const page = Number(params.page ?? 1)
+  const salarioMin = params.salarioMin ? Number(params.salarioMin) : undefined
 
-  const { jobs, total, pages } = await getJobs({
-    categoria: params.categoria as JobCategory | undefined,
-    tipo: params.tipo as JobType | undefined,
-    ciudad: params.ciudad,
-    q: params.q,
-    page,
-  })
+  const [{ jobs, total, pages }, sourceCounts] = await Promise.all([
+    getJobs({
+      categoria: params.categoria as JobCategory | undefined,
+      tipo: params.tipo as JobType | undefined,
+      ciudad: params.ciudad,
+      q: params.q,
+      page,
+      salarioMin,
+      source: params.source as 'brasil_bcn' | 'adzuna' | 'jooble' | 'importados' | undefined,
+    }),
+    getJobSourceCounts(),
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,9 +66,18 @@ export default async function EmpleosPage({ searchParams }: PageProps) {
               <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-2">
                 Ofertas de empleo
               </h1>
-              <p className="text-blue-200">
+              <p className="text-blue-200 mb-3">
                 <span className="text-[#FFDF00] font-bold">{total.toLocaleString('es-ES')}</span> ofertas activas para brasileños en Cataluña
               </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1">
+                  <span className="w-2 h-2 rounded-full bg-[#009C3B] animate-pulse" />
+                  <span className="text-xs text-white font-semibold">{sourceCounts.brasil_bcn} verificadas BrasilBCN</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1">
+                  <span className="text-xs text-blue-200 font-medium">{sourceCounts.imported} importadas de portales</span>
+                </div>
+              </div>
             </div>
             <Link href="/empleos/publicar">
               <Button className="bg-[#009C3B] hover:bg-[#007a2f] text-white font-semibold shadow-lg gap-2">
