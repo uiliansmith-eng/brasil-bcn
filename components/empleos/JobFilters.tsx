@@ -170,22 +170,16 @@ export function JobFilters() {
       {/* City filter */}
       <div>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Ciudad</p>
-        <div className="flex flex-wrap gap-2">
+        <select
+          value={currentCity ?? ''}
+          onChange={(e) => updateParam('ciudad', e.target.value || null)}
+          className="w-full h-10 px-3 rounded-xl border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:border-[#009C3B] focus:ring-2 focus:ring-[#009C3B]/20 transition-colors"
+        >
+          <option value="">Todas las ciudades</option>
           {CITIES.map((city) => (
-            <button
-              key={city}
-              onClick={() => updateParam('ciudad', currentCity === city ? null : city)}
-              className={cn(
-                'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
-                currentCity === city
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
-              )}
-            >
-              {city}
-            </button>
+            <option key={city} value={city}>{city}</option>
           ))}
-        </div>
+        </select>
       </div>
     </div>
   )

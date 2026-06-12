@@ -123,7 +123,38 @@ export const BARCELONA_DISTRICTS = [
   'Poblenou',
 ]
 
-export const CITIES = ['Barcelona', 'Badalona', 'L\'Hospitalet', 'Terrassa', 'Sabadell', 'Mataró', 'Girona']
+export const CITIES = [
+  // Cataluña
+  'Barcelona', 'Badalona', "L'Hospitalet", 'Terrassa', 'Sabadell', 'Mataró', 'Girona', 'Tarragona', 'Lleida', 'Reus', 'Manresa', 'Castelldefels', 'Gavà', 'Viladecans', 'Cornellà', 'Sant Boi', 'Granollers', 'Vic', 'Figueres',
+  // Madrid
+  'Madrid', 'Alcalá de Henares', 'Alcorcón', 'Fuenlabrada', 'Getafe', 'Leganés', 'Móstoles', 'Torrejón de Ardoz', 'Alcobendas', 'Las Rozas', 'Pozuelo',
+  // Valencia
+  'Valencia', 'Alicante', 'Castellón', 'Elche', 'Torrevieja', 'Benidorm', 'Gandía',
+  // Andalucía
+  'Sevilla', 'Málaga', 'Granada', 'Córdoba', 'Cádiz', 'Almería', 'Huelva', 'Jaén', 'Marbella', 'Jerez de la Frontera', 'Torremolinos', 'Fuengirola',
+  // País Vasco
+  'Bilbao', 'San Sebastián', 'Vitoria',
+  // Galicia
+  'A Coruña', 'Vigo', 'Santiago de Compostela', 'Pontevedra',
+  // Aragón
+  'Zaragoza', 'Huesca', 'Teruel',
+  // Castilla y León
+  'Valladolid', 'Burgos', 'Salamanca', 'León', 'Palencia', 'Ávila', 'Segovia', 'Soria', 'Zamora',
+  // Castilla-La Mancha
+  'Toledo', 'Albacete', 'Ciudad Real', 'Cuenca', 'Guadalajara',
+  // Murcia
+  'Murcia', 'Cartagena',
+  // Canarias
+  'Las Palmas', 'Santa Cruz de Tenerife', 'Tenerife', 'Gran Canaria', 'Lanzarote', 'Fuerteventura',
+  // Baleares
+  'Palma', 'Ibiza', 'Menorca',
+  // Navarra y La Rioja
+  'Pamplona', 'Logroño',
+  // Asturias y Cantabria
+  'Oviedo', 'Gijón', 'Santander',
+  // Extremadura
+  'Badajoz', 'Cáceres',
+]
 
 export const LISTING_CATEGORY_LABELS: Record<ListingCategory, string> = {
   electronica: 'Electrónica',
