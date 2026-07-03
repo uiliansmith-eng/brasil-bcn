@@ -24,6 +24,24 @@ export async function getAdByPosition(position: AdPosition) {
   return data ?? null
 }
 
+// Returns every currently active ad for a position (used where more than
+// one banner should rotate, e.g. the home hero slot).
+export async function getAdsByPosition(position: AdPosition) {
+  const supabase = await createClient()
+  const now = new Date().toISOString()
+
+  const { data } = await supabase
+    .from('advertisements')
+    .select('id, title, description, image_url, url, position')
+    .eq('position', position)
+    .eq('is_active', true)
+    .lte('starts_at', now)
+    .gte('ends_at', now)
+    .order('created_at', { ascending: false })
+
+  return data ?? []
+}
+
 export async function trackAdImpression(id: string) {
   const supabase = await createClient()
   const { data } = await supabase

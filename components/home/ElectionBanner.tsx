@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Vote, ChevronLeft, ChevronRight, Headphones, Layers } from 'lucide-react'
+import { Vote, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const banners = [
   {
@@ -31,60 +31,6 @@ const banners = [
     ctaBg: 'bg-[#009C3B] hover:bg-[#007a2f]',
     flag: '🇧🇷',
     footer: '🗳️ Voto consciente · Regularize seu título · Voto no exterior disponível',
-  },
-  {
-    id: 'podcast',
-    bg: 'from-[#1a1a2e] via-[#16213e] to-[#0f0f1a]',
-    accent1: 'bg-red-600/20',
-    accent2: 'bg-purple-500/15',
-    tag: 'Podcast',
-    tagColor: 'text-red-400',
-    icon: Headphones,
-    iconBg: 'bg-red-600',
-    title: (
-      <>
-        <span className="text-red-400">Só Vai</span>{' '}
-        <span className="text-white">Podcast</span>
-      </>
-    ),
-    subtitle: (
-      <>
-        Histórias reais de brasileiros em Barcelona.{' '}
-        <span className="text-white font-bold">Já no YouTube!</span>
-      </>
-    ),
-    cta: 'Assistir no YouTube',
-    ctaHref: 'https://www.youtube.com/@sovaipdc',
-    ctaBg: 'bg-red-600 hover:bg-red-700',
-    flag: '🎙️',
-    footer: '▶️ Inscreva-se no canal · Novos episódios toda semana · @sovaipdc',
-  },
-  {
-    id: 'plaminates',
-    bg: 'from-[#2c1a0e] via-[#3d2512] to-[#1a0f07]',
-    accent1: 'bg-amber-600/20',
-    accent2: 'bg-yellow-400/10',
-    tag: 'Empresa Associada',
-    tagColor: 'text-amber-400',
-    icon: Layers,
-    iconBg: 'bg-amber-600',
-    title: (
-      <>
-        <span className="text-amber-400">Suelos laminados</span>{' '}
-        <span className="text-white">& vinílicos</span>
-      </>
-    ),
-    subtitle: (
-      <>
-        Medición gratuita · Instalación profesional.{' '}
-        <span className="text-white font-bold">Transforma tu hogar en Barcelona.</span>
-      </>
-    ),
-    cta: 'Ver colección',
-    ctaHref: 'https://tienda.plaminates.com',
-    ctaBg: 'bg-amber-600 hover:bg-amber-700',
-    flag: '🪵',
-    footer: '✓ Medición gratis · ✓ Instalación incluida · ✓ Asesoramiento personalizado · plaminates.com',
   },
 ]
 

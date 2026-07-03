@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import { getAdByPosition } from '@/actions/advertisements'
-import { AdBanner } from './AdBanner'
+import { getAdsByPosition } from '@/actions/advertisements'
+import { AdCarousel } from './AdCarousel'
 import type { AdPosition } from '@/types'
 
 interface AdSlotProps {
@@ -10,9 +10,9 @@ interface AdSlotProps {
 }
 
 async function AdSlotInner({ position, variant }: Omit<AdSlotProps, 'className'>) {
-  const ad = await getAdByPosition(position)
-  if (!ad) return null
-  return <AdBanner ad={ad} variant={variant} />
+  const ads = await getAdsByPosition(position)
+  if (ads.length === 0) return null
+  return <AdCarousel ads={ads} variant={variant} />
 }
 
 export function AdSlot({ position, variant = 'banner', className }: AdSlotProps) {
