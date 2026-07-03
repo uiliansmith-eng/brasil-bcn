@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { createJobAction } from '@/actions/jobs'
 import { createJobSchema, type CreateJobInput } from '@/lib/validations/jobs'
-import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
+import { JOB_CATEGORY_LABELS, JOB_CATEGORY_EMOJI, JOB_TYPE_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const CATEGORIES = Object.entries(JOB_CATEGORY_LABELS) as [string, string][]
@@ -112,7 +112,7 @@ export function PublishJobForm() {
                       : 'bg-white text-gray-600 border-gray-200 hover:border-[#009C3B]'
                   )}
                 >
-                  {label}
+                  {JOB_CATEGORY_EMOJI[value as keyof typeof JOB_CATEGORY_EMOJI]} {label}
                 </button>
               ))}
             </div>

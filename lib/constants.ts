@@ -9,16 +9,16 @@ export const JOB_TYPE_LABELS: Record<JobType, string> = {
 }
 
 export const JOB_CATEGORY_LABELS: Record<JobCategory, string> = {
-  hosteleria: 'Hostelería',
-  construccion: 'Construcción',
-  limpieza: 'Limpieza',
-  belleza: 'Belleza',
-  transporte: 'Transporte',
-  comercio: 'Comercio',
-  tecnologia: 'Tecnología',
-  educacion: 'Educación',
-  salud: 'Salud',
   administracion: 'Administración',
+  belleza: 'Belleza',
+  comercio: 'Comercio',
+  construccion: 'Construcción',
+  educacion: 'Educación',
+  hosteleria: 'Hostelería',
+  limpieza: 'Limpieza',
+  salud: 'Salud',
+  tecnologia: 'Tecnología',
+  transporte: 'Transporte',
   otro: 'Otro',
 }
 
@@ -95,16 +95,16 @@ export const GUIDE_CATEGORY_COLORS: Record<GuideCategory, string> = {
 }
 
 export const JOB_CATEGORY_EMOJI: Record<JobCategory, string> = {
-  hosteleria: '🍽️',
-  construccion: '🏗️',
-  limpieza: '🧹',
-  belleza: '✂️',
-  transporte: '🚗',
-  comercio: '🛍️',
-  tecnologia: '💻',
-  educacion: '📚',
-  salud: '🏥',
   administracion: '📋',
+  belleza: '✂️',
+  comercio: '🛍️',
+  construccion: '🏗️',
+  educacion: '📚',
+  hosteleria: '🍽️',
+  limpieza: '🧹',
+  salud: '🏥',
+  tecnologia: '💻',
+  transporte: '🚗',
   otro: '💼',
 }
 

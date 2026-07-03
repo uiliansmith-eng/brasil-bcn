@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { MapPin, Clock, Building2, Zap, ExternalLink } from 'lucide-react'
-import { formatSalary, JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
+import { formatSalary, JOB_CATEGORY_LABELS, JOB_CATEGORY_EMOJI, JOB_TYPE_LABELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 type JobSource = 'brasil_bcn' | 'adzuna' | 'jooble' | string
@@ -138,7 +138,7 @@ export function JobCard({ job, featured = false }: JobCardProps) {
       {/* Tags */}
       <div className="flex flex-wrap items-center gap-2">
         <span className={cn('text-xs font-semibold px-2.5 py-1 rounded-full border', categoryColor)}>
-          {JOB_CATEGORY_LABELS[job.category as keyof typeof JOB_CATEGORY_LABELS] ?? job.category}
+          {JOB_CATEGORY_EMOJI[job.category as keyof typeof JOB_CATEGORY_EMOJI]} {JOB_CATEGORY_LABELS[job.category as keyof typeof JOB_CATEGORY_LABELS] ?? job.category}
         </span>
         <span className="text-xs text-gray-500 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-full">
           {JOB_TYPE_LABELS[job.job_type as keyof typeof JOB_TYPE_LABELS] ?? job.job_type}

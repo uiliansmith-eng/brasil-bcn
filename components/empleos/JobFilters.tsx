@@ -3,7 +3,7 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { Search, X } from 'lucide-react'
-import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
+import { JOB_CATEGORY_LABELS, JOB_CATEGORY_EMOJI, JOB_TYPE_LABELS } from '@/lib/constants'
 import { CitySelect } from '@/components/shared/CitySelect'
 import { cn } from '@/lib/utils'
 import type { JobCategory, JobType } from '@/types'
@@ -141,7 +141,7 @@ export function JobFilters() {
                   : 'bg-white text-gray-800 border-gray-300 hover:border-[#009C3B] hover:text-[#009C3B]'
               )}
             >
-              {label}
+              {JOB_CATEGORY_EMOJI[value]} {label}
             </button>
           ))}
         </div>
