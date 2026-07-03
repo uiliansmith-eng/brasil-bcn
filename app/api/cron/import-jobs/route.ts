@@ -68,6 +68,7 @@ async function upsertJobs(supabase: ReturnType<typeof serviceClient>, rows: Impo
       is_urgent: false,
       posted_by: null,
       expires_at: expiresAt(),
+      created_at: row.created_at,
     })
     if (error) {
       console.error(`[import-jobs] ${source} insert error:`, error.message)

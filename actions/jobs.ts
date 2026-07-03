@@ -30,9 +30,10 @@ export async function getJobs(filters: JobFilters = {}) {
     .eq('is_active', true)
     .eq('is_approved', true)
     .gt('expires_at', new Date().toISOString())
-    // Brasil BCN jobs first, then urgent, then by date
+    // Brasil BCN jobs first, then urgent, then Barcelona before other provinces, then by date
     .order('source', { ascending: true })
     .order('is_urgent', { ascending: false })
+    .order('city_priority', { ascending: true })
     .order('created_at', { ascending: false })
     .range(from, to)
 
