@@ -39,7 +39,6 @@ export function PublishJobForm() {
   })
 
   const salaryVisible = watch('salary_visible')
-  const selectedCategory = watch('category')
   const selectedType = watch('job_type')
 
   const onSubmit = async (data: CreateJobInput) => {
@@ -99,23 +98,18 @@ export function PublishJobForm() {
           {/* Category */}
           <div className="space-y-2">
             <Label className="text-sm font-medium text-gray-700">Categoría *</Label>
-            <div className="flex flex-wrap gap-2">
+            <select
+              className="w-full h-11 px-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#009C3B] focus:ring-2 focus:ring-[#009C3B]/20 transition-colors"
+              defaultValue=""
+              {...register('category')}
+            >
+              <option value="" disabled>Selecciona una categoría</option>
               {CATEGORIES.map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setValue('category', value as CreateJobInput['category'])}
-                  className={cn(
-                    'text-sm font-medium px-4 py-2 rounded-xl border transition-all',
-                    selectedCategory === value
-                      ? 'bg-[#009C3B] text-white border-[#009C3B]'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-[#009C3B]'
-                  )}
-                >
+                <option key={value} value={value}>
                   {JOB_CATEGORY_EMOJI[value as keyof typeof JOB_CATEGORY_EMOJI]} {label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
             {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
           </div>
 

@@ -129,22 +129,18 @@ export function JobFilters() {
       {/* Category filter */}
       <div>
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">Categoría</p>
-        <div className="flex flex-wrap gap-2">
+        <select
+          value={currentCategory ?? ''}
+          onChange={(e) => updateParam('categoria', e.target.value || null)}
+          className="w-full h-10 px-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#009C3B] focus:ring-2 focus:ring-[#009C3B]/20 transition-colors"
+        >
+          <option value="">Todas las categorías</option>
           {CATEGORIES.map(([value, label]) => (
-            <button
-              key={value}
-              onClick={() => updateParam('categoria', currentCategory === value ? null : value)}
-              className={cn(
-                'text-xs font-medium px-3 py-1.5 rounded-full border transition-all',
-                currentCategory === value
-                  ? 'bg-[#009C3B] text-white border-[#009C3B]'
-                  : 'bg-white text-gray-800 border-gray-300 hover:border-[#009C3B] hover:text-[#009C3B]'
-              )}
-            >
+            <option key={value} value={value}>
               {JOB_CATEGORY_EMOJI[value]} {label}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       {/* Type filter */}
