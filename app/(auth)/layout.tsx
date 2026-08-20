@@ -8,7 +8,7 @@ import { LangContext, translations, type Lang, type TKey } from '@/lib/auth-i18n
 const LANG_FLAGS: { lang: Lang; flag: string; label: string }[] = [
   { lang: 'pt', flag: '🇧🇷', label: 'PT' },
   { lang: 'es', flag: '🇪🇸', label: 'ES' },
-  { lang: 'ca', flag: '🏴󠁥󠁳󠁣󠁴󠁿', label: 'CA' },
+  { lang: 'ca', flag: '🇪🇸', label: 'CA' },
 ]
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -56,7 +56,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="flex-1 flex flex-col justify-center">
               <div className="flex items-center gap-2 mb-8">
                 <span className="text-4xl" role="img" aria-label="Brasil">🇧🇷</span>
-                <span className="text-4xl" role="img" aria-label="Barcelona">🏴󠁥󠁳󠁣󠁴󠁿</span>
+                <span className="text-4xl" role="img" aria-label="España">🇪🇸</span>
               </div>
               <h2 className="text-4xl font-black text-white leading-tight mb-4">
                 {t('layout_heading').split(' ').slice(0, 3).join(' ')}

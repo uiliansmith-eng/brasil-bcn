@@ -125,7 +125,7 @@ export default function LoginPage() {
       <div className="flex items-center justify-center gap-2 mt-8 text-gray-400 text-sm">
         <span>🇧🇷</span>
         <span>{t('login_community')}</span>
-        <span>🏴󠁥󠁳󠁣󠁴󠁿</span>
+        <span>🇪🇸</span>
       </div>
     </div>
   )

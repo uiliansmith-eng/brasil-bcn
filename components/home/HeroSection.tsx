@@ -80,7 +80,7 @@ export function HeroSection({ settings, brand }: HeroProps) {
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
               <span className="text-lg" role="img" aria-label="Brasil">🇧🇷</span>
               <span className="text-white/90 text-sm font-medium">{h.badge_text}</span>
-              <span className="text-lg" role="img" aria-label="Cataluña">🏴󠁥󠁳󠁣󠁴󠁿</span>
+              <span className="text-lg" role="img" aria-label="España">🇪🇸</span>
             </div>
 
             {/* Heading */}
