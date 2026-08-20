@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Clock, Briefcase, Building2, MessageCircle, Mail, Zap, Share2 } from 'lucide-react'
+import { ArrowLeft, MapPin, Clock, Briefcase, Building2, MessageCircle, Mail, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ShareJobButton } from '@/components/empleos/ShareJobButton'
 import { getJobById } from '@/actions/jobs'
 import { formatSalary, JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
@@ -202,12 +203,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             {/* Share */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <p className="font-bold text-gray-700 text-sm mb-3">Compartir esta oferta</p>
-              <button
-                onClick={() => typeof navigator !== 'undefined' && navigator.share?.({ title: job.title, url: window.location.href })}
-                className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-xl py-2.5 hover:bg-gray-50 transition-colors"
-              >
-                <Share2 className="w-4 h-4" /> Compartir
-              </button>
+              <ShareJobButton title={job.title} />
             </div>
           </aside>
         </div>
