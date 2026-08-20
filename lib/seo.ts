@@ -42,7 +42,11 @@ export function buildMetadata({
       description,
       url: canonical,
       siteName: siteConfig.name,
-      images: ogImages,
+      // Omit the `images` key entirely (not just set it to undefined) when
+      // no explicit image is given — an explicit `images: undefined` still
+      // suppresses Next.js's automatic file-convention image resolution,
+      // an omitted key does not.
+      ...(ogImages ? { images: ogImages } : {}),
       locale: 'pt_BR',
       alternateLocale: 'es_ES',
       type,
@@ -51,7 +55,7 @@ export function buildMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: image ? [image] : undefined,
+      ...(image ? { images: [image] } : {}),
     },
     robots: noIndex
       ? { index: false, follow: false }
