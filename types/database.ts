@@ -158,7 +158,82 @@ export interface Listing {
   updated_at: string
 }
 
+export type QuizStatus = 'draft' | 'published'
+
+export interface Quiz {
+  id: string
+  title: string
+  slug: string
+  description: string | null
+  status: QuizStatus
+  is_quiz_of_week: boolean
+  cover_image: string | null
+  estimated_minutes: number
+  created_at: string
+  updated_at: string
+  published_at: string | null
+}
+
+export interface QuizResult {
+  id: string
+  quiz_id: string
+  title: string
+  slug: string
+  icon: string | null
+  subtitle: string | null
+  description: string | null
+  ideal_role: string | null
+  order_index: number
+  created_at: string
+}
+
+export interface QuizQuestion {
+  id: string
+  quiz_id: string
+  question: string
+  order_index: number
+  created_at: string
+}
+
+export interface QuizAnswer {
+  id: string
+  question_id: string
+  answer: string
+  result_id: string
+  order_index: number
+  created_at: string
+}
+
+export type QuizEventType =
+  | 'quiz_viewed' | 'quiz_started' | 'question_answered' | 'quiz_completed'
+  | 'result_viewed' | 'share_clicked' | 'instagram_share_clicked'
+  | 'whatsapp_share_clicked' | 'share_image_downloaded'
+
+export interface QuizEvent {
+  id: number
+  quiz_id: string | null
+  session_id: string
+  event_type: QuizEventType
+  result_id: string | null
+  question_id: string | null
+  source: string | null
+  utm_source: string | null
+  utm_medium: string | null
+  utm_campaign: string | null
+  meta: Record<string, unknown> | null
+  created_at: string
+}
+
 // Joined types
+export interface QuestionWithAnswers extends QuizQuestion {
+  answers: QuizAnswer[]
+}
+
+export interface QuizWithContent extends Quiz {
+  questions: QuestionWithAnswers[]
+  results: QuizResult[]
+}
+
 export interface JobWithCompany extends Job {
   company: Pick<Company, 'id' | 'name' | 'slug' | 'logo_url' | 'category'> | null
   poster: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>

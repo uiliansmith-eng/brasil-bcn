@@ -5,7 +5,7 @@ import { Upload, X, Loader2, ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
-type Bucket = 'avatars' | 'companies' | 'events' | 'listings'
+type Bucket = 'avatars' | 'companies' | 'events' | 'listings' | 'quizzes'
 
 interface ImageUploadProps {
   bucket: Bucket

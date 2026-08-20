@@ -20,6 +20,14 @@ export function formatDate(date: string | Date) {
   }).format(new Date(date))
 }
 
+export function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
 export function formatNumber(num: number) {
   if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
   return num.toString()

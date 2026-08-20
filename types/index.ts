@@ -3,6 +3,8 @@ export type {
   ListingCategory, ListingCondition,
   Profile, Company, Job, Event, Guide, Advertisement, Listing,
   JobWithCompany, CompanyWithOwner, EventWithOrganizer, ListingWithSeller,
+  QuizStatus, Quiz, QuizResult, QuizQuestion, QuizAnswer, QuizEventType, QuizEvent,
+  QuestionWithAnswers, QuizWithContent,
   Database,
 } from './database'
 
