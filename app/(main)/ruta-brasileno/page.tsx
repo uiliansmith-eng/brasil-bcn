@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { RouteHero } from '@/components/ruta/RouteHero'
 import { AllStagesTimeline } from '@/components/ruta/AllStagesTimeline'
+import { RegularizaBanner } from '@/components/shared/RegularizaBanner'
 import { getStagesWithSteps } from '@/actions/ruta'
 import { buildMetadata } from '@/lib/seo'
 
@@ -20,6 +21,8 @@ export default async function RutaBrasilenoPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <RouteHero totalSteps={totalSteps} totalStages={stages.length} />
+
+      <RegularizaBanner />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 lg:py-14">
         <AllStagesTimeline stages={stages} />

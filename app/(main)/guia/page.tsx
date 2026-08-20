@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { GuideCard } from '@/components/guia/GuideCard'
 import { GuideFilters } from '@/components/guia/GuideFilters'
 import { Pagination } from '@/components/shared/Pagination'
+import { RegularizaBanner } from '@/components/shared/RegularizaBanner'
 import { getGuides } from '@/actions/guides'
 import { GUIDE_CATEGORY_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
@@ -59,6 +60,8 @@ export default async function GuiaPage({ searchParams }: PageProps) {
           </p>
         </div>
       </div>
+
+      <RegularizaBanner />
 
       {/* Category quick links */}
       {!params.categoria && !params.q && page === 1 && (

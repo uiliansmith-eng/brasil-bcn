@@ -153,6 +153,7 @@ export function PageSettingsForm({ settings }: Props) {
 
   const sectionLabels: Record<keyof SiteSettings['sections'], string> = {
     election_banner: 'Banner de elecciones',
+    regulariza_banner: 'Banner de Regulariza',
     launch_section: 'Sección de lanzamiento',
     stats: 'Estadísticas',
     ad_slot: 'Publicidad',

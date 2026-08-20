@@ -7,6 +7,7 @@ import { FeaturedCompaniesSection } from '@/components/home/FeaturedCompaniesSec
 import { BrazilNewsSection } from '@/components/home/BrazilNewsSection'
 import { CTASection } from '@/components/home/CTASection'
 import { AdSlot } from '@/components/ads/AdSlot'
+import { RegularizaBanner } from '@/components/shared/RegularizaBanner'
 import { getSettings } from '@/actions/settings'
 
 export const revalidate = 1800
@@ -19,6 +20,7 @@ export default async function HomePage() {
     <>
       <HeroSection settings={settings.hero} brand={settings.brand} />
       {sec.election_banner && <ElectionBanner />}
+      {sec.regulariza_banner && <RegularizaBanner />}
       {sec.launch_section && <LaunchSection settings={settings.launch} />}
       {sec.stats && <StatsSection />}
       {sec.ad_slot && (

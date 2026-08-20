@@ -24,6 +24,7 @@ export type SiteSettings = {
   }
   sections: {
     election_banner: boolean
+    regulariza_banner: boolean
     launch_section: boolean
     stats: boolean
     ad_slot: boolean
@@ -60,6 +61,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   },
   sections: {
     election_banner: true,
+    regulariza_banner: true,
     launch_section: true,
     stats: true,
     ad_slot: true,
