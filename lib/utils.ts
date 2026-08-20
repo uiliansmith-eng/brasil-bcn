@@ -24,3 +24,16 @@ export function formatNumber(num: number) {
   if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
   return num.toString()
 }
+
+// Bounds a promise so a stalled network request (e.g. a Server Action
+// that never gets a response on a bad mobile connection) can't leave a
+// form's loading state spinning forever — it rejects instead, so the UI
+// can show an error and let the user retry.
+export function withTimeout<T>(promise: Promise<T>, ms = 20000): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error('TIMEOUT')), ms)
+    }),
+  ])
+}

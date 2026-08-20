@@ -11,7 +11,7 @@ import { FormField } from '@/components/ui/form-field'
 import { registerAction } from '@/actions/auth'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { useLang } from '@/lib/auth-i18n'
-import { cn } from '@/lib/utils'
+import { cn, withTimeout } from '@/lib/utils'
 
 export default function RegisterPage() {
   const { t } = useLang()
@@ -35,11 +35,15 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterInput) => {
     setServerError(null)
-    const result = await registerAction(data)
-    if ('error' in result) {
-      setServerError(result.error)
-    } else {
-      setSuccess(true)
+    try {
+      const result = await withTimeout(registerAction(data))
+      if ('error' in result) {
+        setServerError(result.error)
+      } else {
+        setSuccess(true)
+      }
+    } catch {
+      setServerError('La conexión está tardando demasiado. Comprueba tu internet e inténtalo de nuevo.')
     }
   }
 

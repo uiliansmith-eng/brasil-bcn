@@ -10,6 +10,7 @@ import { FormField } from '@/components/ui/form-field'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { useLang } from '@/lib/auth-i18n'
+import { withTimeout } from '@/lib/utils'
 
 export default function LoginPage() {
   const { t } = useLang()
@@ -25,10 +26,17 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginInput) => {
     setServerError(null)
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    })
+    let error: { message: string } | null = null
+    try {
+      const result = await withTimeout(supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      }))
+      error = result.error
+    } catch {
+      setServerError('La conexión está tardando demasiado. Comprueba tu internet e inténtalo de nuevo.')
+      return
+    }
 
     if (error) {
       if (error.message.includes('Invalid login credentials')) {
