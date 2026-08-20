@@ -11,8 +11,8 @@ export const createListingSchema = z.object({
     z.coerce.number().positive('El precio debe ser mayor que 0').optional()
   ),
   price_negotiable: z.boolean(),
-  category: z.enum(LISTING_CATEGORIES, { error: 'Selecciona una categoría' }),
-  condition: z.enum(LISTING_CONDITIONS, { error: 'Selecciona el estado del artículo' }),
+  category: z.enum(LISTING_CATEGORIES, { message: 'Selecciona una categoría' }),
+  condition: z.enum(LISTING_CONDITIONS, { message: 'Selecciona el estado del artículo' }),
   city: z.string().min(1, 'Selecciona una ciudad'),
   whatsapp: z.string().optional(),
   images: z.array(z.string().url()).max(5).optional(),
