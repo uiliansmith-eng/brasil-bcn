@@ -146,5 +146,38 @@ export async function deleteJobAction(id: string): Promise<{ error: string } | {
   if (error) return { error: 'Error al eliminar el empleo' }
 
   revalidatePath('/empleos')
+  revalidatePath('/dashboard')
   return { success: true }
+}
+
+// ─── UPDATE JOB ──────────────────────────────────────────────
+export async function updateJobAction(id: string, data: CreateJobInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
+  const parsed = createJobSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Debes iniciar sesión' }
+
+  const { error } = await supabase
+    .from('jobs')
+    .update({
+      ...parsed.data,
+      salary_min: parsed.data.salary_min ?? null,
+      salary_max: parsed.data.salary_max ?? null,
+      email: parsed.data.email || null,
+      whatsapp: parsed.data.whatsapp || null,
+      requirements: parsed.data.requirements || null,
+      benefits: parsed.data.benefits || null,
+      location: parsed.data.location || null,
+    })
+    .eq('id', id)
+    .eq('posted_by', user.id)
+
+  if (error) return { error: `Error al guardar: ${error.message}` }
+
+  revalidatePath('/empleos')
+  revalidatePath(`/empleos/${id}`)
+  revalidatePath('/dashboard')
+  return { ok: true, redirectTo: '/dashboard?actualizado=true' }
 }

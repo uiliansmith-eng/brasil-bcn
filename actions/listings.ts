@@ -83,6 +83,65 @@ export async function createListingAction(data: CreateListingInput): Promise<{ e
   return { ok: true, redirectTo: '/compraventa?publicado=true' }
 }
 
+// ─── UPDATE / DELETE / MARK SOLD (owner) ───────────────────────
+export async function updateListingAction(id: string, data: CreateListingInput): Promise<{ error: string } | { ok: true; redirectTo: string }> {
+  const parsed = createListingSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error?.issues[0]?.message ?? 'Datos inválidos' }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Debes iniciar sesión' }
+
+  const { error } = await supabase
+    .from('listings')
+    .update({ ...parsed.data, price: parsed.data.price ?? null })
+    .eq('id', id)
+    .eq('seller_id', user.id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/compraventa')
+  revalidatePath(`/compraventa/${id}`)
+  revalidatePath('/dashboard')
+  return { ok: true, redirectTo: '/dashboard?actualizado=true' }
+}
+
+export async function deleteListingAction(id: string): Promise<{ error: string } | { success: true }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const { error } = await supabase
+    .from('listings')
+    .update({ is_active: false })
+    .eq('id', id)
+    .eq('seller_id', user.id)
+
+  if (error) return { error: 'Error al eliminar el anuncio' }
+
+  revalidatePath('/compraventa')
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function markListingSoldAction(id: string, sold: boolean): Promise<{ error: string } | { success: true }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const { error } = await supabase
+    .from('listings')
+    .update({ is_sold: sold })
+    .eq('id', id)
+    .eq('seller_id', user.id)
+
+  if (error) return { error: 'Error al actualizar' }
+
+  revalidatePath('/compraventa')
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
 // ---------- Admin ----------
 
 async function requireAdmin() {

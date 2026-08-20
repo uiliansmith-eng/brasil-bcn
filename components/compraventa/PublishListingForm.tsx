@@ -8,14 +8,15 @@ import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MultiImageUpload } from '@/components/ui/ImageUpload'
 import { createListingSchema, type CreateListingInput, LISTING_CATEGORIES, LISTING_CONDITIONS } from '@/lib/validations/listings'
-import { createListingAction } from '@/actions/listings'
+import { createListingAction, updateListingAction } from '@/actions/listings'
 import { LISTING_CATEGORY_LABELS, LISTING_CONDITION_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import type { Listing } from '@/types'
 
-export function PublishListingForm() {
+export function PublishListingForm({ listing }: { listing?: Listing } = {}) {
   const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null)
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>(listing?.images ?? [])
 
   const {
     register,
@@ -25,7 +26,16 @@ export function PublishListingForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateListingInput>({
     resolver: zodResolver(createListingSchema),
-    defaultValues: {
+    defaultValues: listing ? {
+      title: listing.title,
+      description: listing.description,
+      price: listing.price ?? undefined,
+      price_negotiable: listing.price_negotiable,
+      category: listing.category,
+      condition: listing.condition,
+      city: listing.city,
+      whatsapp: listing.whatsapp ?? '',
+    } : {
       title: '',
       description: '',
       price: undefined,
@@ -44,7 +54,9 @@ export function PublishListingForm() {
   async function onSubmit(data: CreateListingInput) {
     setServerError(null)
     try {
-      const result = await createListingAction({ ...data, images })
+      const result = listing
+        ? await updateListingAction(listing.id, { ...data, images })
+        : await createListingAction({ ...data, images })
       if (result && 'error' in result) { setServerError(result.error); return }
       if (result && 'ok' in result) router.push(result.redirectTo)
     } catch (e) {
@@ -226,9 +238,9 @@ export function PublishListingForm() {
         className="w-full h-12 bg-[#009C3B] hover:bg-[#007a2f] text-white font-bold text-base"
       >
         {isSubmitting ? (
-          <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Publicando...</>
+          <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> {listing ? 'Guardando...' : 'Publicando...'}</>
         ) : (
-          'Publicar anuncio'
+          listing ? 'Guardar cambios' : 'Publicar anuncio'
         )}
       </Button>
     </form>

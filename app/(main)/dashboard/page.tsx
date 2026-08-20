@@ -5,6 +5,7 @@ import { getMyContent } from '@/actions/profile'
 import type { Metadata } from 'next'
 import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DashboardItemActions } from '@/components/dashboard/DashboardItemActions'
 
 export const metadata: Metadata = { title: 'Panel de control — BrasilBCN' }
 
@@ -156,17 +157,23 @@ export default async function DashboardPage() {
               ) : (
                 <ul className="divide-y divide-gray-50">
                   {s.items.slice(0, 5).map((item: { id: string; title?: string; name?: string; is_approved: boolean; is_sold?: boolean }) => (
-                    <li key={item.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors">
-                      <div className="min-w-0">
+                    <li key={item.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors gap-3">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-800 truncate">{item.title ?? item.name}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{s.renderSub(item as never)}</p>
                       </div>
-                      <div className="flex items-center gap-2 ml-3 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
                         <StatusBadge approved={item.is_approved} sold={'is_sold' in item ? item.is_sold : undefined} />
-                        {item.is_approved && (
-                          <Link href={s.detailHref(item.id)} className="text-gray-300 hover:text-gray-600 transition-colors">
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </Link>
+                        {s.key === 'jobs' ? (
+                          <DashboardItemActions type="job" id={item.id} />
+                        ) : s.key === 'listings' ? (
+                          <DashboardItemActions type="listing" id={item.id} isSold={Boolean(item.is_sold)} />
+                        ) : (
+                          item.is_approved && (
+                            <Link href={s.detailHref(item.id)} className="text-gray-300 hover:text-gray-600 transition-colors">
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+                          )
                         )}
                       </div>
                     </li>

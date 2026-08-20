@@ -10,15 +10,16 @@ import { FormField } from '@/components/ui/form-field'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { createJobAction } from '@/actions/jobs'
+import { createJobAction, updateJobAction } from '@/actions/jobs'
 import { createJobSchema, type CreateJobInput } from '@/lib/validations/jobs'
 import { JOB_CATEGORY_LABELS, JOB_CATEGORY_EMOJI, JOB_TYPE_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import type { Job } from '@/types'
 
 const CATEGORIES = Object.entries(JOB_CATEGORY_LABELS) as [string, string][]
 const TYPES = Object.entries(JOB_TYPE_LABELS) as [string, string][]
 
-export function PublishJobForm() {
+export function PublishJobForm({ job }: { job?: Job } = {}) {
   const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -30,7 +31,22 @@ export function PublishJobForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateJobInput>({
     resolver: zodResolver(createJobSchema),
-    defaultValues: {
+    defaultValues: job ? {
+      title: job.title,
+      description: job.description,
+      category: job.category,
+      job_type: job.job_type,
+      salary_min: job.salary_min ?? undefined,
+      salary_max: job.salary_max ?? undefined,
+      salary_visible: job.salary_visible,
+      location: job.location ?? '',
+      city: job.city,
+      whatsapp: job.whatsapp ?? '',
+      email: job.email ?? '',
+      requirements: job.requirements ?? '',
+      benefits: job.benefits ?? '',
+      is_urgent: job.is_urgent,
+    } : {
       city: 'Barcelona',
       job_type: 'full_time',
       salary_visible: true,
@@ -44,7 +60,7 @@ export function PublishJobForm() {
   const onSubmit = async (data: CreateJobInput) => {
     setServerError(null)
     try {
-      const result = await createJobAction(data)
+      const result = job ? await updateJobAction(job.id, data) : await createJobAction(data)
       if (result && 'error' in result) { setServerError(result.error); return }
       if (result && 'ok' in result) router.push(result.redirectTo)
     } catch (e) {
@@ -251,6 +267,7 @@ export function PublishJobForm() {
           <div className="flex items-center gap-3 p-4 bg-red-50 rounded-xl border border-red-100">
             <Checkbox
               id="is_urgent"
+              checked={watch('is_urgent')}
               onCheckedChange={(v) => setValue('is_urgent', v === true)}
             />
             <div>
@@ -264,12 +281,14 @@ export function PublishJobForm() {
       </section>
 
       {/* Notice */}
-      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
-        <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-        <p className="text-sm text-blue-700">
-          Tu oferta será revisada por el equipo de BrasilBCN antes de publicarse. Normalmente tardamos menos de 24h.
-        </p>
-      </div>
+      {!job && (
+        <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
+          <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+          <p className="text-sm text-blue-700">
+            Tu oferta será revisada por el equipo de BrasilBCN antes de publicarse. Normalmente tardamos menos de 24h.
+          </p>
+        </div>
+      )}
 
       <Button
         type="submit"
@@ -277,9 +296,9 @@ export function PublishJobForm() {
         className="w-full h-12 bg-[#009C3B] hover:bg-[#007a2f] text-white font-bold text-base rounded-xl"
       >
         {isSubmitting ? (
-          <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Publicando...</>
+          <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> {job ? 'Guardando...' : 'Publicando...'}</>
         ) : (
-          'Publicar oferta de empleo'
+          job ? 'Guardar cambios' : 'Publicar oferta de empleo'
         )}
       </Button>
     </form>
