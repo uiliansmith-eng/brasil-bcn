@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createGuideSchema, type CreateGuideInput } from '@/lib/validations/guides'
 
@@ -67,6 +68,17 @@ export async function getPendingJobs() {
   return data ?? []
 }
 
+export async function getJobForAdmin(id: string) {
+  const ctx = await requireAdmin()
+  if (!ctx) return null
+  const { data } = await ctx.supabase
+    .from('jobs')
+    .select('*, company:companies(id, name, slug, logo_url, city, whatsapp, website), poster:profiles(id, full_name, avatar_url, email)')
+    .eq('id', id)
+    .single()
+  return data ?? null
+}
+
 export async function getPendingCompanies() {
   const supabase = await createClient()
   const { data } = await supabase
@@ -106,6 +118,7 @@ export async function approveJobAction(formData: FormData) {
   await ctx.supabase.from('jobs').update({ is_approved: true }).eq('id', id)
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
+  redirect('/admin/empleos')
 }
 
 export async function rejectJobAction(formData: FormData) {
@@ -115,6 +128,7 @@ export async function rejectJobAction(formData: FormData) {
   await ctx.supabase.from('jobs').update({ is_active: false }).eq('id', id)
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
+  redirect('/admin/empleos')
 }
 
 export async function approveCompanyAction(formData: FormData) {

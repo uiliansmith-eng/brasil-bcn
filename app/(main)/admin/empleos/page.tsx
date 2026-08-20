@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Briefcase, ExternalLink } from 'lucide-react'
+import { Briefcase, ChevronRight } from 'lucide-react'
 import { getPendingJobs, approveJobAction, rejectJobAction } from '@/actions/admin'
 import { JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
 
@@ -37,26 +37,25 @@ export default async function AdminEmpleosPage() {
             const poster = job.poster as { full_name?: string } | null
             return (
               <div key={job.id} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#009C3B]/10 flex items-center justify-center shrink-0">
-                  <Briefcase className="w-5 h-5 text-[#009C3B]" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-gray-900 truncate">{job.title}</p>
-                    <Link href={`/empleos/${job.id}`} target="_blank">
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 shrink-0" />
-                    </Link>
+                <Link href={`/admin/empleos/${job.id}`} className="flex items-center gap-4 flex-1 min-w-0 group">
+                  <div className="w-10 h-10 rounded-xl bg-[#009C3B]/10 flex items-center justify-center shrink-0">
+                    <Briefcase className="w-5 h-5 text-[#009C3B]" />
                   </div>
-                  <p className="text-xs text-gray-400">
-                    {JOB_CATEGORY_LABELS[job.category as keyof typeof JOB_CATEGORY_LABELS] ?? job.category}
-                    {' · '}
-                    {JOB_TYPE_LABELS[job.job_type as keyof typeof JOB_TYPE_LABELS] ?? job.job_type}
-                    {' · '}{job.city}
-                    {poster?.full_name && ` · por ${poster.full_name}`}
-                    {' · '}{timeAgo(job.created_at)}
-                  </p>
-                </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 truncate group-hover:text-[#009C3B] transition-colors">{job.title}</p>
+                    <p className="text-xs text-gray-400">
+                      {JOB_CATEGORY_LABELS[job.category as keyof typeof JOB_CATEGORY_LABELS] ?? job.category}
+                      {' · '}
+                      {JOB_TYPE_LABELS[job.job_type as keyof typeof JOB_TYPE_LABELS] ?? job.job_type}
+                      {' · '}{job.city}
+                      {poster?.full_name && ` · por ${poster.full_name}`}
+                      {' · '}{timeAgo(job.created_at)}
+                    </p>
+                  </div>
+
+                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-400 shrink-0" />
+                </Link>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <form action={approveJobAction}>
