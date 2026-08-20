@@ -57,21 +57,44 @@ export default async function ComunidadPage() {
             Empleos, eventos y recursos para brasileños en Cataluña. Unidos somos mais.
           </p>
 
-          {/* Live stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
-            {[
-              { icon: Users, value: stats.users.toLocaleString('es-ES'), label: 'Miembros' },
-              { icon: Building2, value: stats.companies.toLocaleString('es-ES'), label: 'Empresas' },
-              { icon: Briefcase, value: stats.jobs.toLocaleString('es-ES'), label: 'Empleos' },
-              { icon: CalendarDays, value: stats.events.toLocaleString('es-ES'), label: 'Eventos' },
-            ].map(({ icon: Icon, value, label }) => (
-              <div key={label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                <Icon className="w-5 h-5 text-[#FFDF00] mb-2" />
-                <p className="text-2xl font-black text-white">{value}</p>
-                <p className="text-blue-200 text-xs">{label}</p>
+          {/* Live stats — solo mostramos números que ya impresionan; los bajos
+              (comunidad recién empezando) restan credibilidad más que suman */}
+          {(() => {
+            const STAT_MIN = 10
+            const allStats = [
+              { icon: Users, raw: stats.users, label: 'Miembros' },
+              { icon: Building2, raw: stats.companies, label: 'Empresas' },
+              { icon: Briefcase, raw: stats.jobs, label: 'Empleos' },
+              { icon: CalendarDays, raw: stats.events, label: 'Eventos' },
+            ]
+            const visible = allStats.filter((s) => s.raw >= STAT_MIN)
+            const gridCols: Record<number, string> = {
+              1: 'grid-cols-1 max-w-xs',
+              2: 'grid-cols-2 max-w-md',
+              3: 'grid-cols-3 max-w-xl',
+              4: 'grid-cols-2 sm:grid-cols-4 max-w-2xl',
+            }
+
+            if (visible.length === 0) {
+              return (
+                <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full px-5 py-2.5 text-[#FFDF00] text-sm font-semibold">
+                  🚀 Comunidade em crescimento — sê um dos primeiros a se juntar
+                </span>
+              )
+            }
+
+            return (
+              <div className={`grid gap-4 ${gridCols[visible.length]}`}>
+                {visible.map(({ icon: Icon, raw, label }) => (
+                  <div key={label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                    <Icon className="w-5 h-5 text-[#FFDF00] mb-2" />
+                    <p className="text-2xl font-black text-white">{raw.toLocaleString('es-ES')}</p>
+                    <p className="text-blue-200 text-xs">{label}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )
+          })()}
         </div>
       </div>
 
