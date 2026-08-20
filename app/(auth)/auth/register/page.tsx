@@ -37,6 +37,7 @@ export default function RegisterPage() {
     setServerError(null)
     const supabase = createClient()
     let error: { code?: string; message: string } | null = null
+    let identitiesCount: number | undefined
     try {
       const result = await withTimeout(supabase.auth.signUp({
         email: data.email,
@@ -47,8 +48,17 @@ export default function RegisterPage() {
         },
       }))
       error = result.error
+      identitiesCount = result.data?.user?.identities?.length
     } catch {
       setServerError('La conexión está tardando demasiado. Comprueba tu internet e inténtalo de nuevo.')
+      return
+    }
+
+    // Supabase returns a fake-success response (no error, no new email sent)
+    // when the email already belongs to a confirmed account, to avoid
+    // leaking which emails are registered. identities:[] is the only tell.
+    if (!error && identitiesCount === 0) {
+      setServerError('Este email ya está registrado. ¿Quieres iniciar sesión?')
       return
     }
 
