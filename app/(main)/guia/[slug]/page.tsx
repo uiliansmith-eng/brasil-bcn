@@ -27,12 +27,109 @@ function formatDate(dateStr: string | null): string {
   return new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
+// Lightweight Markdown-ish renderer: headings (##/###), **bold**, lists
+// (- item, - [ ] checklist), tables (| a | b |) and > blockquotes. Falls
+// back to plain paragraphs for anything else — no external dependency.
+function renderInline(text: string, keyPrefix: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
+  return parts.map((part, i) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <strong key={`${keyPrefix}-${i}`}>{part.slice(2, -2)}</strong>
+    ) : (
+      <span key={`${keyPrefix}-${i}`}>{part}</span>
+    )
+  )
+}
+
 function renderContent(content: string) {
-  return content.split('\n\n').filter(Boolean).map((para, i) => (
-    <p key={i} className="text-gray-700 leading-relaxed">
-      {para.trim()}
-    </p>
-  ))
+  const blocks = content.split('\n\n').map((b) => b.trim()).filter(Boolean)
+
+  return blocks.map((block, i) => {
+    const lines = block.split('\n').map((l) => l.trim()).filter(Boolean)
+    const key = `block-${i}`
+
+    if (block.startsWith('### ')) {
+      return (
+        <h3 key={key} className="text-lg font-bold text-gray-900 mt-8 mb-3">
+          {renderInline(block.replace(/^###\s+/, ''), key)}
+        </h3>
+      )
+    }
+    if (block.startsWith('## ')) {
+      return (
+        <h2 key={key} className="text-2xl font-black text-gray-900 mt-10 mb-4">
+          {renderInline(block.replace(/^##\s+/, ''), key)}
+        </h2>
+      )
+    }
+    if (lines.every((l) => l.startsWith('> '))) {
+      return (
+        <blockquote key={key} className="border-l-4 border-[#009C3B] bg-[#009C3B]/5 pl-4 py-3 my-4 text-gray-700 italic">
+          {lines.map((l, j) => (
+            <p key={j}>{renderInline(l.replace(/^>\s+/, ''), `${key}-${j}`)}</p>
+          ))}
+        </blockquote>
+      )
+    }
+    if (lines.every((l) => /^-\s+\[[ x]\]/i.test(l))) {
+      return (
+        <ul key={key} className="space-y-2 my-4">
+          {lines.map((l, j) => {
+            const checked = /^-\s+\[x\]/i.test(l)
+            return (
+              <li key={j} className="flex items-start gap-2 text-gray-700">
+                <span className={cn('mt-1 w-4 h-4 rounded border shrink-0', checked ? 'bg-[#009C3B] border-[#009C3B]' : 'border-gray-300')} />
+                {renderInline(l.replace(/^-\s+\[[ x]\]\s*/i, ''), `${key}-${j}`)}
+              </li>
+            )
+          })}
+        </ul>
+      )
+    }
+    if (lines.every((l) => l.startsWith('- '))) {
+      return (
+        <ul key={key} className="list-disc pl-5 space-y-1.5 my-4 text-gray-700">
+          {lines.map((l, j) => (
+            <li key={j}>{renderInline(l.replace(/^-\s+/, ''), `${key}-${j}`)}</li>
+          ))}
+        </ul>
+      )
+    }
+    if (lines.length >= 2 && lines.every((l) => l.startsWith('|')) && /^\|[\s:|-]+\|$/.test(lines[1])) {
+      const rows = [lines[0], ...lines.slice(2)].map((l) =>
+        l.replace(/^\||\|$/g, '').split('|').map((c) => c.trim())
+      )
+      const [header, ...body] = rows
+      return (
+        <div key={key} className="overflow-x-auto my-4">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="border-b border-gray-200">
+                {header.map((h, j) => (
+                  <th key={j} className="text-left font-bold text-gray-900 py-2 pr-4">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {body.map((row, j) => (
+                <tr key={j} className="border-b border-gray-100">
+                  {row.map((c, k) => (
+                    <td key={k} className="py-2 pr-4 text-gray-700">{renderInline(c, `${key}-${j}-${k}`)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+
+    return (
+      <p key={key} className="text-gray-700 leading-relaxed">
+        {renderInline(block, key)}
+      </p>
+    )
+  })
 }
 
 export default async function GuideDetailPage({ params }: PageProps) {

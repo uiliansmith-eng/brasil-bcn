@@ -72,7 +72,7 @@ export function CreateGuideForm() {
               Contenido * <span className="text-gray-400 font-normal">(mínimo 100 caracteres)</span>
             </Label>
             <Textarea
-              placeholder="Escribe el contenido de la guía. Separa los párrafos con líneas en blanco..."
+              placeholder="Escribe el contenido de la guía. Separa los párrafos con líneas en blanco. Soporta ## títulos, ### subtítulos, **negrita**, - listas, - [ ] checklists, > citas y tablas |a|b|."
               rows={16}
               className={cn(
                 'rounded-xl border-gray-200 focus:border-[#002776] focus:ring-[#002776]/20 resize-none font-mono text-sm',
