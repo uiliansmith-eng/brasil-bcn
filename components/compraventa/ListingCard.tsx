@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { MapPin, Clock, Package } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, CARD_SURFACE } from '@/lib/utils'
 import {
   LISTING_CATEGORY_LABELS,
   LISTING_CONDITION_LABELS,
@@ -41,7 +41,7 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link
       href={`/compraventa/${listing.id}`}
-      className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 hover:border-[#009C3B]/30"
+      className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#009C3B]/25')}
     >
       {/* Image */}
       <div className="relative h-44 bg-gray-50 flex items-center justify-center overflow-hidden">

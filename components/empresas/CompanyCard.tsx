@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MapPin, CheckCircle2, Building2 } from 'lucide-react'
 import { COMPANY_CATEGORY_LABELS } from '@/lib/constants'
-import { cn } from '@/lib/utils'
+import { cn, CARD_SURFACE } from '@/lib/utils'
 
 interface CompanyCardProps {
   company: {
@@ -38,7 +38,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
   return (
     <Link
       href={`/empresas/${company.slug}`}
-      className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 hover:border-[#009C3B]/20"
+      className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#009C3B]/25')}
     >
       {/* Logo area */}
       <div className="relative h-28 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">

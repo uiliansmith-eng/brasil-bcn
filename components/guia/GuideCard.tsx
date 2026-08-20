@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Clock, Eye, BookOpen } from 'lucide-react'
 import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
-import { cn } from '@/lib/utils'
+import { cn, CARD_SURFACE } from '@/lib/utils'
 import type { GuideCategory } from '@/types'
 
 interface GuideCardProps {
@@ -30,7 +30,7 @@ export function GuideCard({ guide }: GuideCardProps) {
   return (
     <Link
       href={`/guia/${guide.slug}`}
-      className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 hover:border-[#002776]/20"
+      className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#002776]/20')}
     >
       {/* Cover */}
       <div className="relative h-44 bg-gradient-to-br from-[#002776]/5 to-[#002776]/10 flex items-center justify-center overflow-hidden">

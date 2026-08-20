@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MapPin, Clock, Building2, Zap, ExternalLink } from 'lucide-react'
 import { formatSalary, JOB_CATEGORY_LABELS, JOB_CATEGORY_EMOJI, JOB_TYPE_LABELS } from '@/lib/constants'
-import { cn } from '@/lib/utils'
+import { cn, CARD_SURFACE } from '@/lib/utils'
 
 type JobSource = 'brasil_bcn' | 'adzuna' | 'jooble' | string
 
@@ -81,12 +81,13 @@ export function JobCard({ job, featured = false }: JobCardProps) {
   const cardInner = (
     <div
       className={cn(
-        'group flex flex-col gap-4 bg-white rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 h-full',
+        CARD_SURFACE,
+        'group flex flex-col gap-4 p-6 h-full',
         featured
-          ? 'border-[#009C3B]/30 shadow-sm ring-1 ring-[#009C3B]/10'
+          ? 'ring-2 ring-[#009C3B]/30'
           : isImported
-            ? 'border-gray-100 hover:border-blue-200'
-            : 'border-gray-100 hover:border-[#009C3B]/30',
+            ? 'hover:ring-blue-300/60'
+            : 'hover:ring-[#009C3B]/25',
         job.is_urgent && 'border-l-4 border-l-red-400'
       )}
     >

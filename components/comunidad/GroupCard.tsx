@@ -1,5 +1,5 @@
 import { Users } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, CARD_SURFACE } from '@/lib/utils'
 import { GROUP_CATEGORY_COLORS, type CommunityGroup } from '@/lib/community-groups'
 
 interface GroupCardProps {
@@ -10,7 +10,7 @@ export function GroupCard({ group }: GroupCardProps) {
   const badgeColor = GROUP_CATEGORY_COLORS[group.category] ?? 'bg-gray-50 text-gray-600'
 
   return (
-    <div className="group flex flex-col bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 hover:border-[#25D366]/30">
+    <div className={cn(CARD_SURFACE, 'group flex flex-col p-5 hover:ring-[#25D366]/30')}>
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-2xl shrink-0 border border-gray-100">
