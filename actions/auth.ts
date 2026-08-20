@@ -3,8 +3,8 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { loginSchema, registerSchema, forgotPasswordSchema, resetPasswordSchema } from '@/lib/validations/auth'
-import type { LoginInput, RegisterInput, ForgotPasswordInput, ResetPasswordInput } from '@/lib/validations/auth'
+import { loginSchema, forgotPasswordSchema, resetPasswordSchema } from '@/lib/validations/auth'
+import type { LoginInput, ForgotPasswordInput, ResetPasswordInput } from '@/lib/validations/auth'
 
 type ActionResult = { error: string } | { success: string } | never
 
@@ -31,38 +31,6 @@ export async function loginAction(data: LoginInput): Promise<ActionResult> {
 
   revalidatePath('/', 'layout')
   redirect('/')
-}
-
-// ─── REGISTER ────────────────────────────────────────────────
-export async function registerAction(data: RegisterInput): Promise<ActionResult> {
-  const parsed = registerSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0].message }
-
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    options: {
-      data: {
-        full_name: parsed.data.full_name,
-        role: parsed.data.role,
-      },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  })
-
-  if (error) {
-    if (error.message.includes('already registered') || error.message.includes('already exists')) {
-      return { error: 'Este email ya está registrado. ¿Quieres iniciar sesión?' }
-    }
-    if (error.code === 'over_email_send_rate_limit' || error.message.toLowerCase().includes('rate limit')) {
-      return { error: 'Estamos recibiendo muchos registros ahora mismo. Espera un minuto e inténtalo de nuevo.' }
-    }
-    console.error('registerAction signUp error:', error.code, error.message)
-    return { error: 'Error al crear la cuenta. Inténtalo de nuevo.' }
-  }
-
-  return { success: '¡Cuenta creada! Revisa tu email para confirmar el registro.' }
 }
 
 // ─── LOGOUT ──────────────────────────────────────────────────

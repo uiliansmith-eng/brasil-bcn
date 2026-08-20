@@ -8,7 +8,7 @@ import { Eye, EyeOff, Loader2, Briefcase, Building2, CheckCircle2 } from 'lucide
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormField } from '@/components/ui/form-field'
-import { registerAction } from '@/actions/auth'
+import { createClient } from '@/lib/supabase/client'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { useLang } from '@/lib/auth-i18n'
 import { cn, withTimeout } from '@/lib/utils'
@@ -35,16 +35,36 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterInput) => {
     setServerError(null)
+    const supabase = createClient()
+    let error: { code?: string; message: string } | null = null
     try {
-      const result = await withTimeout(registerAction(data))
-      if ('error' in result) {
-        setServerError(result.error)
-      } else {
-        setSuccess(true)
-      }
+      const result = await withTimeout(supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: { full_name: data.full_name, role: data.role },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      }))
+      error = result.error
     } catch {
       setServerError('La conexión está tardando demasiado. Comprueba tu internet e inténtalo de nuevo.')
+      return
     }
+
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        setServerError('Este email ya está registrado. ¿Quieres iniciar sesión?')
+      } else if (error.code === 'over_email_send_rate_limit' || error.message.toLowerCase().includes('rate limit')) {
+        setServerError('Estamos recibiendo muchos registros ahora mismo. Espera un minuto e inténtalo de nuevo.')
+      } else {
+        console.error('register signUp error:', error.code, error.message)
+        setServerError('Error al crear la cuenta. Inténtalo de nuevo.')
+      }
+      return
+    }
+
+    setSuccess(true)
   }
 
   if (success) {
