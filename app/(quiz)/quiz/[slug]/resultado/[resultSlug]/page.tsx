@@ -19,7 +19,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `Eu sou ${result.title}! ${result.icon ?? '🇧🇷'}`,
     description: `Descubra que tipo de brasileiro você é em Barcelona no Quiz da Semana do Brasil BCN. ${quiz.title}`,
     path: `/quiz/${slug}/resultado/${resultSlug}`,
-    image: `/quiz/${slug}/resultado/${resultSlug}/opengraph-image`,
     type: 'article',
     keywords: ['quiz brasileiro Barcelona', 'brasileiro em Barcelona', result.title],
   })

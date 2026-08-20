@@ -26,7 +26,11 @@ export function buildMetadata({
   type = 'website',
 }: BuildMetadataOptions): Metadata {
   const canonical = `${siteConfig.url}${path}`
-  const ogImage = image ?? '/opengraph-image'
+  // When no explicit image is given, leave `images` undefined instead of
+  // guessing a URL — Next.js automatically resolves it from a colocated
+  // opengraph-image/twitter-image file convention (which may have a hashed
+  // filename we can't predict), falling back to the root app/opengraph-image.png.
+  const ogImages = image ? [{ url: image, width: 1200, height: 630, alt: title }] : undefined
 
   return {
     title,
@@ -38,7 +42,7 @@ export function buildMetadata({
       description,
       url: canonical,
       siteName: siteConfig.name,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: ogImages,
       locale: 'pt_BR',
       alternateLocale: 'es_ES',
       type,
@@ -47,7 +51,7 @@ export function buildMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [ogImage],
+      images: image ? [image] : undefined,
     },
     robots: noIndex
       ? { index: false, follow: false }
