@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createGuideSchema, type CreateGuideInput } from '@/lib/validations/guides'
+import { sendEmail, wrapEmail, absoluteUrl } from '@/lib/email'
 
 // ─── AUTH GUARD ───────────────────────────────────────────────
 async function requireAdmin() {
@@ -115,9 +116,29 @@ export async function approveJobAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('jobs').update({ is_approved: true }).eq('id', id)
+  const { data: job } = await ctx.supabase
+    .from('jobs')
+    .update({ is_approved: true })
+    .eq('id', id)
+    .select('title, poster:profiles(email)')
+    .single()
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
+
+  const poster = job?.poster as { email?: string } | null
+  if (poster?.email) {
+    await sendEmail({
+      to: poster.email,
+      subject: `Sua vaga "${job!.title}" foi aprovada — Brasil BCN`,
+      html: wrapEmail(
+        'Sua vaga foi aprovada!',
+        `Boas notícias: a vaga <strong>${job!.title}</strong> que você publicou já está no ar e visível para toda a comunidade.`,
+        absoluteUrl(`/empleos/${id}`),
+        'Ver vaga publicada',
+      ),
+    })
+  }
+
   redirect('/admin/empleos')
 }
 
@@ -125,9 +146,28 @@ export async function rejectJobAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('jobs').update({ is_active: false }).eq('id', id)
+  const { data: job } = await ctx.supabase
+    .from('jobs')
+    .update({ is_active: false })
+    .eq('id', id)
+    .select('title, poster:profiles(email)')
+    .single()
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
+
+  const poster = job?.poster as { email?: string } | null
+  if (poster?.email) {
+    await sendEmail({
+      to: poster.email,
+      subject: `Sua vaga "${job!.title}" não foi aprovada — Brasil BCN`,
+      html: wrapEmail(
+        'Sua vaga não foi aprovada',
+        `A vaga <strong>${job!.title}</strong> que você publicou não atendeu aos critérios da comunidade e não foi publicada. `
+        + `Se achar que foi um engano, entre em contato respondendo este email.`,
+      ),
+    })
+  }
+
   redirect('/admin/empleos')
 }
 
@@ -135,36 +175,114 @@ export async function approveCompanyAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('companies').update({ is_approved: true }).eq('id', id)
+  const { data: company } = await ctx.supabase
+    .from('companies')
+    .update({ is_approved: true })
+    .eq('id', id)
+    .select('name, slug, owner:profiles(email)')
+    .single()
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
+
+  const owner = company?.owner as { email?: string } | null
+  if (owner?.email) {
+    await sendEmail({
+      to: owner.email,
+      subject: `Sua empresa "${company!.name}" foi aprovada — Brasil BCN`,
+      html: wrapEmail(
+        'Sua empresa foi aprovada!',
+        `Boas notícias: <strong>${company!.name}</strong> já está no diretório de empresas, visível para toda a comunidade.`,
+        absoluteUrl(`/empresas/${company!.slug}`),
+        'Ver perfil da empresa',
+      ),
+    })
+  }
+  redirect('/admin/empresas')
 }
 
 export async function rejectCompanyAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('companies').update({ is_active: false }).eq('id', id)
+  const { data: company } = await ctx.supabase
+    .from('companies')
+    .update({ is_active: false })
+    .eq('id', id)
+    .select('name, owner:profiles(email)')
+    .single()
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
+
+  const owner = company?.owner as { email?: string } | null
+  if (owner?.email) {
+    await sendEmail({
+      to: owner.email,
+      subject: `Sua empresa "${company!.name}" não foi aprovada — Brasil BCN`,
+      html: wrapEmail(
+        'Sua empresa não foi aprovada',
+        `O cadastro de <strong>${company!.name}</strong> não atendeu aos critérios da comunidade e não foi publicado. `
+        + `Se achar que foi um engano, entre em contato respondendo este email.`,
+      ),
+    })
+  }
+  redirect('/admin/empresas')
 }
 
 export async function approveEventAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('events').update({ is_approved: true }).eq('id', id)
+  const { data: event } = await ctx.supabase
+    .from('events')
+    .update({ is_approved: true })
+    .eq('id', id)
+    .select('title, slug, organizer:profiles(email)')
+    .single()
   revalidatePath('/admin/eventos')
   revalidatePath('/eventos')
+
+  const organizer = event?.organizer as { email?: string } | null
+  if (organizer?.email) {
+    await sendEmail({
+      to: organizer.email,
+      subject: `Seu evento "${event!.title}" foi aprovado — Brasil BCN`,
+      html: wrapEmail(
+        'Seu evento foi aprovado!',
+        `Boas notícias: <strong>${event!.title}</strong> já está publicado e visível para toda a comunidade.`,
+        absoluteUrl(`/eventos/${event!.slug}`),
+        'Ver evento publicado',
+      ),
+    })
+  }
+  redirect('/admin/eventos')
 }
 
 export async function rejectEventAction(formData: FormData) {
   const ctx = await requireAdmin()
   if (!ctx) return
   const id = formData.get('id') as string
-  await ctx.supabase.from('events').update({ is_active: false }).eq('id', id)
+  const { data: event } = await ctx.supabase
+    .from('events')
+    .update({ is_active: false })
+    .eq('id', id)
+    .select('title, organizer:profiles(email)')
+    .single()
   revalidatePath('/admin/eventos')
   revalidatePath('/eventos')
+
+  const organizer = event?.organizer as { email?: string } | null
+  if (organizer?.email) {
+    await sendEmail({
+      to: organizer.email,
+      subject: `Seu evento "${event!.title}" não foi aprovado — Brasil BCN`,
+      html: wrapEmail(
+        'Seu evento não foi aprovado',
+        `O evento <strong>${event!.title}</strong> que você publicou não atendeu aos critérios da comunidade e não foi publicado. `
+        + `Se achar que foi um engano, entre em contato respondendo este email.`,
+      ),
+    })
+  }
+  redirect('/admin/eventos')
 }
 
 // ─── GUIDES MANAGEMENT ───────────────────────────────────────
