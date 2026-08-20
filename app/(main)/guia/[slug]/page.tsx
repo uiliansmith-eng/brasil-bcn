@@ -27,18 +27,32 @@ function formatDate(dateStr: string | null): string {
   return new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-// Lightweight Markdown-ish renderer: headings (##/###), **bold**, lists
-// (- item, - [ ] checklist), tables (| a | b |) and > blockquotes. Falls
-// back to plain paragraphs for anything else — no external dependency.
+// Lightweight Markdown-ish renderer: headings (##/###), **bold**,
+// [links](url), lists (- item, - [ ] checklist), tables (| a | b |) and
+// > blockquotes. Falls back to plain paragraphs for anything else — no
+// external dependency.
 function renderInline(text: string, keyPrefix: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
-  return parts.map((part, i) =>
-    part.startsWith('**') && part.endsWith('**') ? (
+  const parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g).filter(Boolean)
+  return parts.map((part, i) => {
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+    if (linkMatch) {
+      const [, label, href] = linkMatch
+      return href.startsWith('/') ? (
+        <Link key={`${keyPrefix}-${i}`} href={href} className="text-[#009C3B] font-semibold hover:underline">
+          {label}
+        </Link>
+      ) : (
+        <a key={`${keyPrefix}-${i}`} href={href} target="_blank" rel="noopener noreferrer" className="text-[#009C3B] font-semibold hover:underline">
+          {label}
+        </a>
+      )
+    }
+    return part.startsWith('**') && part.endsWith('**') ? (
       <strong key={`${keyPrefix}-${i}`}>{part.slice(2, -2)}</strong>
     ) : (
       <span key={`${keyPrefix}-${i}`}>{part}</span>
     )
-  )
+  })
 }
 
 function renderContent(content: string) {
