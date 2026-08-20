@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Menu, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings, Map } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Menu, ChevronLeft, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings, Map } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -25,12 +26,23 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, loading } = useUser()
+  const pathname = usePathname()
+  const router = useRouter()
+  const showBack = pathname !== '/'
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
+  }
 
   const initials = user?.full_name
     ? user.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
@@ -48,11 +60,28 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain bg-white px-2 py-1 group-hover:opacity-90 transition-opacity" />
-          </Link>
+          {/* Back + Logo */}
+          <div className="flex items-center gap-2">
+            {showBack && (
+              <button
+                type="button"
+                onClick={handleBack}
+                aria-label="Voltar"
+                className={cn(
+                  'flex items-center justify-center w-9 h-9 rounded-full transition-colors shrink-0',
+                  isScrolled
+                    ? 'text-gray-600 hover:bg-gray-100'
+                    : 'text-white hover:bg-white/15'
+                )}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            <Link href="/" className="flex items-center group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Brasil BCN" className="h-12 w-auto rounded-xl object-contain bg-white px-2 py-1 group-hover:opacity-90 transition-opacity" />
+            </Link>
+          </div>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
