@@ -140,9 +140,14 @@ export default async function StepPage({ params }: PageProps) {
                       href={`/ruta-brasileno/articulo/${article.slug}`}
                       className="group flex items-start gap-4 bg-white rounded-xl border border-gray-100 p-4 hover:border-[#002776]/25 hover:shadow-sm transition-all"
                     >
-                      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#002776] transition-colors">
-                        <FileText className="w-5 h-5 text-[#002776] group-hover:text-white transition-colors" />
-                      </div>
+                      {article.featured_image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={article.featured_image} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#002776] transition-colors">
+                          <FileText className="w-5 h-5 text-[#002776] group-hover:text-white transition-colors" />
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-gray-900 text-sm group-hover:text-[#002776] transition-colors mb-1">
                           {article.title}

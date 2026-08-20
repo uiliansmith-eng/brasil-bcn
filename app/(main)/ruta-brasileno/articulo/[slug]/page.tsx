@@ -81,7 +81,12 @@ export default async function ArticlePage({ params }: PageProps) {
           <main>
             {/* Article header */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-6">
-              <div className="h-2 bg-[#002776]" />
+              {article.featured_image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={article.featured_image} alt={article.title} className="w-full h-56 object-cover" />
+              ) : (
+                <div className="h-2 bg-[#002776]" />
+              )}
               <div className="p-6 sm:p-8">
                 <div className="flex flex-wrap items-center gap-2 mb-3 text-xs text-gray-400">
                   <span className="font-bold uppercase tracking-wider">{stage.icon} {stage.title}</span>
