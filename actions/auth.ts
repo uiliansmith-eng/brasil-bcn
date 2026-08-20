@@ -55,6 +55,10 @@ export async function registerAction(data: RegisterInput): Promise<ActionResult>
     if (error.message.includes('already registered') || error.message.includes('already exists')) {
       return { error: 'Este email ya está registrado. ¿Quieres iniciar sesión?' }
     }
+    if (error.code === 'over_email_send_rate_limit' || error.message.toLowerCase().includes('rate limit')) {
+      return { error: 'Estamos recibiendo muchos registros ahora mismo. Espera un minuto e inténtalo de nuevo.' }
+    }
+    console.error('registerAction signUp error:', error.code, error.message)
     return { error: 'Error al crear la cuenta. Inténtalo de nuevo.' }
   }
 
