@@ -40,7 +40,7 @@ export async function updateSettings(
   if (!user) return { error: 'No autenticado' }
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (profile?.role !== 'admin') return { error: 'Sin permisos' }
+  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') return { error: 'Sin permisos' }
 
   const current = await getSettings()
   const merged = { ...current[section], ...values }
@@ -62,7 +62,7 @@ export async function toggleMaintenanceMode(enabled: boolean): Promise<{ error: 
   if (!user) return { error: 'No autenticado' }
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (profile?.role !== 'admin') return { error: 'Sin permisos' }
+  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') return { error: 'Sin permisos' }
 
   const { error } = await supabase
     .from('site_settings')

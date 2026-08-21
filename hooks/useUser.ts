@@ -44,7 +44,7 @@ export function useUser(): UseUserReturn {
   return {
     user,
     loading,
-    isAdmin: user?.role === 'admin',
+    isAdmin: user?.role === 'admin' || user?.role === 'super_admin',
     isCompany: user?.role === 'company',
   }
 }

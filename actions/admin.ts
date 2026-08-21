@@ -18,7 +18,7 @@ async function requireAdmin() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.role !== 'admin') return null
+  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') return null
   return { supabase, userId: user.id }
 }
 
@@ -201,8 +201,14 @@ export async function approveCompanyAction(formData: FormData) {
     .from('companies')
     .update({ is_approved: true })
     .eq('id', id)
-    .select('name, slug, owner:profiles(email)')
+    .select('name, slug, is_store, owner:profiles(email)')
     .single()
+  await ctx.supabase.from('audit_logs').insert({
+    actor_id: ctx.userId,
+    action: 'company_approved',
+    entity_type: company?.is_store ? 'store' : 'company',
+    entity_id: id,
+  })
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
 
@@ -230,8 +236,14 @@ export async function rejectCompanyAction(formData: FormData) {
     .from('companies')
     .update({ is_active: false })
     .eq('id', id)
-    .select('name, owner:profiles(email)')
+    .select('name, is_store, owner:profiles(email)')
     .single()
+  await ctx.supabase.from('audit_logs').insert({
+    actor_id: ctx.userId,
+    action: 'company_rejected',
+    entity_type: company?.is_store ? 'store' : 'company',
+    entity_id: id,
+  })
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
 

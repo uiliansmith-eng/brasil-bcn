@@ -56,7 +56,7 @@ export default function LoginPage() {
     }
     const supabase2 = createClient()
     const { data: profile } = await supabase2.from('profiles').select('role').single()
-    window.location.href = profile?.role === 'admin' ? '/admin' : '/dashboard'
+    window.location.href = (profile?.role === 'admin' || profile?.role === 'super_admin') ? '/admin' : '/dashboard'
   }
 
   return (

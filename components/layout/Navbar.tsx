@@ -134,7 +134,7 @@ export function Navbar() {
                   <DropdownMenuItem render={<Link href="/dashboard" />} className="flex items-center gap-2 cursor-pointer">
                     <Settings className="w-4 h-4" /> Panel de control
                   </DropdownMenuItem>
-                  {user.role === 'admin' && (
+                  {(user.role === 'admin' || user.role === 'super_admin') && (
                     <DropdownMenuItem render={<Link href="/admin" />} className="flex items-center gap-2 cursor-pointer text-[#009C3B] font-medium">
                       Admin
                     </DropdownMenuItem>

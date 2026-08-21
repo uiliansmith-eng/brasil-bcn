@@ -49,7 +49,7 @@ export default async function AdminUsuariosPage({
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-                    u.role === 'admin' ? 'bg-[#002776]/10 text-[#002776]' : 'bg-gray-100 text-gray-500'
+                    (u.role === 'admin' || u.role === 'super_admin') ? 'bg-[#002776]/10 text-[#002776]' : 'bg-gray-100 text-gray-500'
                   }`}>
                     {u.role}
                   </span>
@@ -69,7 +69,7 @@ export default async function AdminUsuariosPage({
                   {new Date(u.created_at).toLocaleDateString('es-ES')}
                 </td>
                 <td className="px-4 py-3">
-                  {u.role !== 'admin' && (
+                  {u.role !== 'admin' && u.role !== 'super_admin' && (
                     <UserActions userId={u.id} isBlocked={!!u.is_blocked} blockedReason={u.blocked_reason ?? ''} />
                   )}
                 </td>

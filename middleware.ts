@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = AUTH_ROUTES.some((r) => pathname.startsWith(r))
   if (isAuthRoute && user) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-    const dest = profile?.role === 'admin' ? '/admin' : '/'
+    const dest = (profile?.role === 'admin' || profile?.role === 'super_admin') ? '/admin' : '/'
     return finish(NextResponse.redirect(new URL(dest, request.url)))
   }
 
@@ -67,12 +67,14 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.is_blocked && profile.role !== 'admin') {
+    const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin'
+
+    if (profile?.is_blocked && !isAdmin) {
       return finish(NextResponse.redirect(new URL('/bloqueado', request.url)))
     }
 
     const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
-    if (isAdminRoute && profile?.role !== 'admin') {
+    if (isAdminRoute && !isAdmin) {
       return finish(NextResponse.redirect(new URL('/', request.url)))
     }
   }
@@ -94,7 +96,7 @@ export async function middleware(request: NextRequest) {
           .select('role')
           .eq('id', user.id)
           .single()
-        if (profile?.role === 'admin') return finish(supabaseResponse)
+        if (profile?.role === 'admin' || profile?.role === 'super_admin') return finish(supabaseResponse)
       }
       return finish(NextResponse.redirect(new URL('/mantenimiento', request.url)))
     }
