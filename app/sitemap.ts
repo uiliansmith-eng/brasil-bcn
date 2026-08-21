@@ -8,6 +8,7 @@ const STATIC: MetadataRoute.Sitemap = [
   { url: BASE, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
   { url: `${BASE}/empleos`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.9 },
   { url: `${BASE}/empresas`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+  { url: `${BASE}/tiendas`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
   { url: `${BASE}/eventos`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
   { url: `${BASE}/guia`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
   { url: `${BASE}/compraventa`, lastModified: new Date(), changeFrequency: 'hourly', priority: 0.8 },
@@ -21,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     )
 
-    const [jobs, companies, events, guides, listings] = await Promise.all([
+    const [jobs, companies, stores, events, guides, listings] = await Promise.all([
       supabase
         .from('jobs')
         .select('id, updated_at')
@@ -33,6 +34,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .select('slug, updated_at')
         .eq('is_active', true)
         .eq('is_approved', true),
+      supabase
+        .from('companies')
+        .select('slug, updated_at')
+        .eq('is_active', true)
+        .eq('is_approved', true)
+        .eq('is_store', true),
       supabase
         .from('events')
         .select('slug, updated_at')
@@ -64,6 +71,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
+    const storeUrls: MetadataRoute.Sitemap = (stores.data ?? []).map((s) => ({
+      url: `${BASE}/tiendas/${s.slug}`,
+      lastModified: new Date(s.updated_at),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }))
+
     const eventUrls: MetadataRoute.Sitemap = (events.data ?? []).map((e) => ({
       url: `${BASE}/eventos/${e.slug}`,
       lastModified: new Date(e.updated_at),
@@ -85,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }))
 
-    return [...STATIC, ...jobUrls, ...companyUrls, ...eventUrls, ...guideUrls, ...listingUrls]
+    return [...STATIC, ...jobUrls, ...companyUrls, ...storeUrls, ...eventUrls, ...guideUrls, ...listingUrls]
   } catch {
     return STATIC
   }

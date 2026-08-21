@@ -15,6 +15,7 @@ export const navItems = [
   { label: 'Quiz', href: '/quiz' },
   { label: 'Empleos', href: '/empleos' },
   { label: 'Empresas', href: '/empresas' },
+  { label: 'Tiendas', href: '/tiendas' },
   { label: 'Eventos', href: '/eventos' },
   { label: 'Guía', href: '/guia' },
   { label: 'Ruta Brasileño', href: '/ruta-brasileno' },

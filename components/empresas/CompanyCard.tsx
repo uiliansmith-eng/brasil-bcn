@@ -15,15 +15,19 @@ interface CompanyCardProps {
     is_verified: boolean
     views: number
   }
+  basePath?: string
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
   restaurantes: 'bg-orange-50 text-orange-700',
+  bar_cafeteria: 'bg-amber-50 text-amber-700',
   abogados: 'bg-blue-50 text-blue-700',
   peluquerias: 'bg-pink-50 text-pink-700',
+  barberia: 'bg-cyan-50 text-cyan-700',
   tiendas: 'bg-green-50 text-green-700',
   construccion: 'bg-yellow-50 text-yellow-700',
   contables: 'bg-purple-50 text-purple-700',
+  servicios_profesionales: 'bg-lime-50 text-lime-700',
   transporte: 'bg-sky-50 text-sky-700',
   educacion: 'bg-teal-50 text-teal-700',
   salud: 'bg-red-50 text-red-700',
@@ -31,13 +35,13 @@ const CATEGORY_COLORS: Record<string, string> = {
   otro: 'bg-gray-50 text-gray-600',
 }
 
-export function CompanyCard({ company }: CompanyCardProps) {
+export function CompanyCard({ company, basePath = '/empresas' }: CompanyCardProps) {
   const catColor = CATEGORY_COLORS[company.category] ?? CATEGORY_COLORS.otro
   const catLabel = COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category
 
   return (
     <Link
-      href={`/empresas/${company.slug}`}
+      href={`${basePath}/${company.slug}`}
       className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#009C3B]/25')}
     >
       {/* Logo area */}
