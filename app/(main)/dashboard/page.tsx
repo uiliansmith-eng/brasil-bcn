@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getMyContent } from '@/actions/profile'
-import { getMyCompany } from '@/actions/stores'
+import { getMyCompany, getMyStaffCompanies } from '@/actions/stores'
 import { getUnreadNotificationCount } from '@/actions/notifications'
 import type { Metadata } from 'next'
 import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight, CalendarClock, Heart, Bell } from 'lucide-react'
@@ -50,10 +50,11 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [profile, content, company, unreadCount] = await Promise.all([
+  const [profile, content, company, staffCompanies, unreadCount] = await Promise.all([
     supabase.from('profiles').select('full_name, role').eq('id', user.id).single().then(r => r.data),
     getMyContent(),
     getMyCompany(),
+    getMyStaffCompanies(),
     getUnreadNotificationCount(),
   ])
 
@@ -129,6 +130,20 @@ export default async function DashboardPage() {
           <div className="flex-1">
             <p className="font-bold text-gray-900 text-sm">Mi tienda</p>
             <p className="text-gray-500 text-xs mt-0.5">{company.name} · gestiona productos, servicios y cupones</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
+        </Link>
+      ) : staffCompanies.length > 0 ? (
+        <Link
+          href="/dashboard/tienda"
+          className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-11 h-11 rounded-xl bg-[#009C3B]/10 flex items-center justify-center shrink-0">
+            <Store className="w-5 h-5 text-[#009C3B]" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-gray-900 text-sm">Tienda donde trabajo</p>
+            <p className="text-gray-500 text-xs mt-0.5">Gestiona el catálogo, pedidos y reservas</p>
           </div>
           <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
         </Link>

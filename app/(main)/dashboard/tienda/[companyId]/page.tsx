@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock, Star, Store } from 'lucide-react'
-import { getCompanyForOwner, getMyCompanies, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
+import { getCompanyForStaff, getMyCompanies, getMyStaffCompanies, getMyStoreItems, getMyCoupons, getMyStoreModules, getMyStoreEmployees } from '@/actions/stores'
 import { getStoreAnalyticsSummary } from '@/actions/analytics'
 import { getMyPromotions } from '@/actions/promotions'
 import { getSubscriptionPlans } from '@/actions/subscriptions'
@@ -16,6 +16,8 @@ import { StoreAnalyticsPanel } from '@/components/tiendas/StoreAnalyticsPanel'
 import { PromotionsManager } from '@/components/tiendas/PromotionsManager'
 import { SubscriptionPanel } from '@/components/tiendas/SubscriptionPanel'
 import { GalleryManager } from '@/components/tiendas/GalleryManager'
+import { EmployeesManager } from '@/components/tiendas/EmployeesManager'
+import type { StoreEmployee } from '@/types'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -27,21 +29,30 @@ interface PageProps {
 
 export default async function MiTiendaPage({ params }: PageProps) {
   const { companyId } = await params
-  const company = await getCompanyForOwner(companyId)
+  const access = await getCompanyForStaff(companyId)
 
-  if (!company || !company.is_store) notFound()
+  if (!access || !access.company.is_store) notFound()
 
-  const [items, coupons, modules, analytics, promotions, plans, myCompanies] = await Promise.all([
+  const { company, role } = access
+  const isOwner = role === 'owner'
+
+  const [items, coupons, modules, analytics, promotions, myCompanies, staffCompanies] = await Promise.all([
     getMyStoreItems(company.id),
     getMyCoupons(company.id),
     getMyStoreModules(company.id),
     getStoreAnalyticsSummary(company.id),
     getMyPromotions(company.id),
-    getSubscriptionPlans(),
     getMyCompanies(),
+    getMyStaffCompanies(),
   ])
 
-  const hasMultipleStores = myCompanies.filter((c) => c.is_store).length > 1
+  // Solo el dueño necesita esto (planes, empleados); se evita
+  // cargarlo para un empleado que no puede verlo/tocarlo.
+  const [plans, employees] = isOwner
+    ? await Promise.all([getSubscriptionPlans(), getMyStoreEmployees(company.id)])
+    : [[], []]
+
+  const hasMultipleStores = myCompanies.filter((c) => c.is_store).length + staffCompanies.length > 1
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -56,7 +67,10 @@ export default async function MiTiendaPage({ params }: PageProps) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Mi tienda</h1>
-          <p className="text-gray-500 text-sm mt-1">{company.name}</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {company.name}
+            {!isOwner && <span className="ml-2 text-xs font-semibold text-[#002776] bg-[#002776]/10 px-2 py-0.5 rounded-full align-middle">Empleado</span>}
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <Link
@@ -134,26 +148,36 @@ export default async function MiTiendaPage({ params }: PageProps) {
 
       <div className="space-y-6">
         <StoreAnalyticsPanel summary={analytics} />
-        <StoreInfoEditor company={company} />
-        <StoreModulesManager companyId={company.id} modules={modules} />
+
+        {isOwner && <StoreInfoEditor company={company} />}
+        {isOwner && <StoreModulesManager companyId={company.id} modules={modules} />}
+
         <StoreAvailabilityManager companyId={company.id} />
-        <GalleryManager
-          companyId={company.id}
-          initialGallery={company.gallery ?? []}
-          moduleActive={modules.some((m) => m.module_key === 'gallery' && m.is_active)}
-        />
+
+        {isOwner && (
+          <GalleryManager
+            companyId={company.id}
+            initialGallery={company.gallery ?? []}
+            moduleActive={modules.some((m) => m.module_key === 'gallery' && m.is_active)}
+          />
+        )}
+
         <StoreItemsManager companyId={company.id} items={items} />
         <CouponsManager companyId={company.id} coupons={coupons} />
+
         {modules.some((m) => m.module_key === 'qr' && m.is_active) && (
           <QrRedeemPanel companyId={company.id} />
         )}
+
         <PromotionsManager
           companyId={company.id}
           promotions={promotions}
           items={items}
           moduleActive={modules.some((m) => m.module_key === 'promotions' && m.is_active)}
         />
-        <SubscriptionPanel companyId={company.id} plans={plans} currentPlanKey={company.store_plan} />
+
+        {isOwner && <EmployeesManager companyId={company.id} employees={employees as (StoreEmployee & { profile: { full_name: string | null; email: string; avatar_url: string | null } | null })[]} />}
+        {isOwner && <SubscriptionPanel companyId={company.id} plans={plans} currentPlanKey={company.store_plan} />}
       </div>
     </div>
   )

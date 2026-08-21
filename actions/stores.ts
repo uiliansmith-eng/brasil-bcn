@@ -175,10 +175,11 @@ export async function getMyCompanies() {
   return data ?? []
 }
 
-// Una tienda concreta, solo si el usuario actual es su dueño (las
-// páginas de gestión del panel son exclusivas del dueño; los
-// empleados gestionan catálogo/cupones vía RLS pero no tienen
-// todavía un panel propio).
+// Una tienda concreta, solo si el usuario actual es su dueño. Usar
+// para las secciones exclusivas del dueño (info de la tienda,
+// módulos, galería, empleados, suscripción); para el resto del
+// panel (catálogo, cupones, pedidos, reservas, reseñas) usar
+// getCompanyForStaff, que también admite empleados.
 export async function getCompanyForOwner(companyId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -192,6 +193,50 @@ export async function getCompanyForOwner(companyId: string) {
     .maybeSingle()
 
   return data
+}
+
+export type StaffRole = 'owner' | 'manager' | 'employee'
+
+// Una tienda concreta, si el usuario actual es su dueño O un
+// empleado (con el rol exacto que tiene ahí). Usar en las secciones
+// del panel que un empleado también puede gestionar según RLS
+// (store_items, coupons, store_availability, promotions, orders,
+// reservations, reviews) — nunca para info de la tienda/módulos/
+// galería/empleados/suscripción, que siguen siendo del dueño.
+export async function getCompanyForStaff(companyId: string): Promise<{ company: NonNullable<Awaited<ReturnType<typeof getCompanyForOwner>>>; role: StaffRole } | null> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const { data: company } = await supabase.from('companies').select('*').eq('id', companyId).maybeSingle()
+  if (!company) return null
+
+  if (company.owner_id === user.id) return { company, role: 'owner' }
+
+  const { data: employee } = await supabase
+    .from('store_employees')
+    .select('role')
+    .eq('company_id', companyId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (!employee) return null
+  return { company, role: employee.role }
+}
+
+// Tiendas donde el usuario actual trabaja como empleado (no dueño).
+export async function getMyStaffCompanies() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data } = await supabase
+    .from('store_employees')
+    .select('role, company:companies(id, name, slug, city, is_approved)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+
+  return data ?? []
 }
 
 export async function activateStoreAction(companyId: string, data: ActivateStoreInput): Promise<{ error: string } | { ok: true }> {
