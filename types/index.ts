@@ -4,7 +4,7 @@ export type {
   CompanyStatus, StoreModuleKey, StoreEmployeeRole,
   OrderStatus, OrderPaymentStatus, FulfillmentMethod, PaymentStatus, ReservationStatus,
   QrCodeStatus, PromotionScope, SubscriptionStatus, BillingPeriod,
-  Profile, Company, Job, Event, Guide, Advertisement, Listing, StoreItem, Coupon,
+  Profile, Company, Job, Event, Guide, Advertisement, Listing, StoreItem, StoreItemVariant, Coupon,
   StoreCategory, StoreSubcategory, StoreModule, StoreEmployee,
   Order, OrderItem, Payment, Reservation, StoreAvailability, QrCode, CouponRedemption,
   Review, Favorite, Notification, Promotion, SubscriptionPlan, Subscription,

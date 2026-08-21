@@ -42,14 +42,19 @@ export function StoreItemForm({ companyId, item, onDone }: StoreItemFormProps) {
       category: item.category ?? '',
       duration_min: item.duration_min,
       is_active: item.is_active,
+      sku: item.sku ?? '',
+      track_stock: item.track_stock,
+      stock: item.stock,
     } : {
       item_type: 'product',
       is_active: true,
+      track_stock: false,
     },
   })
 
   const itemType = watch('item_type')
   const isActive = watch('is_active')
+  const trackStock = watch('track_stock')
 
   const onSubmit = async (data: StoreItemInput) => {
     setServerError(null)
@@ -139,6 +144,30 @@ export function StoreItemForm({ companyId, item, onDone }: StoreItemFormProps) {
         error={errors.category?.message}
         {...register('category')}
       />
+
+      {itemType === 'product' && (
+        <>
+          <FormField
+            label="SKU / referencia"
+            placeholder="Ej: CAM-AZUL-M"
+            error={errors.sku?.message}
+            {...register('sku')}
+          />
+          <div className="flex items-center gap-2.5">
+            <Checkbox id="track_stock" checked={trackStock} onCheckedChange={(v) => setValue('track_stock', v === true)} />
+            <label htmlFor="track_stock" className="text-sm text-gray-700 cursor-pointer">Controlar stock</label>
+          </div>
+          {trackStock && (
+            <FormField
+              label="Unidades en stock"
+              type="number"
+              placeholder="0"
+              error={errors.stock?.message}
+              {...register('stock')}
+            />
+          )}
+        </>
+      )}
 
       <div className="flex items-center gap-2.5">
         <Checkbox id="item_active" checked={isActive} onCheckedChange={(v) => setValue('is_active', v === true)} />

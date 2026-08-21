@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { activateStoreSchema, createStoreSchema, storeItemSchema, couponSchema, type ActivateStoreInput, type CreateStoreInput, type StoreItemInput, type CouponInput } from '@/lib/validations/stores'
+import { activateStoreSchema, createStoreSchema, storeItemSchema, storeItemVariantSchema, couponSchema, type ActivateStoreInput, type CreateStoreInput, type StoreItemInput, type StoreItemVariantInput, type CouponInput } from '@/lib/validations/stores'
 import type { CompanyCategory, StoreModuleKey, StoreEmployeeRole } from '@/types'
 import { STORE_MODULE_DEFAULTS } from '@/lib/constants'
 
@@ -222,6 +222,9 @@ export async function createStoreItemAction(companyId: string, data: StoreItemIn
     category: parsed.data.category || null,
     duration_min: parsed.data.duration_min ?? null,
     is_active: parsed.data.is_active,
+    sku: parsed.data.sku || null,
+    track_stock: parsed.data.track_stock,
+    stock: parsed.data.track_stock ? (parsed.data.stock ?? 0) : null,
   })
 
   if (error) return { error: 'Error al crear el producto/servicio. Inténtalo de nuevo.' }
@@ -246,6 +249,9 @@ export async function updateStoreItemAction(itemId: string, data: StoreItemInput
       category: parsed.data.category || null,
       duration_min: parsed.data.duration_min ?? null,
       is_active: parsed.data.is_active,
+      sku: parsed.data.sku || null,
+      track_stock: parsed.data.track_stock,
+      stock: parsed.data.track_stock ? (parsed.data.stock ?? 0) : null,
     })
     .eq('id', itemId)
 
@@ -253,6 +259,69 @@ export async function updateStoreItemAction(itemId: string, data: StoreItemInput
 
   revalidatePath('/dashboard')
   return { ok: true }
+}
+
+// ─── OWNER: VARIANTES DE PRODUCTO ───────────────────────────────
+
+export async function getStoreItemVariants(storeItemId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('store_item_variants')
+    .select('*')
+    .eq('store_item_id', storeItemId)
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: true })
+
+  return data ?? []
+}
+
+export async function createStoreItemVariantAction(storeItemId: string, data: StoreItemVariantInput): Promise<{ error: string } | { ok: true }> {
+  const parsed = storeItemVariantSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const { error } = await supabase.from('store_item_variants').insert({
+    store_item_id: storeItemId,
+    name: parsed.data.name,
+    sku: parsed.data.sku || null,
+    price_override: parsed.data.price_override ?? null,
+    stock: parsed.data.stock ?? null,
+    is_active: parsed.data.is_active,
+  })
+
+  if (error) return { error: 'Error al crear la variante. Inténtalo de nuevo.' }
+
+  revalidatePath('/dashboard')
+  return { ok: true }
+}
+
+export async function updateStoreItemVariantAction(variantId: string, data: StoreItemVariantInput): Promise<{ error: string } | { ok: true }> {
+  const parsed = storeItemVariantSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('store_item_variants')
+    .update({
+      name: parsed.data.name,
+      sku: parsed.data.sku || null,
+      price_override: parsed.data.price_override ?? null,
+      stock: parsed.data.stock ?? null,
+      is_active: parsed.data.is_active,
+    })
+    .eq('id', variantId)
+
+  if (error) return { error: 'Error al guardar los cambios. Inténtalo de nuevo.' }
+
+  revalidatePath('/dashboard')
+  return { ok: true }
+}
+
+export async function deleteStoreItemVariantAction(formData: FormData) {
+  const variantId = formData.get('id') as string
+  const supabase = await createClient()
+  await supabase.from('store_item_variants').delete().eq('id', variantId)
+  revalidatePath('/dashboard')
 }
 
 export async function deleteStoreItemAction(formData: FormData) {

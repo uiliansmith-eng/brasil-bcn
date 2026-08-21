@@ -293,8 +293,23 @@ export interface StoreItem {
   duration_min: number | null
   is_active: boolean
   display_order: number
+  sku: string | null
+  track_stock: boolean
+  stock: number | null
   created_at: string
   updated_at: string
+}
+
+export interface StoreItemVariant {
+  id: string
+  store_item_id: string
+  name: string
+  sku: string | null
+  price_override: number | null
+  stock: number | null
+  is_active: boolean
+  display_order: number
+  created_at: string
 }
 
 export interface Coupon {
@@ -530,6 +545,7 @@ export interface Database {
       advertisements: { Row: Advertisement; Insert: Omit<Advertisement, 'id' | 'created_at' | 'updated_at' | 'clicks' | 'impressions'>; Update: Partial<Omit<Advertisement, 'id' | 'created_at'>> }
       listings: { Row: Listing; Insert: Omit<Listing, 'id' | 'created_at' | 'updated_at' | 'views'>; Update: Partial<Omit<Listing, 'id' | 'created_at'>> }
       store_items: { Row: StoreItem; Insert: Omit<StoreItem, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<StoreItem, 'id' | 'created_at'>> }
+      store_item_variants: { Row: StoreItemVariant; Insert: Omit<StoreItemVariant, 'id' | 'created_at'>; Update: Partial<Omit<StoreItemVariant, 'id' | 'created_at'>> }
       coupons: { Row: Coupon; Insert: Omit<Coupon, 'id' | 'created_at' | 'used_count'>; Update: Partial<Omit<Coupon, 'id' | 'created_at'>> }
       store_categories: { Row: StoreCategory; Insert: Omit<StoreCategory, 'id'>; Update: Partial<Omit<StoreCategory, 'id'>> }
       store_subcategories: { Row: StoreSubcategory; Insert: Omit<StoreSubcategory, 'id'>; Update: Partial<Omit<StoreSubcategory, 'id'>> }

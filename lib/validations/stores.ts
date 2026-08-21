@@ -27,9 +27,22 @@ export const storeItemSchema = z.object({
   category: z.string().max(60).optional().or(z.literal('')),
   duration_min: z.coerce.number().int().min(0).optional().nullable(),
   is_active: z.boolean().default(true),
+  sku: z.string().max(60).optional().or(z.literal('')),
+  track_stock: z.boolean().default(false),
+  stock: z.coerce.number().int().min(0).optional().nullable(),
 })
 
 export type StoreItemInput = z.infer<typeof storeItemSchema>
+
+export const storeItemVariantSchema = z.object({
+  name: z.string().min(1, 'Mínimo 1 carácter').max(100),
+  sku: z.string().max(60).optional().or(z.literal('')),
+  price_override: z.coerce.number().min(0).optional().nullable(),
+  stock: z.coerce.number().int().min(0).optional().nullable(),
+  is_active: z.boolean().default(true),
+})
+
+export type StoreItemVariantInput = z.infer<typeof storeItemVariantSchema>
 
 export const couponSchema = z.object({
   title: z.string().min(2, 'Mínimo 2 caracteres').max(100),
