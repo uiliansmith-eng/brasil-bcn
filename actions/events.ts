@@ -31,7 +31,9 @@ export async function getEvents(filters: EventFilters = {}) {
     .range(from, to)
 
   if (filters.upcoming !== false) {
-    query = query.gte('date_start', new Date().toISOString())
+    // Un evento sigue visible hasta 3h después de terminar (o de empezar, si no tiene hora de fin)
+    const cutoff = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
+    query = query.or(`date_end.gte.${cutoff},and(date_end.is.null,date_start.gte.${cutoff})`)
   }
   if (filters.categoria) query = query.eq('category', filters.categoria)
   if (filters.ciudad) query = query.ilike('city', `%${filters.ciudad}%`)
