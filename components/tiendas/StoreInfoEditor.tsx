@@ -29,6 +29,7 @@ export function StoreInfoEditor({ company }: StoreInfoEditorProps) {
             business_hours: businessHours ?? '',
             language: (company.language as 'pt' | 'es' | 'en') ?? 'pt',
             extra_info: company.extra_info ?? '',
+            whatsapp_message: company.whatsapp_message ?? '',
             store_category_id: company.store_category_id ?? '',
             store_subcategory_id: company.store_subcategory_id ?? '',
             latitude: company.latitude ?? undefined,

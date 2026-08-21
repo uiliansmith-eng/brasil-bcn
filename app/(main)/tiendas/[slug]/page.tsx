@@ -61,8 +61,12 @@ export default async function StoreDetailPage({ params }: PageProps) {
   const catLabel = COMPANY_CATEGORY_LABELS[store.category as CompanyCategory] ?? store.category
   const catalogLabel = STORE_CATALOG_LABEL[store.category as CompanyCategory] ?? 'Catálogo'
   const businessHours = (store.business_hours as { text?: string } | null)?.text ?? null
+  const whatsappGreeting = store.whatsapp_message || `Hola ${store.name}! Te encontré en Brasil BCN.`
   const whatsappUrl = store.whatsapp
-    ? `https://wa.me/${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hola ${store.name}! Te encontré en Brasil BCN.`)}`
+    ? `https://wa.me/${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(whatsappGreeting)}`
+    : null
+  const whatsappItemUrl = (itemName: string) => store.whatsapp
+    ? `https://wa.me/${store.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`${whatsappGreeting}\n\nMe interesa: ${itemName}`)}`
     : null
   const instagramUrl = store.instagram
     ? `https://instagram.com/${store.instagram.replace(/^@/, '')}`
@@ -218,23 +222,35 @@ export default async function StoreDetailPage({ params }: PageProps) {
                               <span className="text-[10px] text-gray-400">{item.duration_min} min</span>
                             )}
                           </div>
-                          {item.item_type === 'product' && item.price !== null && (!item.track_stock || (item.stock ?? 0) > 0) && (
-                            <AddToCartButton
-                              companyId={store.id}
-                              storeItemId={item.id}
-                              name={item.name}
-                              price={item.price}
-                              imageUrl={item.image_url}
-                            />
-                          )}
-                          {item.item_type === 'service' && modules.has('bookings') && (
-                            <ReserveButton
-                              companyId={store.id}
-                              storeSlug={store.slug}
-                              storeItemId={item.id}
-                              itemName={item.name}
-                            />
-                          )}
+                          <div className="flex items-center gap-1.5">
+                            {item.item_type === 'product' && item.price !== null && (!item.track_stock || (item.stock ?? 0) > 0) && (
+                              <AddToCartButton
+                                companyId={store.id}
+                                storeItemId={item.id}
+                                name={item.name}
+                                price={item.price}
+                                imageUrl={item.image_url}
+                              />
+                            )}
+                            {item.item_type === 'service' && modules.has('bookings') && (
+                              <ReserveButton
+                                companyId={store.id}
+                                storeSlug={store.slug}
+                                storeItemId={item.id}
+                                itemName={item.name}
+                              />
+                            )}
+                            {whatsappItemUrl(item.name) && (
+                              <WhatsAppTrackedLink
+                                companyId={store.id}
+                                href={whatsappItemUrl(item.name)!}
+                                className="flex items-center justify-center w-7 h-7 rounded-lg border border-[#25D366]/30 text-[#25D366] hover:bg-[#25D366]/5 shrink-0"
+                                title="Preguntar por WhatsApp"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                              </WhatsAppTrackedLink>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

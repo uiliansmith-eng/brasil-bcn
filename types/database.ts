@@ -65,6 +65,7 @@ export interface Company {
   business_hours: Record<string, string> | null
   language: string
   extra_info: string | null
+  whatsapp_message: string | null
   is_store: boolean
   store_plan: StorePlan
   store_category_id: string | null

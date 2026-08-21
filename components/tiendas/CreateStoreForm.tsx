@@ -264,6 +264,16 @@ export function CreateStoreForm() {
               {...register('extra_info')}
             />
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-700">Mensaje automático de WhatsApp</Label>
+            <Textarea
+              placeholder="Hola! Te encontré en Brasil BCN."
+              rows={2}
+              className="rounded-xl border-gray-200 focus:border-[#009C3B] focus:ring-[#009C3B]/20 resize-none"
+              {...register('whatsapp_message')}
+            />
+            <p className="text-xs text-gray-400">Este mensaje se rellena automáticamente cuando alguien te escribe desde tu tienda.</p>
+          </div>
         </div>
       </section>
 

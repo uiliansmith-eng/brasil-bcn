@@ -6,6 +6,7 @@ export const activateStoreSchema = z.object({
   business_hours: z.string().max(300).optional().or(z.literal('')),
   language: z.enum(['pt', 'es', 'en']).default('pt'),
   extra_info: z.string().max(1000).optional().or(z.literal('')),
+  whatsapp_message: z.string().max(300).optional().or(z.literal('')),
   store_category_id: z.string().uuid().optional().or(z.literal('')),
   store_subcategory_id: z.string().uuid().optional().or(z.literal('')),
   latitude: z.preprocess(
