@@ -7,6 +7,7 @@ import { CompanyCard } from '@/components/empresas/CompanyCard'
 import { CompanyFilters } from '@/components/empresas/CompanyFilters'
 import { Pagination } from '@/components/shared/Pagination'
 import { getStores } from '@/actions/stores'
+import { getFeaturedStoreIds } from '@/actions/promotions'
 import { buildMetadata } from '@/lib/seo'
 import type { Company, CompanyCategory } from '@/types'
 
@@ -30,12 +31,15 @@ export default async function TiendasPage({ searchParams }: PageProps) {
   const params = await searchParams
   const page = Number(params.page ?? 1)
 
-  const { stores, total, pages } = await getStores({
-    categoria: params.categoria as CompanyCategory | undefined,
-    ciudad: params.ciudad,
-    q: params.q,
-    page,
-  })
+  const [{ stores, total, pages }, featuredIds] = await Promise.all([
+    getStores({
+      categoria: params.categoria as CompanyCategory | undefined,
+      ciudad: params.ciudad,
+      q: params.q,
+      page,
+    }),
+    getFeaturedStoreIds(),
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -105,7 +109,7 @@ export default async function TiendasPage({ searchParams }: PageProps) {
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {stores.map((store) => (
-                    <CompanyCard key={store.id} company={store as Company} basePath="/tiendas" />
+                    <CompanyCard key={store.id} company={store as Company} basePath="/tiendas" featured={featuredIds.has(store.id)} />
                   ))}
                 </div>
                 <Suspense>

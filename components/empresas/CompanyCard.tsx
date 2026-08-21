@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MapPin, CheckCircle2, Building2 } from 'lucide-react'
+import { MapPin, CheckCircle2, Building2, Sparkles } from 'lucide-react'
 import { COMPANY_CATEGORY_LABELS } from '@/lib/constants'
 import { cn, CARD_SURFACE } from '@/lib/utils'
 
@@ -16,6 +16,7 @@ interface CompanyCardProps {
     views: number
   }
   basePath?: string
+  featured?: boolean
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -35,14 +36,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   otro: 'bg-gray-50 text-gray-600',
 }
 
-export function CompanyCard({ company, basePath = '/empresas' }: CompanyCardProps) {
+export function CompanyCard({ company, basePath = '/empresas', featured = false }: CompanyCardProps) {
   const catColor = CATEGORY_COLORS[company.category] ?? CATEGORY_COLORS.otro
   const catLabel = COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category
 
   return (
     <Link
       href={`${basePath}/${company.slug}`}
-      className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#009C3B]/25')}
+      className={cn(CARD_SURFACE, 'group flex flex-col overflow-hidden hover:ring-[#009C3B]/25', featured && 'ring-2 ring-[#FFDF00]/60')}
     >
       {/* Logo area */}
       <div className="relative h-28 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
@@ -52,6 +53,12 @@ export function CompanyCard({ company, basePath = '/empresas' }: CompanyCardProp
         ) : (
           <div className="w-16 h-16 rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
             <Building2 className="w-7 h-7 text-gray-400" />
+          </div>
+        )}
+        {featured && (
+          <div className="absolute top-3 left-3 flex items-center gap-1 bg-[#FFDF00] rounded-full px-2 py-1 shadow-sm text-xs font-bold text-[#002776]">
+            <Sparkles className="w-3 h-3" />
+            Destacada
           </div>
         )}
         {company.is_verified && (

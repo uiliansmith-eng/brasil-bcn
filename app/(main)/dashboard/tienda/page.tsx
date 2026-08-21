@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock, Star } from 'lucide-react'
 import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
 import { getStoreAnalyticsSummary } from '@/actions/analytics'
+import { getMyPromotions } from '@/actions/promotions'
+import { getSubscriptionPlans } from '@/actions/subscriptions'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
 import { CouponsManager } from '@/components/tiendas/CouponsManager'
@@ -11,6 +13,8 @@ import { StoreModulesManager } from '@/components/tiendas/StoreModulesManager'
 import { StoreAvailabilityManager } from '@/components/tiendas/StoreAvailabilityManager'
 import { QrRedeemPanel } from '@/components/tiendas/QrRedeemPanel'
 import { StoreAnalyticsPanel } from '@/components/tiendas/StoreAnalyticsPanel'
+import { PromotionsManager } from '@/components/tiendas/PromotionsManager'
+import { SubscriptionPanel } from '@/components/tiendas/SubscriptionPanel'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -23,11 +27,13 @@ export default async function MiTiendaPage() {
     redirect('/tiendas/crear')
   }
 
-  const [items, coupons, modules, analytics] = await Promise.all([
+  const [items, coupons, modules, analytics, promotions, plans] = await Promise.all([
     getMyStoreItems(company.id),
     getMyCoupons(company.id),
     getMyStoreModules(company.id),
     getStoreAnalyticsSummary(company.id),
+    getMyPromotions(company.id),
+    getSubscriptionPlans(),
   ])
 
   return (
@@ -117,6 +123,13 @@ export default async function MiTiendaPage() {
         {modules.some((m) => m.module_key === 'qr' && m.is_active) && (
           <QrRedeemPanel companyId={company.id} />
         )}
+        <PromotionsManager
+          companyId={company.id}
+          promotions={promotions}
+          items={items}
+          moduleActive={modules.some((m) => m.module_key === 'promotions' && m.is_active)}
+        />
+        <SubscriptionPanel companyId={company.id} plans={plans} currentPlanKey={company.store_plan} />
       </div>
     </div>
   )
