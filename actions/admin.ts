@@ -84,11 +84,22 @@ export async function getPendingCompanies() {
   const supabase = await createClient()
   const { data } = await supabase
     .from('companies')
-    .select('id, name, category, city, created_at, owner:profiles(full_name)')
+    .select('id, name, category, city, is_store, created_at, owner:profiles(full_name)')
     .eq('is_active', true)
     .eq('is_approved', false)
     .order('created_at', { ascending: false })
   return data ?? []
+}
+
+export async function getCompanyForAdmin(id: string) {
+  const ctx = await requireAdmin()
+  if (!ctx) return null
+  const { data } = await ctx.supabase
+    .from('companies')
+    .select('*, owner:profiles(id, full_name, avatar_url, email), items:store_items(*), coupons:coupons(*)')
+    .eq('id', id)
+    .single()
+  return data ?? null
 }
 
 export async function getPendingEvents() {

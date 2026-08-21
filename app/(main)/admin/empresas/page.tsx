@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Building2, ExternalLink } from 'lucide-react'
+import { Building2, Store } from 'lucide-react'
 import { getPendingCompanies, approveCompanyAction, rejectCompanyAction } from '@/actions/admin'
 import { COMPANY_CATEGORY_LABELS } from '@/lib/constants'
 
@@ -35,24 +35,28 @@ export default async function AdminEmpresasPage() {
             const owner = company.owner as { full_name?: string } | null
             return (
               <div key={company.id} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
-                  <Building2 className="w-5 h-5 text-[#002776]" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-gray-900 truncate">{company.name}</p>
-                    <Link href={`/empresas/${company.id}`} target="_blank">
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 shrink-0" />
-                    </Link>
+                <Link href={`/admin/empresas/${company.id}`} className="flex items-center gap-4 flex-1 min-w-0 group">
+                  <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+                    <Building2 className="w-5 h-5 text-[#002776]" />
                   </div>
-                  <p className="text-xs text-gray-400">
-                    {COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category}
-                    {' · '}{company.city}
-                    {owner?.full_name && ` · por ${owner.full_name}`}
-                    {' · '}{timeAgo(company.created_at)}
-                  </p>
-                </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <p className="font-semibold text-gray-900 truncate group-hover:underline">{company.name}</p>
+                      {company.is_store && (
+                        <span className="flex items-center gap-1 text-[10px] font-bold bg-[#009C3B]/10 text-[#009C3B] px-1.5 py-0.5 rounded-full shrink-0">
+                          <Store className="w-2.5 h-2.5" /> Tienda
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      {COMPANY_CATEGORY_LABELS[company.category as keyof typeof COMPANY_CATEGORY_LABELS] ?? company.category}
+                      {' · '}{company.city}
+                      {owner?.full_name && ` · por ${owner.full_name}`}
+                      {' · '}{timeAgo(company.created_at)}
+                    </p>
+                  </div>
+                </Link>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <form action={approveCompanyAction}>
