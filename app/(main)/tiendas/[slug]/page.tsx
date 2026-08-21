@@ -16,6 +16,7 @@ import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
 import { isStoreFavorited } from '@/actions/favorites'
 import { getStoreAvailability } from '@/actions/reservations'
 import { isStoreOpenNow } from '@/lib/store-hours'
+import { isVideoUrl } from '@/lib/media'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
@@ -267,9 +268,13 @@ export default async function StoreDetailPage({ params }: PageProps) {
                 </h2>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                   {(store.gallery as string[]).map((url) => (
-                    <div key={url} className="aspect-square rounded-xl overflow-hidden border border-gray-100">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={store.name} className="w-full h-full object-cover" />
+                    <div key={url} className="aspect-square rounded-xl overflow-hidden border border-gray-100 bg-black">
+                      {isVideoUrl(url) ? (
+                        <video src={url} controls className="w-full h-full object-cover" />
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={url} alt={store.name} className="w-full h-full object-cover" />
+                      )}
                     </div>
                   ))}
                 </div>
