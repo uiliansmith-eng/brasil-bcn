@@ -62,3 +62,17 @@ export async function getMyContent() {
     companies: companies.data ?? [],
   }
 }
+
+export async function getReferralStats() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const [{ data: profile }, { count }] = await Promise.all([
+    supabase.from('profiles').select('referral_code').eq('id', user.id).single(),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('referred_by', user.id),
+  ])
+
+  if (!profile) return null
+  return { code: profile.referral_code as string, count: count ?? 0 }
+}

@@ -36,6 +36,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterInput) => {
     setServerError(null)
     const supabase = createClient()
+    const ref = document.cookie.match(/(?:^|; )bcn_ref=([^;]+)/)?.[1]
     let error: { code?: string; message: string } | null = null
     let identitiesCount: number | undefined
     try {
@@ -43,7 +44,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         options: {
-          data: { full_name: data.full_name, role: data.role },
+          data: { full_name: data.full_name, role: data.role, ...(ref && { ref }) },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       }))

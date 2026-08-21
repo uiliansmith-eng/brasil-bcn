@@ -6,8 +6,18 @@ const AUTH_ROUTES = ['/auth/login', '/auth/register', '/auth/forgot-password']
 const ADMIN_ROUTES = ['/admin']
 const MAINTENANCE_BYPASS = ['/mantenimiento', '/auth', '/admin', '/_next', '/favicon', '/api']
 
+const REF_COOKIE = 'bcn_ref'
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
+
+  // Capture referral code from ?ref=<codigo> into a 30-day cookie, so it
+  // survives until the visitor registers (see /auth/register).
+  const refCode = request.nextUrl.searchParams.get('ref')
+  const finish = (res: NextResponse) => {
+    if (refCode) res.cookies.set(REF_COOKIE, refCode, { maxAge: 60 * 60 * 24 * 30, path: '/' })
+    return res
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +48,7 @@ export async function middleware(request: NextRequest) {
   if (isAuthRoute && user) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
     const dest = profile?.role === 'admin' ? '/admin' : '/'
-    return NextResponse.redirect(new URL(dest, request.url))
+    return finish(NextResponse.redirect(new URL(dest, request.url)))
   }
 
   // Redirect unauthenticated users away from protected routes
@@ -46,7 +56,7 @@ export async function middleware(request: NextRequest) {
   if (isProtected && !user) {
     const loginUrl = new URL('/auth/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+    return finish(NextResponse.redirect(loginUrl))
   }
 
   // Block banned users + admin route protection
@@ -58,12 +68,12 @@ export async function middleware(request: NextRequest) {
       .single()
 
     if (profile?.is_blocked && profile.role !== 'admin') {
-      return NextResponse.redirect(new URL('/bloqueado', request.url))
+      return finish(NextResponse.redirect(new URL('/bloqueado', request.url)))
     }
 
     const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r))
     if (isAdminRoute && profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/', request.url))
+      return finish(NextResponse.redirect(new URL('/', request.url)))
     }
   }
 
@@ -84,13 +94,13 @@ export async function middleware(request: NextRequest) {
           .select('role')
           .eq('id', user.id)
           .single()
-        if (profile?.role === 'admin') return supabaseResponse
+        if (profile?.role === 'admin') return finish(supabaseResponse)
       }
-      return NextResponse.redirect(new URL('/mantenimiento', request.url))
+      return finish(NextResponse.redirect(new URL('/mantenimiento', request.url)))
     }
   }
 
-  return supabaseResponse
+  return finish(supabaseResponse)
 }
 
 export const config = {

@@ -3,8 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Settings, MapPin, Map } from 'lucide-react'
-import { getMyContent } from '@/actions/profile'
+import { getMyContent, getReferralStats } from '@/actions/profile'
 import { ProfileForm } from './ProfileForm'
+import { ReferralCard } from '@/components/perfil/ReferralCard'
 
 export const metadata: Metadata = { title: 'Mi perfil — BrasilBCN' }
 
@@ -27,7 +28,7 @@ export default async function PerfilPage() {
 
   if (!profile) redirect('/auth/login')
 
-  const content = await getMyContent()
+  const [content, referral] = await Promise.all([getMyContent(), getReferralStats()])
   const stats = [
     { label: 'Empleos', count: content?.jobs.length ?? 0, href: '/empleos/publicar', icon: Briefcase, cta: 'Publicar empleo' },
     { label: 'Empresas', count: content?.companies.length ?? 0, href: '/empresas/registrar', icon: Building2, cta: 'Registrar empresa' },
@@ -101,6 +102,9 @@ export default async function PerfilPage() {
           </Link>
         )}
       </div>
+
+      {/* Referrals */}
+      {referral && <ReferralCard code={referral.code} count={referral.count} />}
 
       {/* Ruta CTA */}
       <Link
