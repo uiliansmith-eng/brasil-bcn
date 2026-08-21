@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutSchema, cartLineSchema, type CheckoutInput, type CartLineInput } from '@/lib/validations/orders'
 import { notifyUser } from '@/actions/notifications'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { ORDER_STATUS_LABELS } from '@/lib/constants'
 import type { OrderStatus } from '@/types'
 
@@ -26,6 +27,9 @@ export async function createOrderAction(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Debes iniciar sesión para completar el pedido.' }
+
+  const withinLimit = await checkRateLimit('create_order', user.id, 10, 600)
+  if (!withinLimit) return { error: 'Demasiados pedidos en poco tiempo. Espera unos minutos e inténtalo de nuevo.' }
 
   // Nunca confiar en precios del cliente: se recalculan desde la BD.
   const itemIds = cleanLines.map((l) => l.store_item_id)

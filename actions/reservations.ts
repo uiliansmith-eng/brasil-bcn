@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { reservationSchema, availabilityDaySchema, type ReservationInput, type AvailabilityDayInput } from '@/lib/validations/reservations'
 import { notifyUser } from '@/actions/notifications'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { RESERVATION_STATUS_LABELS } from '@/lib/constants'
 import type { ReservationStatus } from '@/types'
 
@@ -93,6 +94,9 @@ export async function createReservationAction(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Debes iniciar sesión para reservar.' }
+
+  const withinLimit = await checkRateLimit('create_reservation', user.id, 10, 600)
+  if (!withinLimit) return { error: 'Demasiadas reservas en poco tiempo. Espera unos minutos e inténtalo de nuevo.' }
 
   const { data: item } = await supabase
     .from('store_items')

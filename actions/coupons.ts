@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // ─── CLIENTE: RECLAMAR / VER MI QR ──────────────────────────────
 
@@ -27,6 +28,9 @@ export async function claimCouponQrAction(couponId: string): Promise<{ error: st
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Debes iniciar sesión para obtener el cupón QR.' }
+
+  const withinLimit = await checkRateLimit('claim_qr', user.id, 20, 3600)
+  if (!withinLimit) return { error: 'Demasiados cupones QR reclamados. Inténtalo de nuevo más tarde.' }
 
   const { data: coupon } = await supabase
     .from('coupons')
@@ -71,6 +75,9 @@ export async function redeemQrCodeAction(
   code: string
 ): Promise<{ error: string } | { ok: true; couponTitle: string }> {
   const supabase = await createClient()
+
+  const withinLimit = await checkRateLimit('redeem_qr', companyId, 60, 600)
+  if (!withinLimit) return { error: 'Demasiados intentos de canje. Espera unos minutos e inténtalo de nuevo.' }
 
   const { data: qr } = await supabase
     .from('qr_codes')

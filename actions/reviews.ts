@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { reviewSchema, reviewReplySchema, type ReviewInput, type ReviewReplyInput } from '@/lib/validations/reviews'
 import { notifyUser } from '@/actions/notifications'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function getStoreReviews(companyId: string) {
   const supabase = await createClient()
@@ -39,6 +40,9 @@ export async function submitReviewAction(companyId: string, data: ReviewInput): 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Debes iniciar sesión para dejar una reseña.' }
+
+  const withinLimit = await checkRateLimit('submit_review', user.id, 10, 3600)
+  if (!withinLimit) return { error: 'Demasiadas reseñas en poco tiempo. Inténtalo de nuevo más tarde.' }
 
   const { error } = await supabase
     .from('reviews')
