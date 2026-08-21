@@ -20,10 +20,9 @@ export async function QuizBanner() {
           </div>
 
           <div className="flex-1">
-            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1.5">
-              <span className="text-[#FFDF00] text-xs font-bold uppercase tracking-widest">Quiz da semana</span>
-              <span className="text-lg leading-none" role="img" aria-label="Brasil">🇧🇷</span>
-            </div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest text-[#7a6600] bg-[#FFDF00] px-3 py-1 rounded-full mb-2.5">
+              ✨ QUIZ DA SEMANA 🇧🇷
+            </span>
             <h2 className="text-white font-black text-2xl sm:text-3xl leading-tight mb-1.5 text-balance">
               {quiz.title}
             </h2>

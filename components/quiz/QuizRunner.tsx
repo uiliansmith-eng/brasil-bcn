@@ -96,9 +96,14 @@ export function QuizRunner({ quiz }: { quiz: QuizWithContent }) {
 
   if (stage === 'intro') {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center max-w-md mx-auto w-full">
-        <span className="text-5xl mb-6">🇧🇷</span>
-        <p className="text-xs font-bold tracking-widest text-[#009C3B] mb-3 flex items-center gap-1.5">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-16 text-center max-w-md mx-auto w-full relative overflow-hidden">
+        <div className="absolute -top-10 -right-16 w-56 h-56 rounded-full bg-[#009C3B]/10 blur-2xl pointer-events-none" />
+        <div className="absolute bottom-24 -left-20 w-56 h-56 rounded-full bg-[#FFDF00]/15 blur-2xl pointer-events-none" />
+
+        <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-[#009C3B]/10 to-[#FFDF00]/10 flex items-center justify-center mb-5">
+          <span className="text-5xl">🇧🇷</span>
+        </div>
+        <p className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest text-[#7a6600] bg-[#FFDF00] px-3.5 py-1.5 rounded-full mb-4">
           <Sparkles className="w-3.5 h-3.5" /> QUIZ DA SEMANA
         </p>
         <h1 className="text-3xl font-black text-gray-900 leading-tight mb-4 text-balance">
