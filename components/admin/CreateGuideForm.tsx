@@ -10,16 +10,22 @@ import { FormField } from '@/components/ui/form-field'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { createGuideAction } from '@/actions/admin'
+import { createGuideAction, updateGuideAction } from '@/actions/admin'
 import { createGuideSchema, type CreateGuideInput } from '@/lib/validations/guides'
 import { GUIDE_CATEGORY_LABELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 const CATEGORIES = Object.entries(GUIDE_CATEGORY_LABELS) as [string, string][]
 
-export function CreateGuideForm() {
+interface CreateGuideFormProps {
+  guideId?: string
+  defaultValues?: CreateGuideInput
+}
+
+export function CreateGuideForm({ guideId, defaultValues }: CreateGuideFormProps) {
   const [serverError, setServerError] = useState<string | null>(null)
   const router = useRouter()
+  const isEditing = Boolean(guideId)
 
   const {
     register,
@@ -29,7 +35,7 @@ export function CreateGuideForm() {
     formState: { errors, isSubmitting },
   } = useForm<CreateGuideInput>({
     resolver: zodResolver(createGuideSchema),
-    defaultValues: { is_published: false },
+    defaultValues: defaultValues ?? { is_published: false },
   })
 
   const selectedCategory = watch('category')
@@ -37,7 +43,7 @@ export function CreateGuideForm() {
 
   const onSubmit = async (data: CreateGuideInput) => {
     setServerError(null)
-    const result = await createGuideAction(data)
+    const result = guideId ? await updateGuideAction(guideId, data) : await createGuideAction(data)
     if ('error' in result) {
       setServerError(result.error)
     } else {
@@ -148,8 +154,12 @@ export function CreateGuideForm() {
         >
           {isSubmitting ? (
             <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Guardando...</>
+          ) : isEditing ? (
+            'Guardar cambios'
+          ) : isPublished ? (
+            'Publicar guía'
           ) : (
-            isPublished ? 'Publicar guía' : 'Guardar borrador'
+            'Guardar borrador'
           )}
         </Button>
       </div>

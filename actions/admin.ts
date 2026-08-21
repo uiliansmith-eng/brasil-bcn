@@ -356,6 +356,50 @@ export async function createGuideAction(data: CreateGuideInput): Promise<{ error
   return { success: true }
 }
 
+export async function getGuideForAdmin(id: string) {
+  const ctx = await requireAdmin()
+  if (!ctx) return null
+  const { data } = await ctx.supabase
+    .from('guides')
+    .select('*')
+    .eq('id', id)
+    .single()
+  return data ?? null
+}
+
+export async function updateGuideAction(id: string, data: CreateGuideInput): Promise<{ error: string } | { success: true }> {
+  const ctx = await requireAdmin()
+  if (!ctx) return { error: 'No autorizado' }
+
+  const parsed = createGuideSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const wordCount = parsed.data.content.trim().split(/\s+/).length
+  const reading_time = Math.max(1, Math.ceil(wordCount / 200))
+
+  const { data: guide, error } = await ctx.supabase
+    .from('guides')
+    .update({
+      title: parsed.data.title,
+      excerpt: parsed.data.excerpt || null,
+      content: parsed.data.content,
+      category: parsed.data.category,
+      cover_url: parsed.data.cover_url || null,
+      reading_time,
+      is_published: parsed.data.is_published,
+    })
+    .eq('id', id)
+    .select('slug')
+    .single()
+
+  if (error) return { error: 'Error al guardar los cambios. Inténtalo de nuevo.' }
+
+  revalidatePath('/admin/guias')
+  revalidatePath('/guia')
+  if (guide?.slug) revalidatePath(`/guia/${guide.slug}`)
+  return { success: true }
+}
+
 // ─── USUARIOS ─────────────────────────────────────────────────
 
 export async function getUsers(page = 1, search = '') {

@@ -68,6 +68,11 @@ export default async function AdminGuiasPage() {
                     </button>
                   </Link>
                 )}
+                <Link href={`/admin/guias/${guide.id}/editar`}>
+                  <button type="button" className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors">
+                    Editar
+                  </button>
+                </Link>
                 <form action={toggleGuidePublishAction}>
                   <input type="hidden" name="id" value={guide.id} />
                   <input type="hidden" name="is_published" value={String(guide.is_published)} />
