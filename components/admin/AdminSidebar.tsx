@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight, Users, Settings2, Sparkles } from 'lucide-react'
+import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight, Users, Settings2, Sparkles, BarChart3 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/analitica', label: 'Analítica', icon: BarChart3 },
   { href: '/admin/pagina', label: 'Página', icon: Settings2 },
   { href: '/admin/usuarios', label: 'Usuarios', icon: Users },
   { href: '/admin/empleos', label: 'Empleos', icon: Briefcase },

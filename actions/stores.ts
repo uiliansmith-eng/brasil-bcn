@@ -74,6 +74,7 @@ export async function getStoreBySlug(slug: string) {
   if (error || !data) return null
 
   await supabase.from('companies').update({ views: (data.views ?? 0) + 1 }).eq('id', data.id)
+  await supabase.from('store_analytics_events').insert({ company_id: data.id, event_type: 'store_viewed' })
 
   return data
 }

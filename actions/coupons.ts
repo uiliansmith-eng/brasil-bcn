@@ -59,6 +59,8 @@ export async function claimCouponQrAction(couponId: string): Promise<{ error: st
 
   if (error || !qr) return { error: 'Error al generar el cupón QR. Inténtalo de nuevo.' }
 
+  await supabase.from('store_analytics_events').insert({ company_id: coupon.company_id, event_type: 'coupon_qr_claimed', user_id: user.id })
+
   return { ok: true, code: qr.code }
 }
 

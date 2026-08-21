@@ -3,12 +3,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock, Star } from 'lucide-react'
 import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
+import { getStoreAnalyticsSummary } from '@/actions/analytics'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
 import { CouponsManager } from '@/components/tiendas/CouponsManager'
 import { StoreModulesManager } from '@/components/tiendas/StoreModulesManager'
 import { StoreAvailabilityManager } from '@/components/tiendas/StoreAvailabilityManager'
 import { QrRedeemPanel } from '@/components/tiendas/QrRedeemPanel'
+import { StoreAnalyticsPanel } from '@/components/tiendas/StoreAnalyticsPanel'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -21,10 +23,11 @@ export default async function MiTiendaPage() {
     redirect('/tiendas/crear')
   }
 
-  const [items, coupons, modules] = await Promise.all([
+  const [items, coupons, modules, analytics] = await Promise.all([
     getMyStoreItems(company.id),
     getMyCoupons(company.id),
     getMyStoreModules(company.id),
+    getStoreAnalyticsSummary(company.id),
   ])
 
   return (
@@ -105,6 +108,7 @@ export default async function MiTiendaPage() {
       )}
 
       <div className="space-y-6">
+        <StoreAnalyticsPanel summary={analytics} />
         <StoreInfoEditor company={company} />
         <StoreModulesManager companyId={company.id} modules={modules} />
         <StoreAvailabilityManager companyId={company.id} />
