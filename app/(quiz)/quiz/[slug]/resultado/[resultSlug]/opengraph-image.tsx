@@ -22,6 +22,6 @@ export default async function Image({ params }: Props) {
         Brasil BCN — Quiz da Semana
       </div>
     ),
-    { ...size }
+    { ...size, emoji: 'twemoji' }
   )
 }

@@ -27,6 +27,6 @@ export async function GET(request: NextRequest) {
 
   return new ImageResponse(
     <VerticalShareCard result={data.result} quizTitle={data.quiz.title} width={dims.width} height={dims.height} />,
-    { ...dims }
+    { ...dims, emoji: 'twemoji' }
   )
 }
