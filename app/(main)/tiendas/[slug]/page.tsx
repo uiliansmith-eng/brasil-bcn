@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, AtSign, Clock, CheckCircle2, Store, Tag, Ticket } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/shared/ShareButtons'
+import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
+import { FloatingCartButton } from '@/components/tiendas/FloatingCartButton'
 import { getStoreBySlug } from '@/actions/stores'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
@@ -181,12 +183,23 @@ export default async function StoreDetailPage({ params }: PageProps) {
                         {item.description && (
                           <p className="text-gray-500 text-xs mt-1 line-clamp-2">{item.description}</p>
                         )}
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">
-                            {STORE_ITEM_TYPE_LABELS[item.item_type]}
-                          </span>
-                          {item.duration_min && (
-                            <span className="text-[10px] text-gray-400">{item.duration_min} min</span>
+                        <div className="flex items-center justify-between gap-2 mt-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">
+                              {STORE_ITEM_TYPE_LABELS[item.item_type]}
+                            </span>
+                            {item.duration_min && (
+                              <span className="text-[10px] text-gray-400">{item.duration_min} min</span>
+                            )}
+                          </div>
+                          {item.item_type === 'product' && item.price !== null && (!item.track_stock || (item.stock ?? 0) > 0) && (
+                            <AddToCartButton
+                              companyId={store.id}
+                              storeItemId={item.id}
+                              name={item.name}
+                              price={item.price}
+                              imageUrl={item.image_url}
+                            />
                           )}
                         </div>
                       </div>
@@ -257,6 +270,8 @@ export default async function StoreDetailPage({ params }: PageProps) {
           </aside>
         </div>
       </div>
+
+      <FloatingCartButton companyId={store.id} storeSlug={store.slug} />
 
       {/* JSON-LD */}
       <script

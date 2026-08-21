@@ -1,4 +1,4 @@
-import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition, StoreItemType, StoreModuleKey, CompanyStatus } from '@/types'
+import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition, StoreItemType, StoreModuleKey, CompanyStatus, OrderStatus, FulfillmentMethod, ReservationStatus } from '@/types'
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
   full_time: 'Jornada completa',
@@ -89,6 +89,29 @@ export const COMPANY_STATUS_LABELS: Record<CompanyStatus, string> = {
   published: 'Publicada',
   paused: 'Pausada',
   suspended: 'Suspendida',
+}
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending: 'Pendiente',
+  paid: 'Pagado',
+  preparing: 'Preparando',
+  ready: 'Listo',
+  completed: 'Completado',
+  cancelled: 'Cancelado',
+  refunded: 'Reembolsado',
+}
+
+export const FULFILLMENT_METHOD_LABELS: Record<FulfillmentMethod, string> = {
+  pickup: 'Recoger en tienda',
+  delivery: 'Entrega a domicilio',
+}
+
+export const RESERVATION_STATUS_LABELS: Record<ReservationStatus, string> = {
+  pending: 'Pendiente',
+  confirmed: 'Confirmada',
+  completed: 'Completada',
+  cancelled: 'Cancelada',
+  no_show: 'No se presentó',
 }
 
 export const STORE_CATALOG_LABEL: Record<CompanyCategory, string> = {

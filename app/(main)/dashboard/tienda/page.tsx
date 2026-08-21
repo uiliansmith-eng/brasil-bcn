@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag } from 'lucide-react'
 import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
@@ -37,15 +37,23 @@ export default async function MiTiendaPage() {
           <h1 className="text-2xl font-black text-gray-900">Mi tienda</h1>
           <p className="text-gray-500 text-sm mt-1">{company.name}</p>
         </div>
-        {company.is_approved && (
+        <div className="flex items-center gap-4">
           <Link
-            href={`/tiendas/${company.slug}`}
-            target="_blank"
-            className="flex items-center gap-1.5 text-sm font-semibold text-[#009C3B] hover:text-[#007a2f]"
+            href="/dashboard/tienda/pedidos"
+            className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
           >
-            Ver tienda pública <ExternalLink className="w-3.5 h-3.5" />
+            <ShoppingBag className="w-3.5 h-3.5" /> Pedidos
           </Link>
-        )}
+          {company.is_approved && (
+            <Link
+              href={`/tiendas/${company.slug}`}
+              target="_blank"
+              className="flex items-center gap-1.5 text-sm font-semibold text-[#009C3B] hover:text-[#007a2f]"
+            >
+              Ver tienda pública <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Status row */}

@@ -146,6 +146,20 @@ export default async function DashboardPage() {
         </Link>
       )}
 
+      <Link
+        href="/dashboard/pedidos"
+        className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+      >
+        <div className="w-11 h-11 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+          <ShoppingBag className="w-5 h-5 text-[#002776]" />
+        </div>
+        <div className="flex-1">
+          <p className="font-bold text-gray-900 text-sm">Mis pedidos</p>
+          <p className="text-gray-500 text-xs mt-0.5">Pedidos que hiciste en tiendas de Brasil BCN</p>
+        </div>
+        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
+      </Link>
+
       {/* Pending alert */}
       {totalPending > 0 && (
         <div className="mb-6 flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">

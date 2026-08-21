@@ -398,6 +398,17 @@ export async function toggleCouponActiveAction(formData: FormData) {
 
 // ─── OWNER: MÓDULOS (feature flags por tienda) ─────────────────
 
+export async function getActiveStoreModuleKeys(companyId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('store_modules')
+    .select('module_key')
+    .eq('company_id', companyId)
+    .eq('is_active', true)
+
+  return new Set((data ?? []).map((m) => m.module_key as StoreModuleKey))
+}
+
 export async function getMyStoreModules(companyId: string) {
   const supabase = await createClient()
   const { data } = await supabase
