@@ -5,7 +5,7 @@ export const createGuideSchema = z.object({
   excerpt: z.string().max(300).optional(),
   content: z.string().min(100, 'El contenido debe tener al menos 100 caracteres'),
   category: z.enum(
-    ['nie', 'empadronamiento', 'autonomos', 'seguridad_social', 'bancos', 'vivienda', 'educacion', 'sanidad', 'otro'],
+    ['nie', 'empadronamiento', 'autonomos', 'seguridad_social', 'bancos', 'vivienda', 'educacion', 'sanidad', 'ciudadania', 'otro'],
     { message: 'Selecciona una categoría' }
   ),
   cover_url: z.string().url('URL inválida').optional().or(z.literal('')),

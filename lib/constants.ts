@@ -67,6 +67,7 @@ export const GUIDE_CATEGORY_LABELS: Record<GuideCategory, string> = {
   vivienda: 'Vivienda',
   educacion: 'Educación',
   sanidad: 'Sanidad',
+  ciudadania: 'Elecciones y Ciudadanía',
   otro: 'Otro',
 }
 
@@ -79,6 +80,7 @@ export const GUIDE_CATEGORY_EMOJI: Record<GuideCategory, string> = {
   vivienda: '🔑',
   educacion: '📚',
   sanidad: '⚕️',
+  ciudadania: '🗳️',
   otro: '📋',
 }
 
@@ -91,6 +93,7 @@ export const GUIDE_CATEGORY_COLORS: Record<GuideCategory, string> = {
   vivienda: 'bg-teal-50 text-teal-700',
   educacion: 'bg-purple-50 text-purple-700',
   sanidad: 'bg-pink-50 text-pink-700',
+  ciudadania: 'bg-indigo-50 text-indigo-700',
   otro: 'bg-gray-50 text-gray-600',
 }
 
