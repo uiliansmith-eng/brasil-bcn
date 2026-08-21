@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock, Star } from 'lucide-react'
 import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
@@ -51,6 +51,12 @@ export default async function MiTiendaPage() {
             className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
           >
             <CalendarClock className="w-3.5 h-3.5" /> Reservas
+          </Link>
+          <Link
+            href="/dashboard/tienda/resenas"
+            className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
+          >
+            <Star className="w-3.5 h-3.5" /> Reseñas
           </Link>
           {company.is_approved && (
             <Link

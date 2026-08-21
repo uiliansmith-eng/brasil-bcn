@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { reservationSchema, availabilityDaySchema, type ReservationInput, type AvailabilityDayInput } from '@/lib/validations/reservations'
+import { notifyUser } from '@/actions/notifications'
+import { RESERVATION_STATUS_LABELS } from '@/lib/constants'
 import type { ReservationStatus } from '@/types'
 
 // weekday sigue la convención de Date.getDay(): 0 = domingo … 6 = sábado.
@@ -130,6 +132,11 @@ export async function createReservationAction(
 
   if (error || !reservation) return { error: 'Error al crear la reserva. Inténtalo de nuevo.' }
 
+  const { data: company } = await supabase.from('companies').select('owner_id, name').eq('id', companyId).single()
+  if (company) {
+    await notifyUser(company.owner_id, 'reservation_received', `Nueva reserva en ${company.name}`, `${parsed.data.date} · ${parsed.data.start_time}`, { reservation_id: reservation.id })
+  }
+
   revalidatePath('/dashboard/reservas')
   return { ok: true, reservationId: reservation.id }
 }
@@ -210,6 +217,18 @@ export async function updateReservationStatusAction(formData: FormData) {
   const reservationId = formData.get('id') as string
   const status = formData.get('status') as ReservationStatus
   const supabase = await createClient()
-  await supabase.from('reservations').update({ status, updated_at: new Date().toISOString() }).eq('id', reservationId)
+
+  const { data: reservation } = await supabase
+    .from('reservations')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', reservationId)
+    .select('customer_id, company:companies(name)')
+    .single()
+
+  if (reservation) {
+    const company = reservation.company as unknown as { name: string } | null
+    await notifyUser(reservation.customer_id, 'reservation_status_changed', `Tu reserva en ${company?.name ?? 'la tienda'} está ${RESERVATION_STATUS_LABELS[status].toLowerCase()}`, undefined, { reservation_id: reservationId })
+  }
+
   revalidatePath('/dashboard/tienda/reservas')
 }

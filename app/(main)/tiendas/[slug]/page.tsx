@@ -8,7 +8,11 @@ import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
 import { FloatingCartButton } from '@/components/tiendas/FloatingCartButton'
 import { ReserveButton } from '@/components/tiendas/ReserveButton'
 import { CouponQrButton } from '@/components/tiendas/CouponQrButton'
+import { FavoriteButton } from '@/components/tiendas/FavoriteButton'
+import { WhatsAppTrackedLink } from '@/components/tiendas/WhatsAppTrackedLink'
+import { ReviewsSection } from '@/components/tiendas/ReviewsSection'
 import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
+import { isStoreFavorited } from '@/actions/favorites'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
@@ -66,6 +70,7 @@ export default async function StoreDetailPage({ params }: PageProps) {
     .sort((a, b) => a.display_order - b.display_order)
   const coupons = (store.coupons ?? []) as Coupon[]
   const modules = await getActiveStoreModuleKeys(store.id)
+  const favorited = await isStoreFavorited(store.id)
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -108,7 +113,10 @@ export default async function StoreDetailPage({ params }: PageProps) {
                   )}
                 </div>
 
-                <h1 className="text-2xl font-black text-gray-900 mb-1">{store.name}</h1>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h1 className="text-2xl font-black text-gray-900">{store.name}</h1>
+                  <FavoriteButton companyId={store.id} initialFavorited={favorited} />
+                </div>
 
                 <div className="flex flex-wrap items-center gap-3 mb-5">
                   <span className="text-sm font-semibold bg-[#002776]/10 text-[#002776] px-3 py-1.5 rounded-full">
@@ -224,6 +232,8 @@ export default async function StoreDetailPage({ params }: PageProps) {
                 </div>
               </div>
             )}
+
+            <ReviewsSection companyId={store.id} />
           </div>
 
           {/* Sidebar */}
@@ -233,11 +243,11 @@ export default async function StoreDetailPage({ params }: PageProps) {
 
               <div className="space-y-3 mb-5">
                 {whatsappUrl && (
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <WhatsAppTrackedLink companyId={store.id} href={whatsappUrl}>
                     <Button className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold gap-2">
                       <MessageCircle className="w-4 h-4" /> WhatsApp
                     </Button>
-                  </a>
+                  </WhatsAppTrackedLink>
                 )}
                 {instagramUrl && (
                   <a href={instagramUrl} target="_blank" rel="noopener noreferrer">

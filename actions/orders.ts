@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { checkoutSchema, cartLineSchema, type CheckoutInput, type CartLineInput } from '@/lib/validations/orders'
+import { notifyUser } from '@/actions/notifications'
+import { ORDER_STATUS_LABELS } from '@/lib/constants'
 import type { OrderStatus } from '@/types'
 
 // ─── CLIENTE: CHECKOUT ──────────────────────────────────────────
@@ -129,6 +131,11 @@ export async function createOrderAction(
     await supabase.from('coupons').update({ used_count: (current?.used_count ?? 0) + 1 }).eq('id', couponId)
   }
 
+  const { data: company } = await supabase.from('companies').select('owner_id, name').eq('id', companyId).single()
+  if (company) {
+    await notifyUser(company.owner_id, 'order_received', `Nuevo pedido en ${company.name}`, `${orderItemsPayload.length} producto(s) · ${total.toLocaleString('es-ES')}€`, { order_id: order.id })
+  }
+
   revalidatePath('/dashboard/pedidos')
   return { ok: true, orderId: order.id }
 }
@@ -175,6 +182,18 @@ export async function updateOrderStatusAction(formData: FormData) {
   const orderId = formData.get('id') as string
   const status = formData.get('status') as OrderStatus
   const supabase = await createClient()
-  await supabase.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', orderId)
+
+  const { data: order } = await supabase
+    .from('orders')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', orderId)
+    .select('customer_id, company:companies(name)')
+    .single()
+
+  if (order) {
+    const company = order.company as unknown as { name: string } | null
+    await notifyUser(order.customer_id, 'order_status_changed', `Tu pedido en ${company?.name ?? 'la tienda'} está ${ORDER_STATUS_LABELS[status].toLowerCase()}`, undefined, { order_id: orderId })
+  }
+
   revalidatePath('/dashboard/tienda/pedidos')
 }

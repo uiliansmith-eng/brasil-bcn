@@ -3,8 +3,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getMyContent } from '@/actions/profile'
 import { getMyCompany } from '@/actions/stores'
+import { getUnreadNotificationCount } from '@/actions/notifications'
 import type { Metadata } from 'next'
-import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight, CalendarClock } from 'lucide-react'
+import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight, CalendarClock, Heart, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DashboardItemActions } from '@/components/dashboard/DashboardItemActions'
 
@@ -49,10 +50,11 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [profile, content, company] = await Promise.all([
+  const [profile, content, company, unreadCount] = await Promise.all([
     supabase.from('profiles').select('full_name, role').eq('id', user.id).single().then(r => r.data),
     getMyContent(),
     getMyCompany(),
+    getUnreadNotificationCount(),
   ])
 
   if (!profile || !content) redirect('/auth/login')
@@ -146,33 +148,52 @@ export default async function DashboardPage() {
         </Link>
       )}
 
-      <Link
-        href="/dashboard/pedidos"
-        className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
-      >
-        <div className="w-11 h-11 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
-          <ShoppingBag className="w-5 h-5 text-[#002776]" />
-        </div>
-        <div className="flex-1">
-          <p className="font-bold text-gray-900 text-sm">Mis pedidos</p>
-          <p className="text-gray-500 text-xs mt-0.5">Pedidos que hiciste en tiendas de Brasil BCN</p>
-        </div>
-        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
-      </Link>
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <Link
+          href="/dashboard/pedidos"
+          className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+            <ShoppingBag className="w-4.5 h-4.5 text-[#002776]" />
+          </div>
+          <p className="font-bold text-gray-900 text-sm flex-1">Mis pedidos</p>
+        </Link>
 
-      <Link
-        href="/dashboard/reservas"
-        className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
-      >
-        <div className="w-11 h-11 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
-          <CalendarClock className="w-5 h-5 text-[#002776]" />
-        </div>
-        <div className="flex-1">
-          <p className="font-bold text-gray-900 text-sm">Mis reservas</p>
-          <p className="text-gray-500 text-xs mt-0.5">Reservas de servicios en tiendas de Brasil BCN</p>
-        </div>
-        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
-      </Link>
+        <Link
+          href="/dashboard/reservas"
+          className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+            <CalendarClock className="w-4.5 h-4.5 text-[#002776]" />
+          </div>
+          <p className="font-bold text-gray-900 text-sm flex-1">Mis reservas</p>
+        </Link>
+
+        <Link
+          href="/dashboard/favoritos"
+          className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+            <Heart className="w-4.5 h-4.5 text-[#002776]" />
+          </div>
+          <p className="font-bold text-gray-900 text-sm flex-1">Mis favoritos</p>
+        </Link>
+
+        <Link
+          href="/dashboard/notificaciones"
+          className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0 relative">
+            <Bell className="w-4.5 h-4.5 text-[#002776]" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </div>
+          <p className="font-bold text-gray-900 text-sm flex-1">Notificaciones</p>
+        </Link>
+      </div>
 
       {/* Pending alert */}
       {totalPending > 0 && (
