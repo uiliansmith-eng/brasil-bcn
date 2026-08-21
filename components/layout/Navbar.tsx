@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, ChevronLeft, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings, Map } from 'lucide-react'
+import { Menu, ChevronLeft, Briefcase, Building2, Calendar, BookOpen, Users, LogOut, User, Settings, Map, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -14,6 +14,7 @@ import { useUser } from '@/hooks/useUser'
 import { logoutAction } from '@/actions/auth'
 
 const navIcons = {
+  Quiz: Sparkles,
   Empleos: Briefcase,
   Empresas: Building2,
   Eventos: Calendar,

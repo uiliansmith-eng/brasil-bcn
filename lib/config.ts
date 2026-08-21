@@ -12,6 +12,7 @@ export const siteConfig: SiteConfig = {
 }
 
 export const navItems = [
+  { label: 'Quiz', href: '/quiz' },
   { label: 'Empleos', href: '/empleos' },
   { label: 'Empresas', href: '/empresas' },
   { label: 'Eventos', href: '/eventos' },
