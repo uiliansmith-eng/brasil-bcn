@@ -10,6 +10,7 @@ import { FormField } from '@/components/ui/form-field'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageUpload } from '@/components/ui/ImageUpload'
+import { StoreCategoryPicker } from '@/components/tiendas/StoreCategoryPicker'
 import { createStoreAction } from '@/actions/stores'
 import { createStoreSchema, type CreateStoreInput } from '@/lib/validations/stores'
 import { COMPANY_CATEGORY_LABELS, CITIES_BY_PROVINCE } from '@/lib/constants'
@@ -36,6 +37,8 @@ export function CreateStoreForm() {
 
   const selectedCategory = watch('category')
   const selectedLanguage = watch('language')
+  const selectedStoreCategoryId = watch('store_category_id')
+  const selectedStoreSubcategoryId = watch('store_subcategory_id')
 
   const onSubmit = async (data: CreateStoreInput) => {
     setServerError(null)
@@ -119,6 +122,15 @@ export function CreateStoreForm() {
             {errors.category && <p className="text-sm text-red-500">{errors.category.message}</p>}
             <p className="text-xs text-gray-400">La categoría define si tu tienda muestra &quot;Menú&quot;, &quot;Servicios&quot; o &quot;Catálogo&quot;.</p>
           </div>
+
+          <StoreCategoryPicker
+            categoryId={selectedStoreCategoryId}
+            subcategoryId={selectedStoreSubcategoryId}
+            onChange={(catId, subId) => {
+              setValue('store_category_id', catId)
+              setValue('store_subcategory_id', subId)
+            }}
+          />
         </div>
       </section>
 

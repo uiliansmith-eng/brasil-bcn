@@ -3,7 +3,21 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { activateStoreSchema, createStoreSchema, storeItemSchema, couponSchema, type ActivateStoreInput, type CreateStoreInput, type StoreItemInput, type CouponInput } from '@/lib/validations/stores'
-import type { CompanyCategory } from '@/types'
+import type { CompanyCategory, StoreModuleKey, StoreEmployeeRole } from '@/types'
+import { STORE_MODULE_DEFAULTS } from '@/lib/constants'
+
+// ─── CATEGORÍAS DEL MOTOR DE TIENDAS ───────────────────────────
+
+export async function getStoreCategories() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('store_categories')
+    .select('*, subcategories:store_subcategories(*)')
+    .order('display_order', { ascending: true })
+    .order('display_order', { ascending: true, foreignTable: 'store_subcategories' })
+
+  return data ?? []
+}
 
 // ─── PUBLIC: DIRECTORY & DETAIL ───────────────────────────────
 
@@ -96,8 +110,10 @@ export async function createStoreAction(data: CreateStoreInput): Promise<{ error
       business_hours: parsed.data.business_hours ? { text: parsed.data.business_hours } : null,
       language: parsed.data.language,
       extra_info: parsed.data.extra_info || null,
+      store_category_id: parsed.data.store_category_id || null,
+      store_subcategory_id: parsed.data.store_subcategory_id || null,
     })
-    .select('slug')
+    .select('id, slug')
     .single()
 
   if (error) {
@@ -107,9 +123,20 @@ export async function createStoreAction(data: CreateStoreInput): Promise<{ error
     return { error: `Error al crear la tienda: ${error.message}` }
   }
 
+  await seedDefaultStoreModules(supabase, company.id)
+
   revalidatePath('/tiendas')
   revalidatePath('/dashboard')
   return { ok: true, slug: company.slug }
+}
+
+// Crea las filas de store_modules con los valores por defecto para
+// una tienda nueva. Todos los módulos quedan construidos en la base
+// de datos desde el primer momento; solo cambia si is_active o no.
+async function seedDefaultStoreModules(supabase: Awaited<ReturnType<typeof createClient>>, companyId: string) {
+  const rows = (Object.entries(STORE_MODULE_DEFAULTS) as [StoreModuleKey, boolean][])
+    .map(([module_key, is_active]) => ({ company_id: companyId, module_key, is_active }))
+  await supabase.from('store_modules').insert(rows)
 }
 
 export async function getMyCompany() {
@@ -144,11 +171,19 @@ export async function activateStoreAction(companyId: string, data: ActivateStore
       business_hours: parsed.data.business_hours ? { text: parsed.data.business_hours } : null,
       language: parsed.data.language,
       extra_info: parsed.data.extra_info || null,
+      store_category_id: parsed.data.store_category_id || null,
+      store_subcategory_id: parsed.data.store_subcategory_id || null,
     })
     .eq('id', companyId)
     .eq('owner_id', user.id)
 
   if (error) return { error: 'Error al activar la tienda. Inténtalo de nuevo.' }
+
+  const { count } = await supabase
+    .from('store_modules')
+    .select('id', { count: 'exact', head: true })
+    .eq('company_id', companyId)
+  if (!count) await seedDefaultStoreModules(supabase, companyId)
 
   revalidatePath('/dashboard')
   revalidatePath('/tiendas')
@@ -290,4 +325,77 @@ export async function toggleCouponActiveAction(formData: FormData) {
   const supabase = await createClient()
   await supabase.from('coupons').update({ is_active: !isActive }).eq('id', couponId)
   revalidatePath('/dashboard')
+}
+
+// ─── OWNER: MÓDULOS (feature flags por tienda) ─────────────────
+
+export async function getMyStoreModules(companyId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('store_modules')
+    .select('*')
+    .eq('company_id', companyId)
+
+  return data ?? []
+}
+
+export async function toggleStoreModuleAction(formData: FormData) {
+  const companyId = formData.get('company_id') as string
+  const moduleKey = formData.get('module_key') as StoreModuleKey
+  const isActive = formData.get('is_active') === 'true'
+  const supabase = await createClient()
+  await supabase
+    .from('store_modules')
+    .update({ is_active: !isActive })
+    .eq('company_id', companyId)
+    .eq('module_key', moduleKey)
+  revalidatePath('/dashboard/tienda')
+}
+
+// ─── OWNER: EMPLEADOS (multiusuario por tienda) ────────────────
+
+export async function getMyStoreEmployees(companyId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('store_employees')
+    .select('*, profile:profiles(id, full_name, email, avatar_url)')
+    .eq('company_id', companyId)
+    .order('created_at', { ascending: false })
+
+  return data ?? []
+}
+
+export async function addStoreEmployeeAction(companyId: string, email: string, role: StoreEmployeeRole): Promise<{ error: string } | { ok: true }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Debes iniciar sesión' }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email.trim().toLowerCase())
+    .maybeSingle()
+
+  if (!profile) return { error: 'No existe ningún usuario registrado con ese email en Brasil BCN.' }
+
+  const { error } = await supabase.from('store_employees').insert({
+    company_id: companyId,
+    user_id: profile.id,
+    role,
+  })
+
+  if (error) {
+    if (error.code === '23505') return { error: 'Ese usuario ya es empleado de esta tienda.' }
+    return { error: 'Error al añadir el empleado. Inténtalo de nuevo.' }
+  }
+
+  revalidatePath('/dashboard/tienda')
+  return { ok: true }
+}
+
+export async function removeStoreEmployeeAction(formData: FormData) {
+  const employeeId = formData.get('id') as string
+  const supabase = await createClient()
+  await supabase.from('store_employees').delete().eq('id', employeeId)
+  revalidatePath('/dashboard/tienda')
 }

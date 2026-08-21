@@ -1,12 +1,15 @@
 // Auto-generado desde schema.sql — actualizar con: supabase gen types typescript
 
-export type UserRole = 'user' | 'company' | 'admin'
+export type UserRole = 'user' | 'company' | 'admin' | 'super_admin' | 'employee'
 export type JobType = 'full_time' | 'part_time' | 'freelance' | 'internship' | 'temporary'
 export type JobCategory = 'hosteleria' | 'construccion' | 'limpieza' | 'belleza' | 'transporte' | 'comercio' | 'tecnologia' | 'educacion' | 'salud' | 'administracion' | 'otro'
 export type CompanyCategory = 'restaurantes' | 'abogados' | 'peluquerias' | 'construccion' | 'contables' | 'tiendas' | 'transporte' | 'educacion' | 'salud' | 'tecnologia' | 'bar_cafeteria' | 'barberia' | 'servicios_profesionales' | 'otro'
 export type StoreItemType = 'product' | 'service'
 export type StorePlan = 'free' | 'business' | 'premium'
 export type CouponDiscountType = 'percentage' | 'fixed'
+export type CompanyStatus = 'draft' | 'published' | 'paused' | 'suspended'
+export type StoreModuleKey = 'products' | 'services' | 'bookings' | 'payments' | 'coupons' | 'qr' | 'gallery' | 'reviews' | 'promotions' | 'delivery' | 'pickup'
+export type StoreEmployeeRole = 'employee' | 'manager'
 export type EventCategory = 'fiesta' | 'cultura' | 'deporte' | 'networking' | 'gastronomia' | 'arte' | 'musica' | 'otro'
 export type GuideCategory = 'nie' | 'empadronamiento' | 'autonomos' | 'seguridad_social' | 'bancos' | 'vivienda' | 'educacion' | 'sanidad' | 'ciudadania' | 'otro'
 export type AdPosition = 'home_hero' | 'sidebar' | 'footer' | 'jobs_top' | 'companies_top'
@@ -55,8 +58,44 @@ export interface Company {
   extra_info: string | null
   is_store: boolean
   store_plan: StorePlan
+  store_category_id: string | null
+  store_subcategory_id: string | null
+  status: CompanyStatus
   created_at: string
   updated_at: string
+}
+
+export interface StoreCategory {
+  id: string
+  key: string
+  label: string
+  icon: string | null
+  legacy_company_category: CompanyCategory
+  display_order: number
+}
+
+export interface StoreSubcategory {
+  id: string
+  category_id: string
+  key: string
+  label: string
+  display_order: number
+}
+
+export interface StoreModule {
+  id: string
+  company_id: string
+  module_key: StoreModuleKey
+  is_active: boolean
+  created_at: string
+}
+
+export interface StoreEmployee {
+  id: string
+  company_id: string
+  user_id: string
+  role: StoreEmployeeRole
+  created_at: string
 }
 
 export interface StoreItem {
@@ -309,6 +348,10 @@ export interface Database {
       listings: { Row: Listing; Insert: Omit<Listing, 'id' | 'created_at' | 'updated_at' | 'views'>; Update: Partial<Omit<Listing, 'id' | 'created_at'>> }
       store_items: { Row: StoreItem; Insert: Omit<StoreItem, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<StoreItem, 'id' | 'created_at'>> }
       coupons: { Row: Coupon; Insert: Omit<Coupon, 'id' | 'created_at' | 'used_count'>; Update: Partial<Omit<Coupon, 'id' | 'created_at'>> }
+      store_categories: { Row: StoreCategory; Insert: Omit<StoreCategory, 'id'>; Update: Partial<Omit<StoreCategory, 'id'>> }
+      store_subcategories: { Row: StoreSubcategory; Insert: Omit<StoreSubcategory, 'id'>; Update: Partial<Omit<StoreSubcategory, 'id'>> }
+      store_modules: { Row: StoreModule; Insert: Omit<StoreModule, 'id' | 'created_at'>; Update: Partial<Omit<StoreModule, 'id' | 'created_at'>> }
+      store_employees: { Row: StoreEmployee; Insert: Omit<StoreEmployee, 'id' | 'created_at'>; Update: Partial<Omit<StoreEmployee, 'id' | 'created_at'>> }
     }
     Enums: {
       user_role: UserRole

@@ -2,10 +2,11 @@ import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2 } from 'lucide-react'
-import { getMyCompany, getMyStoreItems, getMyCoupons } from '@/actions/stores'
+import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
 import { CouponsManager } from '@/components/tiendas/CouponsManager'
+import { StoreModulesManager } from '@/components/tiendas/StoreModulesManager'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -18,9 +19,10 @@ export default async function MiTiendaPage() {
     redirect('/tiendas/crear')
   }
 
-  const [items, coupons] = await Promise.all([
+  const [items, coupons, modules] = await Promise.all([
     getMyStoreItems(company.id),
     getMyCoupons(company.id),
+    getMyStoreModules(company.id),
   ])
 
   return (
@@ -82,6 +84,7 @@ export default async function MiTiendaPage() {
 
       <div className="space-y-6">
         <StoreInfoEditor company={company} />
+        <StoreModulesManager companyId={company.id} modules={modules} />
         <StoreItemsManager companyId={company.id} items={items} />
         <CouponsManager companyId={company.id} coupons={coupons} />
       </div>

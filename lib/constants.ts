@@ -1,4 +1,4 @@
-import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition, StoreItemType } from '@/types'
+import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition, StoreItemType, StoreModuleKey, CompanyStatus } from '@/types'
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
   full_time: 'Jornada completa',
@@ -52,6 +52,44 @@ export const STORE_ITEM_TYPE_LABELS: Record<StoreItemType, string> = {
 export const STORE_SERVICE_FIRST_CATEGORIES: CompanyCategory[] = [
   'peluquerias', 'barberia', 'servicios_profesionales',
 ]
+
+export const STORE_MODULE_LABELS: Record<StoreModuleKey, string> = {
+  products: 'Productos',
+  services: 'Servicios',
+  bookings: 'Reservas',
+  payments: 'Pagos online',
+  coupons: 'Cupones',
+  qr: 'Cupones QR',
+  gallery: 'Galería',
+  reviews: 'Reseñas',
+  promotions: 'Promociones',
+  delivery: 'Entrega a domicilio',
+  pickup: 'Recogida en tienda',
+}
+
+// Módulos activados por defecto al crear una tienda; el resto queda
+// construido en la base de datos pero desactivado hasta que el
+// propietario (o un admin) lo active desde el panel.
+export const STORE_MODULE_DEFAULTS: Record<StoreModuleKey, boolean> = {
+  products: true,
+  services: true,
+  bookings: false,
+  payments: false,
+  coupons: true,
+  qr: false,
+  gallery: true,
+  reviews: true,
+  promotions: false,
+  delivery: false,
+  pickup: false,
+}
+
+export const COMPANY_STATUS_LABELS: Record<CompanyStatus, string> = {
+  draft: 'Borrador',
+  published: 'Publicada',
+  paused: 'Pausada',
+  suspended: 'Suspendida',
+}
 
 export const STORE_CATALOG_LABEL: Record<CompanyCategory, string> = {
   restaurantes: 'Menú',

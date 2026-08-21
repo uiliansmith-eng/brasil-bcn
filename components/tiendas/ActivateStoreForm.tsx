@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { StoreCategoryPicker } from '@/components/tiendas/StoreCategoryPicker'
 import { activateStoreAction } from '@/actions/stores'
 import { activateStoreSchema, type ActivateStoreInput } from '@/lib/validations/stores'
 import { cn } from '@/lib/utils'
@@ -40,6 +41,8 @@ export function ActivateStoreForm({ companyId, companyName, companySlug, mode = 
   })
 
   const selectedLanguage = watch('language')
+  const selectedStoreCategoryId = watch('store_category_id')
+  const selectedStoreSubcategoryId = watch('store_subcategory_id')
 
   const onSubmit = async (data: ActivateStoreInput) => {
     setServerError(null)
@@ -70,6 +73,14 @@ export function ActivateStoreForm({ companyId, companyName, companySlug, mode = 
       )}
 
       <section className="bg-white rounded-2xl border border-gray-100 p-8 space-y-5">
+        <StoreCategoryPicker
+          categoryId={selectedStoreCategoryId}
+          subcategoryId={selectedStoreSubcategoryId}
+          onChange={(catId, subId) => {
+            setValue('store_category_id', catId)
+            setValue('store_subcategory_id', subId)
+          }}
+        />
         <FormField
           label="Instagram"
           placeholder="@tunegocio"

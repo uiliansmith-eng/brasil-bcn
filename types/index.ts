@@ -1,7 +1,9 @@
 export type {
   UserRole, JobType, JobCategory, CompanyCategory, EventCategory, GuideCategory, AdPosition,
   ListingCategory, ListingCondition, StoreItemType, StorePlan, CouponDiscountType,
+  CompanyStatus, StoreModuleKey, StoreEmployeeRole,
   Profile, Company, Job, Event, Guide, Advertisement, Listing, StoreItem, Coupon,
+  StoreCategory, StoreSubcategory, StoreModule, StoreEmployee,
   JobWithCompany, CompanyWithOwner, EventWithOrganizer, ListingWithSeller, StoreWithItems,
   QuizStatus, Quiz, QuizResult, QuizQuestion, QuizAnswer, QuizEventType, QuizEvent,
   QuestionWithAnswers, QuizWithContent,
