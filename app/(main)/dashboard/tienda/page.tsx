@@ -8,6 +8,7 @@ import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
 import { CouponsManager } from '@/components/tiendas/CouponsManager'
 import { StoreModulesManager } from '@/components/tiendas/StoreModulesManager'
 import { StoreAvailabilityManager } from '@/components/tiendas/StoreAvailabilityManager'
+import { QrRedeemPanel } from '@/components/tiendas/QrRedeemPanel'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -103,6 +104,9 @@ export default async function MiTiendaPage() {
         <StoreAvailabilityManager companyId={company.id} />
         <StoreItemsManager companyId={company.id} items={items} />
         <CouponsManager companyId={company.id} coupons={coupons} />
+        {modules.some((m) => m.module_key === 'qr' && m.is_active) && (
+          <QrRedeemPanel companyId={company.id} />
+        )}
       </div>
     </div>
   )

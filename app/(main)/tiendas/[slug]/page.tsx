@@ -7,6 +7,7 @@ import { ShareButtons } from '@/components/shared/ShareButtons'
 import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
 import { FloatingCartButton } from '@/components/tiendas/FloatingCartButton'
 import { ReserveButton } from '@/components/tiendas/ReserveButton'
+import { CouponQrButton } from '@/components/tiendas/CouponQrButton'
 import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
@@ -148,9 +149,14 @@ export default async function StoreDetailPage({ params }: PageProps) {
                     <div key={coupon.id} className="rounded-xl border-2 border-dashed border-[#009C3B]/40 bg-[#009C3B]/5 p-4">
                       <p className="text-sm font-medium text-gray-700 mb-1">{coupon.title}</p>
                       <p className="text-lg font-black text-[#009C3B] mb-2">{formatDiscount(coupon)}</p>
-                      <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5">
-                        <span className="text-xs text-gray-400">Código:</span>
-                        <span className="font-mono font-bold text-gray-900 text-sm">{coupon.code}</span>
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5">
+                          <span className="text-xs text-gray-400">Código:</span>
+                          <span className="font-mono font-bold text-gray-900 text-sm">{coupon.code}</span>
+                        </div>
+                        {modules.has('qr') && (
+                          <CouponQrButton couponId={coupon.id} couponTitle={coupon.title} />
+                        )}
                       </div>
                     </div>
                   ))}
