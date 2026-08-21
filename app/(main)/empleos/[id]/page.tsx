@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Clock, Briefcase, Building2, MessageCircle, Mail, Zap } from 'lucide-react'
+import { ArrowLeft, MapPin, Clock, Briefcase, Building2, MessageCircle, Mail, Zap, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getJobById } from '@/actions/jobs'
@@ -161,7 +161,15 @@ export default async function JobDetailPage({ params }: PageProps) {
                     </Button>
                   </a>
                 )}
-                {!whatsappUrl && !job.email && (
+                {!whatsappUrl && !job.email && job.source_url && (
+                  <a href={job.source_url} target="_blank" rel="noopener noreferrer">
+                    <Button className="w-full bg-[#002776] hover:bg-[#001a5c] text-white font-semibold gap-2">
+                      <ExternalLink className="w-4 h-4" />
+                      Aplicar en la oferta original
+                    </Button>
+                  </a>
+                )}
+                {!whatsappUrl && !job.email && !job.source_url && (
                   <p className="text-gray-400 text-sm text-center py-2">
                     Contacto no disponible
                   </p>
