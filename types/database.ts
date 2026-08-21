@@ -10,6 +10,15 @@ export type CouponDiscountType = 'percentage' | 'fixed'
 export type CompanyStatus = 'draft' | 'published' | 'paused' | 'suspended'
 export type StoreModuleKey = 'products' | 'services' | 'bookings' | 'payments' | 'coupons' | 'qr' | 'gallery' | 'reviews' | 'promotions' | 'delivery' | 'pickup'
 export type StoreEmployeeRole = 'employee' | 'manager'
+export type OrderStatus = 'pending' | 'paid' | 'preparing' | 'ready' | 'completed' | 'cancelled' | 'refunded'
+export type OrderPaymentStatus = 'unpaid' | 'paid' | 'refunded' | 'failed'
+export type FulfillmentMethod = 'pickup' | 'delivery'
+export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'refunded'
+export type ReservationStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no_show'
+export type QrCodeStatus = 'issued' | 'used'
+export type PromotionScope = 'store' | 'product' | 'category' | 'home_banner'
+export type SubscriptionStatus = 'active' | 'past_due' | 'canceled' | 'trialing'
+export type BillingPeriod = 'monthly' | 'yearly'
 export type EventCategory = 'fiesta' | 'cultura' | 'deporte' | 'networking' | 'gastronomia' | 'arte' | 'musica' | 'otro'
 export type GuideCategory = 'nie' | 'empadronamiento' | 'autonomos' | 'seguridad_social' | 'bancos' | 'vivienda' | 'educacion' | 'sanidad' | 'ciudadania' | 'otro'
 export type AdPosition = 'home_hero' | 'sidebar' | 'footer' | 'jobs_top' | 'companies_top'
@@ -95,6 +104,180 @@ export interface StoreEmployee {
   company_id: string
   user_id: string
   role: StoreEmployeeRole
+  created_at: string
+}
+
+export interface Order {
+  id: string
+  company_id: string
+  customer_id: string
+  status: OrderStatus
+  payment_status: OrderPaymentStatus
+  fulfillment_method: FulfillmentMethod
+  subtotal: number
+  discount: number
+  total: number
+  coupon_id: string | null
+  customer_name: string | null
+  customer_phone: string | null
+  customer_notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface OrderItem {
+  id: string
+  order_id: string
+  store_item_id: string | null
+  name_snapshot: string
+  price_snapshot: number
+  quantity: number
+  subtotal: number
+}
+
+export interface Payment {
+  id: string
+  company_id: string
+  order_id: string | null
+  reservation_id: string | null
+  provider: string
+  provider_payment_id: string | null
+  amount: number
+  currency: string
+  status: PaymentStatus
+  idempotency_key: string | null
+  created_at: string
+}
+
+export interface Reservation {
+  id: string
+  company_id: string
+  store_item_id: string | null
+  customer_id: string
+  customer_name: string | null
+  customer_phone: string | null
+  date: string
+  start_time: string
+  end_time: string | null
+  status: ReservationStatus
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface StoreAvailability {
+  id: string
+  company_id: string
+  weekday: number
+  open_time: string | null
+  close_time: string | null
+  is_closed: boolean
+}
+
+export interface QrCode {
+  id: string
+  coupon_id: string
+  code: string
+  user_id: string | null
+  status: QrCodeStatus
+  issued_at: string
+  used_at: string | null
+}
+
+export interface CouponRedemption {
+  id: string
+  coupon_id: string
+  user_id: string | null
+  order_id: string | null
+  qr_code_id: string | null
+  redeemed_at: string
+}
+
+export interface Review {
+  id: string
+  company_id: string
+  user_id: string
+  rating: number
+  comment: string | null
+  reply: string | null
+  is_hidden: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Favorite {
+  id: string
+  user_id: string
+  company_id: string | null
+  store_item_id: string | null
+  created_at: string
+}
+
+export interface Notification {
+  id: string
+  user_id: string
+  type: string
+  title: string
+  body: string | null
+  is_read: boolean
+  meta: Record<string, unknown> | null
+  created_at: string
+}
+
+export interface Promotion {
+  id: string
+  scope: PromotionScope
+  company_id: string | null
+  store_item_id: string | null
+  title: string
+  image_url: string | null
+  link_url: string | null
+  starts_at: string | null
+  ends_at: string | null
+  is_active: boolean
+  created_at: string
+}
+
+export interface SubscriptionPlan {
+  id: string
+  key: string
+  name: string
+  price: number
+  currency: string
+  billing_period: BillingPeriod
+  features: Record<string, unknown> | null
+  is_active: boolean
+}
+
+export interface Subscription {
+  id: string
+  company_id: string
+  plan_id: string
+  status: SubscriptionStatus
+  current_period_end: string | null
+  stripe_subscription_id: string | null
+  stripe_customer_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface StoreAnalyticsEvent {
+  id: number
+  company_id: string | null
+  event_type: string
+  session_id: string | null
+  user_id: string | null
+  meta: Record<string, unknown> | null
+  created_at: string
+}
+
+export interface AuditLog {
+  id: number
+  actor_id: string | null
+  action: string
+  entity_type: string
+  entity_id: string | null
+  meta: Record<string, unknown> | null
   created_at: string
 }
 
@@ -352,6 +535,21 @@ export interface Database {
       store_subcategories: { Row: StoreSubcategory; Insert: Omit<StoreSubcategory, 'id'>; Update: Partial<Omit<StoreSubcategory, 'id'>> }
       store_modules: { Row: StoreModule; Insert: Omit<StoreModule, 'id' | 'created_at'>; Update: Partial<Omit<StoreModule, 'id' | 'created_at'>> }
       store_employees: { Row: StoreEmployee; Insert: Omit<StoreEmployee, 'id' | 'created_at'>; Update: Partial<Omit<StoreEmployee, 'id' | 'created_at'>> }
+      orders: { Row: Order; Insert: Omit<Order, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Order, 'id' | 'created_at'>> }
+      order_items: { Row: OrderItem; Insert: Omit<OrderItem, 'id'>; Update: Partial<Omit<OrderItem, 'id'>> }
+      payments: { Row: Payment; Insert: Omit<Payment, 'id' | 'created_at'>; Update: Partial<Omit<Payment, 'id' | 'created_at'>> }
+      reservations: { Row: Reservation; Insert: Omit<Reservation, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Reservation, 'id' | 'created_at'>> }
+      store_availability: { Row: StoreAvailability; Insert: Omit<StoreAvailability, 'id'>; Update: Partial<Omit<StoreAvailability, 'id'>> }
+      qr_codes: { Row: QrCode; Insert: Omit<QrCode, 'id' | 'issued_at'>; Update: Partial<Omit<QrCode, 'id'>> }
+      coupon_redemptions: { Row: CouponRedemption; Insert: Omit<CouponRedemption, 'id' | 'redeemed_at'>; Update: Partial<Omit<CouponRedemption, 'id'>> }
+      reviews: { Row: Review; Insert: Omit<Review, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Review, 'id' | 'created_at'>> }
+      favorites: { Row: Favorite; Insert: Omit<Favorite, 'id' | 'created_at'>; Update: Partial<Omit<Favorite, 'id'>> }
+      notifications: { Row: Notification; Insert: Omit<Notification, 'id' | 'created_at'>; Update: Partial<Omit<Notification, 'id'>> }
+      promotions: { Row: Promotion; Insert: Omit<Promotion, 'id' | 'created_at'>; Update: Partial<Omit<Promotion, 'id'>> }
+      subscription_plans: { Row: SubscriptionPlan; Insert: Omit<SubscriptionPlan, 'id'>; Update: Partial<Omit<SubscriptionPlan, 'id'>> }
+      subscriptions: { Row: Subscription; Insert: Omit<Subscription, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<Subscription, 'id' | 'created_at'>> }
+      store_analytics_events: { Row: StoreAnalyticsEvent; Insert: Omit<StoreAnalyticsEvent, 'id' | 'created_at'>; Update: Partial<Omit<StoreAnalyticsEvent, 'id'>> }
+      audit_logs: { Row: AuditLog; Insert: Omit<AuditLog, 'id' | 'created_at'>; Update: Partial<Omit<AuditLog, 'id'>> }
     }
     Enums: {
       user_role: UserRole
