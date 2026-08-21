@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/home/HeroSection'
+import { FlightSearchSection } from '@/components/home/FlightSearchSection'
 import { QuizBanner } from '@/components/home/QuizBanner'
 import { ElectionBanner } from '@/components/home/ElectionBanner'
 import { LaunchSection } from '@/components/home/LaunchSection'
@@ -20,6 +21,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection settings={settings.hero} brand={settings.brand} />
+      <FlightSearchSection />
       <QuizBanner />
       {sec.election_banner && <ElectionBanner />}
       {sec.regulariza_banner && <RegularizaBanner />}
