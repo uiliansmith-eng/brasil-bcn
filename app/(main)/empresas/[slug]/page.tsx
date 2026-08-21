@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, CheckCircle2, Briefcase, ChevronRight, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getCompanyBySlug } from '@/actions/companies'
 import { COMPANY_CATEGORY_LABELS, JOB_TYPE_LABELS, formatSalary } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
@@ -198,6 +199,11 @@ export default async function CompanyDetailPage({ params }: PageProps) {
                   <p key={info as string} className="text-gray-400 text-xs">{info}</p>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <p className="font-bold text-gray-700 text-sm mb-3">Compartir esta empresa</p>
+              <ShareButtons title={company.name} text={`${company.name} — ${catLabel} en Barcelona`} />
             </div>
 
           </aside>

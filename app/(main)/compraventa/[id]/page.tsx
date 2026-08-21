@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Clock, ArrowLeft, MessageCircle, Tag, Star, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getListingById } from '@/actions/listings'
 import { buildMetadata } from '@/lib/seo'
 import {
@@ -160,6 +161,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   El vendedor no ha indicado un número de contacto.
                 </p>
               )}
+            </div>
+
+            {/* Share */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <p className="font-bold text-gray-900 mb-3">Compartir anuncio</p>
+              <ShareButtons title={listing.title} text={`${listing.title} — ${formatPrice(listing.price, listing.price_negotiable)}`} />
             </div>
 
             {/* Safety tips */}

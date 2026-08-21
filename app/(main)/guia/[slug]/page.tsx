@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Eye, Calendar, ChevronRight, BookOpen } from 'lucide-react'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getGuideBySlug, getGuidesByCategory } from '@/actions/guides'
 import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -236,6 +237,12 @@ export default async function GuideDetailPage({ params }: PageProps) {
 
           {/* Sidebar */}
           <aside className="space-y-5">
+
+            {/* Share */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <p className="font-bold text-gray-700 text-sm mb-3">Compartir esta guía</p>
+              <ShareButtons title={guide.title} text={guide.excerpt ?? guide.title} />
+            </div>
 
             {/* Related */}
             {related.length > 0 && (

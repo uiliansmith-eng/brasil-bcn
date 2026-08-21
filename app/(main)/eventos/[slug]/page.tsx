@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, MapPin, Calendar, Clock, Users, Ticket, Globe, MessageCircle, ExternalLink, CalendarDays } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getEventBySlug } from '@/actions/events'
 import { EVENT_CATEGORY_LABELS } from '@/lib/constants'
 import type { EventCategory } from '@/types'
@@ -181,6 +182,11 @@ export default async function EventDetailPage({ params }: PageProps) {
                 <p className="text-gray-400 text-xs">{event.views ?? 0} visualizaciones</p>
                 <p className="text-gray-400 text-xs capitalize">{event.city}</p>
               </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <p className="font-bold text-gray-700 text-sm mb-3">Compartir este evento</p>
+              <ShareButtons title={event.title} text={`Evento: ${event.title}`} />
             </div>
           </aside>
         </div>

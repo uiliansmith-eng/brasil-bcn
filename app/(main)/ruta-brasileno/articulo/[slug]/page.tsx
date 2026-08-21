@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ChevronRight, Clock, HelpCircle, ArrowLeft, CalendarCheck } from 'lucide-react'
 import { getArticleBySlug } from '@/actions/ruta'
 import { ArticleContent } from './ArticleContent'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -145,6 +146,12 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* Sidebar */}
           <aside className="space-y-4">
+
+            {/* Share */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+              <p className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-3">Compartir artículo</p>
+              <ShareButtons title={article.title} text={article.excerpt ?? article.title} />
+            </div>
 
             {/* Step card */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">

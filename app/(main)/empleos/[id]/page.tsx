@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, MapPin, Clock, Briefcase, Building2, MessageCircle, Mail, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ShareJobButton } from '@/components/empleos/ShareJobButton'
+import { ShareButtons } from '@/components/shared/ShareButtons'
 import { getJobById } from '@/actions/jobs'
 import { formatSalary, JOB_CATEGORY_LABELS, JOB_TYPE_LABELS } from '@/lib/constants'
 import { formatDate } from '@/lib/utils'
@@ -203,7 +203,10 @@ export default async function JobDetailPage({ params }: PageProps) {
             {/* Share */}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <p className="font-bold text-gray-700 text-sm mb-3">Compartir esta oferta</p>
-              <ShareJobButton title={job.title} />
+              <ShareButtons
+                title={job.title}
+                text={`Vaga: ${job.title}${job.company?.name ? ` na ${job.company.name}` : ''}`}
+              />
             </div>
           </aside>
         </div>
