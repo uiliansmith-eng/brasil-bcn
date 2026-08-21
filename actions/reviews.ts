@@ -74,10 +74,15 @@ export async function replyToReviewAction(reviewId: string, data: ReviewReplyInp
   if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const supabase = await createClient()
-  const { error } = await supabase.from('reviews').update({ reply: parsed.data.reply }).eq('id', reviewId)
+  const { data: review, error } = await supabase
+    .from('reviews')
+    .update({ reply: parsed.data.reply })
+    .eq('id', reviewId)
+    .select('company_id')
+    .single()
   if (error) return { error: 'Error al enviar la respuesta. Inténtalo de nuevo.' }
 
-  revalidatePath('/dashboard/tienda/resenas')
+  if (review) revalidatePath(`/dashboard/tienda/${review.company_id}/resenas`)
   return { ok: true }
 }
 
@@ -85,8 +90,13 @@ export async function toggleReviewHiddenAction(formData: FormData) {
   const id = formData.get('id') as string
   const isHidden = formData.get('is_hidden') === 'true'
   const supabase = await createClient()
-  await supabase.from('reviews').update({ is_hidden: !isHidden }).eq('id', id)
-  revalidatePath('/dashboard/tienda/resenas')
+  const { data: review } = await supabase
+    .from('reviews')
+    .update({ is_hidden: !isHidden })
+    .eq('id', id)
+    .select('company_id')
+    .single()
+  if (review) revalidatePath(`/dashboard/tienda/${review.company_id}/resenas`)
 }
 
 export async function getStoreReviewsForOwner(companyId: string) {

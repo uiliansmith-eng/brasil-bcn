@@ -1,19 +1,19 @@
-import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { CreateStoreForm } from '@/components/tiendas/CreateStoreForm'
 import { ActivateStoreForm } from '@/components/tiendas/ActivateStoreForm'
-import { getMyCompany } from '@/actions/stores'
+import { getMyCompanies } from '@/actions/stores'
 
 export const metadata: Metadata = { title: 'Crear mi tienda — Brasil BCN' }
 
 export default async function CrearTiendaPage() {
-  const company = await getMyCompany()
-
-  if (company?.is_store) {
-    redirect('/dashboard/tienda')
-  }
+  const companies = await getMyCompanies()
+  // Empresa registrada en el directorio general (/empresas/registrar)
+  // que todavía no se activó como tienda — se ofrece activarla en
+  // vez de crear una tienda nueva desde cero.
+  const nonStoreCompany = companies.find((c) => !c.is_store)
+  const hasStores = companies.some((c) => c.is_store)
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -25,17 +25,19 @@ export default async function CrearTiendaPage() {
 
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">
-            {company ? 'Activar mi tienda' : 'Crear mi tienda'}
+            {nonStoreCompany ? 'Activar mi tienda' : hasStores ? 'Crear otra tienda' : 'Crear mi tienda'}
           </h1>
           <p className="text-gray-500">
-            {company
+            {nonStoreCompany
               ? 'Ya tienes una empresa registrada — solo faltan unos detalles para convertirla en tienda.'
-              : 'Completa la información de tu negocio para publicarlo dentro de Brasil BCN.'}
+              : hasStores
+                ? 'Puedes tener varias tiendas en Brasil BCN. Completa los datos del nuevo negocio.'
+                : 'Completa la información de tu negocio para publicarlo dentro de Brasil BCN.'}
           </p>
         </div>
 
-        {company ? (
-          <ActivateStoreForm companyId={company.id} companyName={company.name} companySlug={company.slug} />
+        {nonStoreCompany ? (
+          <ActivateStoreForm companyId={nonStoreCompany.id} companyName={nonStoreCompany.name} companySlug={nonStoreCompany.slug} />
         ) : (
           <CreateStoreForm />
         )}

@@ -197,7 +197,7 @@ export async function setStoreAvailabilityAction(companyId: string, days: Availa
 
   if (error) return { error: 'Error al guardar el horario. Inténtalo de nuevo.' }
 
-  revalidatePath('/dashboard/tienda')
+  revalidatePath(`/dashboard/tienda/${companyId}`)
   return { ok: true }
 }
 
@@ -222,13 +222,12 @@ export async function updateReservationStatusAction(formData: FormData) {
     .from('reservations')
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', reservationId)
-    .select('customer_id, company:companies(name)')
+    .select('customer_id, company_id, company:companies(name)')
     .single()
 
   if (reservation) {
     const company = reservation.company as unknown as { name: string } | null
     await notifyUser(reservation.customer_id, 'reservation_status_changed', `Tu reserva en ${company?.name ?? 'la tienda'} está ${RESERVATION_STATUS_LABELS[status].toLowerCase()}`, undefined, { reservation_id: reservationId })
+    revalidatePath(`/dashboard/tienda/${reservation.company_id}/reservas`)
   }
-
-  revalidatePath('/dashboard/tienda/reservas')
 }

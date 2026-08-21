@@ -187,13 +187,12 @@ export async function updateOrderStatusAction(formData: FormData) {
     .from('orders')
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', orderId)
-    .select('customer_id, company:companies(name)')
+    .select('customer_id, company_id, company:companies(name)')
     .single()
 
   if (order) {
     const company = order.company as unknown as { name: string } | null
     await notifyUser(order.customer_id, 'order_status_changed', `Tu pedido en ${company?.name ?? 'la tienda'} está ${ORDER_STATUS_LABELS[status].toLowerCase()}`, undefined, { order_id: orderId })
+    revalidatePath(`/dashboard/tienda/${order.company_id}/pedidos`)
   }
-
-  revalidatePath('/dashboard/tienda/pedidos')
 }

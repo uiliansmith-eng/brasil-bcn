@@ -156,6 +156,41 @@ export async function getMyCompany() {
   return data
 }
 
+// Todas las empresas/tiendas del usuario actual (un comerciante
+// puede tener varias tiendas). Más recientes primero.
+export async function getMyCompanies() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const { data } = await supabase
+    .from('companies')
+    .select('*')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: false })
+
+  return data ?? []
+}
+
+// Una tienda concreta, solo si el usuario actual es su dueño (las
+// páginas de gestión del panel son exclusivas del dueño; los
+// empleados gestionan catálogo/cupones vía RLS pero no tienen
+// todavía un panel propio).
+export async function getCompanyForOwner(companyId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  const { data } = await supabase
+    .from('companies')
+    .select('*')
+    .eq('id', companyId)
+    .eq('owner_id', user.id)
+    .maybeSingle()
+
+  return data
+}
+
 export async function activateStoreAction(companyId: string, data: ActivateStoreInput): Promise<{ error: string } | { ok: true }> {
   const parsed = activateStoreSchema.safeParse(data)
   if (!parsed.success) return { error: parsed.error.issues[0].message }
@@ -430,7 +465,7 @@ export async function toggleStoreModuleAction(formData: FormData) {
     .update({ is_active: !isActive })
     .eq('company_id', companyId)
     .eq('module_key', moduleKey)
-  revalidatePath('/dashboard/tienda')
+  revalidatePath(`/dashboard/tienda/${companyId}`)
 }
 
 // ─── OWNER: EMPLEADOS (multiusuario por tienda) ────────────────
@@ -470,15 +505,20 @@ export async function addStoreEmployeeAction(companyId: string, email: string, r
     return { error: 'Error al añadir el empleado. Inténtalo de nuevo.' }
   }
 
-  revalidatePath('/dashboard/tienda')
+  revalidatePath(`/dashboard/tienda/${companyId}`)
   return { ok: true }
 }
 
 export async function removeStoreEmployeeAction(formData: FormData) {
   const employeeId = formData.get('id') as string
   const supabase = await createClient()
-  await supabase.from('store_employees').delete().eq('id', employeeId)
-  revalidatePath('/dashboard/tienda')
+  const { data: employee } = await supabase
+    .from('store_employees')
+    .delete()
+    .eq('id', employeeId)
+    .select('company_id')
+    .single()
+  if (employee) revalidatePath(`/dashboard/tienda/${employee.company_id}`)
 }
 
 // ─── OWNER: GALERÍA ──────────────────────────────────────────────
@@ -490,7 +530,7 @@ export async function updateStoreGalleryAction(companyId: string, gallery: strin
   const { error } = await supabase.from('companies').update({ gallery }).eq('id', companyId)
   if (error) return { error: 'Error al guardar la galería. Inténtalo de nuevo.' }
 
-  revalidatePath('/dashboard/tienda')
+  revalidatePath(`/dashboard/tienda/${companyId}`)
   revalidatePath('/tiendas')
   return { ok: true }
 }

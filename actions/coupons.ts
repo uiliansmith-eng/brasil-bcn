@@ -100,6 +100,6 @@ export async function redeemQrCodeAction(
   await supabase.from('coupon_redemptions').insert({ coupon_id: coupon.id, qr_code_id: qr.id })
   await supabase.from('coupons').update({ used_count: coupon.used_count + 1 }).eq('id', coupon.id)
 
-  revalidatePath('/dashboard/tienda')
+  revalidatePath(`/dashboard/tienda/${companyId}`)
   return { ok: true, couponTitle: coupon.title }
 }
