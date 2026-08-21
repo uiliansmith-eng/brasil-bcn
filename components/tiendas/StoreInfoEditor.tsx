@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Pencil, AtSign, Clock, Globe2 } from 'lucide-react'
+import { Pencil, AtSign, Clock, Globe2, MapPin } from 'lucide-react'
 import { ActivateStoreForm } from './ActivateStoreForm'
 import type { Company } from '@/types'
 
@@ -31,6 +31,8 @@ export function StoreInfoEditor({ company }: StoreInfoEditorProps) {
             extra_info: company.extra_info ?? '',
             store_category_id: company.store_category_id ?? '',
             store_subcategory_id: company.store_subcategory_id ?? '',
+            latitude: company.latitude ?? undefined,
+            longitude: company.longitude ?? undefined,
           }}
           onSaved={() => setEditing(false)}
         />
@@ -62,6 +64,12 @@ export function StoreInfoEditor({ company }: StoreInfoEditorProps) {
         <div className="flex items-center gap-2.5 text-gray-600">
           <Globe2 className="w-4 h-4 text-gray-400 shrink-0" />
           {LANGUAGE_LABELS[company.language] ?? company.language}
+        </div>
+        <div className="flex items-center gap-2.5 text-gray-600">
+          <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+          {company.latitude !== null && company.longitude !== null
+            ? `${company.latitude}, ${company.longitude}`
+            : <span className="text-gray-400">Sin coordenadas</span>}
         </div>
         {company.extra_info && (
           <p className="text-gray-500 pt-2 border-t border-gray-50 whitespace-pre-wrap">{company.extra_info}</p>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Store } from 'lucide-react'
+import { Loader2, Store, MapPin, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { Label } from '@/components/ui/label'
@@ -121,6 +121,23 @@ export function ActivateStoreForm({ companyId, companyName, companySlug, mode = 
             className="rounded-xl border-gray-200 focus:border-[#009C3B] focus:ring-[#009C3B]/20 resize-none"
             {...register('extra_info')}
           />
+        </div>
+
+        <div className="space-y-2 pt-2 border-t border-gray-50">
+          <Label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5" /> Coordenadas (opcional)
+          </Label>
+          <p className="text-xs text-gray-400">
+            Buscá tu dirección en{' '}
+            <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-[#009C3B] font-medium inline-flex items-center gap-0.5">
+              Google Maps <ExternalLink className="w-3 h-3" />
+            </a>
+            , hacé clic derecho sobre el marcador y copiá las coordenadas.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <FormField label="Latitud" type="number" step="any" placeholder="41.3874" error={errors.latitude?.message} {...register('latitude')} />
+            <FormField label="Longitud" type="number" step="any" placeholder="2.1686" error={errors.longitude?.message} {...register('longitude')} />
+          </div>
         </div>
       </section>
 

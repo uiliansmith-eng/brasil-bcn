@@ -113,6 +113,8 @@ export async function createStoreAction(data: CreateStoreInput): Promise<{ error
       extra_info: parsed.data.extra_info || null,
       store_category_id: parsed.data.store_category_id || null,
       store_subcategory_id: parsed.data.store_subcategory_id || null,
+      latitude: parsed.data.latitude ?? null,
+      longitude: parsed.data.longitude ?? null,
     })
     .select('id, slug')
     .single()
@@ -209,6 +211,8 @@ export async function activateStoreAction(companyId: string, data: ActivateStore
       extra_info: parsed.data.extra_info || null,
       store_category_id: parsed.data.store_category_id || null,
       store_subcategory_id: parsed.data.store_subcategory_id || null,
+      latitude: parsed.data.latitude ?? null,
+      longitude: parsed.data.longitude ?? null,
     })
     .eq('id', companyId)
     .eq('owner_id', user.id)

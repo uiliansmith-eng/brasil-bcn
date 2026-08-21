@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, AtSign, Clock, CheckCircle2, Store, Tag, Ticket, Images } from 'lucide-react'
+import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, AtSign, Clock, CheckCircle2, Store, Tag, Ticket, Images, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/shared/ShareButtons'
 import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
@@ -10,6 +10,7 @@ import { ReserveButton } from '@/components/tiendas/ReserveButton'
 import { CouponQrButton } from '@/components/tiendas/CouponQrButton'
 import { FavoriteButton } from '@/components/tiendas/FavoriteButton'
 import { WhatsAppTrackedLink } from '@/components/tiendas/WhatsAppTrackedLink'
+import { DirectionsTrackedLink } from '@/components/tiendas/DirectionsTrackedLink'
 import { ReviewsSection } from '@/components/tiendas/ReviewsSection'
 import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
 import { isStoreFavorited } from '@/actions/favorites'
@@ -275,6 +276,16 @@ export default async function StoreDetailPage({ params }: PageProps) {
                     </Button>
                   </WhatsAppTrackedLink>
                 )}
+                {store.latitude !== null && store.longitude !== null && (
+                  <DirectionsTrackedLink
+                    companyId={store.id}
+                    href={`https://www.google.com/maps/search/?api=1&query=${store.latitude},${store.longitude}`}
+                  >
+                    <Button variant="outline" className="w-full gap-2 border-gray-200">
+                      <Navigation className="w-4 h-4" /> Cómo llegar
+                    </Button>
+                  </DirectionsTrackedLink>
+                )}
                 {instagramUrl && (
                   <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline" className="w-full gap-2 border-gray-200">
@@ -343,6 +354,9 @@ export default async function StoreDetailPage({ params }: PageProps) {
             telephone: store.phone,
             email: store.email,
             url: store.website,
+            ...(store.latitude !== null && store.longitude !== null ? {
+              geo: { '@type': 'GeoCoordinates', latitude: store.latitude, longitude: store.longitude },
+            } : {}),
           }),
         }}
       />

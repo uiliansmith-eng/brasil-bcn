@@ -8,6 +8,14 @@ export const activateStoreSchema = z.object({
   extra_info: z.string().max(1000).optional().or(z.literal('')),
   store_category_id: z.string().uuid().optional().or(z.literal('')),
   store_subcategory_id: z.string().uuid().optional().or(z.literal('')),
+  latitude: z.preprocess(
+    (v) => (v === '' || v === null || v === undefined ? undefined : v),
+    z.coerce.number().min(-90).max(90).optional()
+  ),
+  longitude: z.preprocess(
+    (v) => (v === '' || v === null || v === undefined ? undefined : v),
+    z.coerce.number().min(-180).max(180).optional()
+  ),
 })
 
 export type ActivateStoreInput = z.infer<typeof activateStoreSchema>
