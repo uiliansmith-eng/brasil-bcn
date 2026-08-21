@@ -24,11 +24,22 @@ export function ShareResult({ quizId, quizSlug, resultId, resultSlug, resultTitl
   const [loadingAction, setLoadingAction] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
+  const [linkCopiedHint, setLinkCopiedHint] = useState(false)
 
   const shareText = `Eu sou ${resultTitle}! 🇧🇷 Faça o quiz e descubra o seu:`
 
   function track(eventType: 'share_clicked' | 'instagram_share_clicked' | 'whatsapp_share_clicked' | 'share_image_downloaded') {
     logQuizEvent({ quizId, sessionId: getQuizSessionId(), eventType, resultId, source: detectSource() })
+  }
+
+  async function copyLinkForSticker() {
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setLinkCopiedHint(true)
+      setTimeout(() => setLinkCopiedHint(false), 6000)
+    } catch {
+      // clipboard not available; the link is still printed on the shared image
+    }
   }
 
   async function handleInstagramShare() {
@@ -40,6 +51,7 @@ export function ShareResult({ quizId, quizSlug, resultId, resultSlug, resultTitl
       const file = new File([blob], 'quiz-brasilbcn.png', { type: 'image/png' })
 
       if (canShareFiles([file])) {
+        await copyLinkForSticker()
         await navigator.share({ files: [file], title: shareText, text: shareText })
       } else if (navigator.share) {
         await navigator.share({ title: shareText, text: shareText, url: shareUrl })
@@ -113,6 +125,12 @@ export function ShareResult({ quizId, quizSlug, resultId, resultSlug, resultTitl
         {loadingAction === 'instagram' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}
         Compartilhar no Instagram
       </button>
+
+      {linkCopiedHint && (
+        <p className="text-xs text-center text-gray-500 -mt-1">
+          Link copiado! No Story, toque no sticker &quot;Link&quot; e cole para deixá-lo clicável.
+        </p>
+      )}
 
       <a
         href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
