@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/shared/ShareButtons'
 import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
 import { FloatingCartButton } from '@/components/tiendas/FloatingCartButton'
-import { getStoreBySlug } from '@/actions/stores'
+import { ReserveButton } from '@/components/tiendas/ReserveButton'
+import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
@@ -63,6 +64,7 @@ export default async function StoreDetailPage({ params }: PageProps) {
     .filter((i) => i.is_active)
     .sort((a, b) => a.display_order - b.display_order)
   const coupons = (store.coupons ?? []) as Coupon[]
+  const modules = await getActiveStoreModuleKeys(store.id)
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -199,6 +201,14 @@ export default async function StoreDetailPage({ params }: PageProps) {
                               name={item.name}
                               price={item.price}
                               imageUrl={item.image_url}
+                            />
+                          )}
+                          {item.item_type === 'service' && modules.has('bookings') && (
+                            <ReserveButton
+                              companyId={store.id}
+                              storeSlug={store.slug}
+                              storeItemId={item.id}
+                              itemName={item.name}
                             />
                           )}
                         </div>

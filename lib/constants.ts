@@ -114,6 +114,9 @@ export const RESERVATION_STATUS_LABELS: Record<ReservationStatus, string> = {
   no_show: 'No se presentó',
 }
 
+// Índice = Date.getDay(): 0 domingo … 6 sábado.
+export const WEEKDAY_LABELS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+
 export const STORE_CATALOG_LABEL: Record<CompanyCategory, string> = {
   restaurantes: 'Menú',
   bar_cafeteria: 'Menú',

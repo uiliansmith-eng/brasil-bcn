@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Eye, Clock, CheckCircle2, ShoppingBag, CalendarClock } from 'lucide-react'
 import { getMyCompany, getMyStoreItems, getMyCoupons, getMyStoreModules } from '@/actions/stores'
 import { StoreInfoEditor } from '@/components/tiendas/StoreInfoEditor'
 import { StoreItemsManager } from '@/components/tiendas/StoreItemsManager'
 import { CouponsManager } from '@/components/tiendas/CouponsManager'
 import { StoreModulesManager } from '@/components/tiendas/StoreModulesManager'
+import { StoreAvailabilityManager } from '@/components/tiendas/StoreAvailabilityManager'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -43,6 +44,12 @@ export default async function MiTiendaPage() {
             className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
           >
             <ShoppingBag className="w-3.5 h-3.5" /> Pedidos
+          </Link>
+          <Link
+            href="/dashboard/tienda/reservas"
+            className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
+          >
+            <CalendarClock className="w-3.5 h-3.5" /> Reservas
           </Link>
           {company.is_approved && (
             <Link
@@ -93,6 +100,7 @@ export default async function MiTiendaPage() {
       <div className="space-y-6">
         <StoreInfoEditor company={company} />
         <StoreModulesManager companyId={company.id} modules={modules} />
+        <StoreAvailabilityManager companyId={company.id} />
         <StoreItemsManager companyId={company.id} items={items} />
         <CouponsManager companyId={company.id} coupons={coupons} />
       </div>

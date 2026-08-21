@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getMyContent } from '@/actions/profile'
 import { getMyCompany } from '@/actions/stores'
 import type { Metadata } from 'next'
-import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight } from 'lucide-react'
+import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight, CalendarClock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DashboardItemActions } from '@/components/dashboard/DashboardItemActions'
 
@@ -156,6 +156,20 @@ export default async function DashboardPage() {
         <div className="flex-1">
           <p className="font-bold text-gray-900 text-sm">Mis pedidos</p>
           <p className="text-gray-500 text-xs mt-0.5">Pedidos que hiciste en tiendas de Brasil BCN</p>
+        </div>
+        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
+      </Link>
+
+      <Link
+        href="/dashboard/reservas"
+        className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+      >
+        <div className="w-11 h-11 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+          <CalendarClock className="w-5 h-5 text-[#002776]" />
+        </div>
+        <div className="flex-1">
+          <p className="font-bold text-gray-900 text-sm">Mis reservas</p>
+          <p className="text-gray-500 text-xs mt-0.5">Reservas de servicios en tiendas de Brasil BCN</p>
         </div>
         <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
       </Link>
