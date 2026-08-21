@@ -46,7 +46,7 @@ export function ImageUpload({ bucket, value, onChange, label, hint, aspectRatio 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) { setError('Máx. 5 MB'); return }
+    if (file.size > 10 * 1024 * 1024) { setError('Máx. 10 MB'); return }
     upload(file)
   }
 
@@ -96,7 +96,7 @@ export function ImageUpload({ bucket, value, onChange, label, hint, aspectRatio 
             </div>
             <div className="text-center">
               <p className="text-xs font-medium text-gray-600">Subir imagen</p>
-              <p className="text-xs text-gray-400">JPG, PNG, WEBP · máx. 5MB</p>
+              <p className="text-xs text-gray-400">JPG, PNG, WEBP · máx. 10MB</p>
             </div>
           </div>
         )}
@@ -137,7 +137,7 @@ export function MultiImageUpload({ bucket, value, onChange, max = 5, label }: Mu
 
       const urls: string[] = []
       for (const file of Array.from(files)) {
-        if (file.size > 5 * 1024 * 1024) continue
+        if (file.size > 10 * 1024 * 1024) continue
         const ext = file.name.split('.').pop()
         const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
         const { error: uploadError } = await supabase.storage.from(bucket).upload(path, file, { upsert: true })
@@ -187,7 +187,7 @@ export function MultiImageUpload({ bucket, value, onChange, max = 5, label }: Mu
       </div>
 
       {error && <p className="text-xs text-red-500">{error}</p>}
-      <p className="text-xs text-gray-400">{value.length}/{max} imágenes · JPG, PNG, WEBP · máx. 5MB c/u</p>
+      <p className="text-xs text-gray-400">{value.length}/{max} imágenes · JPG, PNG, WEBP · máx. 10MB c/u</p>
 
       <input
         ref={inputRef}
