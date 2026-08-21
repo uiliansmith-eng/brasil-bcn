@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { Loader2, CreditCard, Check } from 'lucide-react'
-import { subscribeToPlanAction } from '@/actions/subscriptions'
+import { subscribeToPlanAction, createCheckoutSessionAction } from '@/actions/subscriptions'
 import { cn } from '@/lib/utils'
 import type { SubscriptionPlan, StorePlan } from '@/types'
 
@@ -15,12 +15,25 @@ interface SubscriptionPanelProps {
 export function SubscriptionPanel({ companyId, plans, currentPlanKey }: SubscriptionPanelProps) {
   const [isPending, startTransition] = useTransition()
   const [selecting, setSelecting] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSelect = (planKey: StorePlan) => {
+    setError(null)
     setSelecting(planKey)
     startTransition(async () => {
-      await subscribeToPlanAction(companyId, planKey)
-      setSelecting(null)
+      if (planKey === 'free') {
+        await subscribeToPlanAction(companyId, planKey)
+        setSelecting(null)
+        return
+      }
+
+      const result = await createCheckoutSessionAction(companyId, planKey)
+      if ('error' in result) {
+        setError(result.error)
+        setSelecting(null)
+        return
+      }
+      window.location.href = result.url
     })
   }
 
@@ -32,6 +45,12 @@ export function SubscriptionPanel({ companyId, plans, currentPlanKey }: Subscrip
       <p className="text-gray-400 text-sm mb-5">
         Brasil BCN solo cobra la suscripción de tu tienda — nunca una comisión sobre tus ventas.
       </p>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
 
       <div className="grid sm:grid-cols-3 gap-3">
         {plans.map((plan) => {
@@ -66,6 +85,8 @@ export function SubscriptionPanel({ companyId, plans, currentPlanKey }: Subscrip
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 ) : isCurrent ? (
                   <><Check className="w-3.5 h-3.5" /> Plan actual</>
+                ) : plan.price > 0 ? (
+                  'Ir a pagar'
                 ) : (
                   'Seleccionar'
                 )}
@@ -77,7 +98,7 @@ export function SubscriptionPanel({ companyId, plans, currentPlanKey }: Subscrip
 
       {currentPlanKey !== 'free' && (
         <p className="text-xs text-gray-400 mt-4">
-          El cobro real de este plan se activará en cuanto Brasil BCN conecte el sistema de pagos. Mientras tanto, tu selección queda registrada.
+          Gestionado por Stripe. Los planes de pago se cobran de forma recurrente hasta que canceles.
         </p>
       )}
     </div>

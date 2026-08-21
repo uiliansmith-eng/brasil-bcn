@@ -248,6 +248,8 @@ export interface SubscriptionPlan {
   billing_period: BillingPeriod
   features: Record<string, unknown> | null
   is_active: boolean
+  stripe_product_id: string | null
+  stripe_price_id: string | null
 }
 
 export interface Subscription {
