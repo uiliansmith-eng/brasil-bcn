@@ -7,6 +7,7 @@ import { getGuideBySlug, getGuidesByCategory } from '@/actions/guides'
 import { GUIDE_CATEGORY_LABELS, GUIDE_CATEGORY_COLORS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { GuideCategory } from '@/types'
+import { buildMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -15,12 +16,18 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const guide = await getGuideBySlug(slug)
-  if (!guide) return { title: 'Guía no encontrada' }
+  if (!guide) return { title: 'Guía no encontrada — BrasilBCN' }
 
-  return {
+  const category = GUIDE_CATEGORY_LABELS[guide.category as GuideCategory] ?? guide.category
+
+  return buildMetadata({
     title: `${guide.title} — BrasilBCN`,
     description: guide.excerpt ?? guide.content.slice(0, 160),
-  }
+    path: `/guia/${slug}`,
+    image: guide.cover_url ?? undefined,
+    type: 'article',
+    keywords: [guide.title, category, 'guía brasileños Barcelona'],
+  })
 }
 
 function formatDate(dateStr: string | null): string {
