@@ -480,3 +480,17 @@ export async function removeStoreEmployeeAction(formData: FormData) {
   await supabase.from('store_employees').delete().eq('id', employeeId)
   revalidatePath('/dashboard/tienda')
 }
+
+// ─── OWNER: GALERÍA ──────────────────────────────────────────────
+
+export async function updateStoreGalleryAction(companyId: string, gallery: string[]): Promise<{ error: string } | { ok: true }> {
+  if (gallery.length > 20) return { error: 'Máximo 20 fotos en la galería.' }
+
+  const supabase = await createClient()
+  const { error } = await supabase.from('companies').update({ gallery }).eq('id', companyId)
+  if (error) return { error: 'Error al guardar la galería. Inténtalo de nuevo.' }
+
+  revalidatePath('/dashboard/tienda')
+  revalidatePath('/tiendas')
+  return { ok: true }
+}

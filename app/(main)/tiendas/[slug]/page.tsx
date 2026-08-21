@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, AtSign, Clock, CheckCircle2, Store, Tag, Ticket } from 'lucide-react'
+import { ArrowLeft, MapPin, Globe, Phone, MessageCircle, Mail, AtSign, Clock, CheckCircle2, Store, Tag, Ticket, Images } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ShareButtons } from '@/components/shared/ShareButtons'
 import { AddToCartButton } from '@/components/tiendas/AddToCartButton'
@@ -13,6 +13,8 @@ import { WhatsAppTrackedLink } from '@/components/tiendas/WhatsAppTrackedLink'
 import { ReviewsSection } from '@/components/tiendas/ReviewsSection'
 import { getStoreBySlug, getActiveStoreModuleKeys } from '@/actions/stores'
 import { isStoreFavorited } from '@/actions/favorites'
+import { getStoreAvailability } from '@/actions/reservations'
+import { isStoreOpenNow } from '@/lib/store-hours'
 import { COMPANY_CATEGORY_LABELS, STORE_CATALOG_LABEL, STORE_ITEM_TYPE_LABELS } from '@/lib/constants'
 import { buildMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
@@ -71,6 +73,8 @@ export default async function StoreDetailPage({ params }: PageProps) {
   const coupons = (store.coupons ?? []) as Coupon[]
   const modules = await getActiveStoreModuleKeys(store.id)
   const favorited = await isStoreFavorited(store.id)
+  const availability = await getStoreAvailability(store.id)
+  const openNow = isStoreOpenNow(availability)
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
@@ -131,6 +135,11 @@ export default async function StoreDetailPage({ params }: PageProps) {
                       <Clock className="w-3.5 h-3.5" />
                       {businessHours}
                     </div>
+                  )}
+                  {openNow !== null && (
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${openNow ? 'bg-[#009C3B]/10 text-[#009C3B]' : 'bg-red-50 text-red-500'}`}>
+                      {openNow ? 'Abierto ahora' : 'Cerrado ahora'}
+                    </span>
                   )}
                 </div>
 
@@ -227,6 +236,23 @@ export default async function StoreDetailPage({ params }: PageProps) {
                           )}
                         </div>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Galería */}
+            {modules.has('gallery') && store.gallery.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-8">
+                <h2 className="text-lg font-black text-gray-900 mb-5 flex items-center gap-2">
+                  <Images className="w-5 h-5 text-[#009C3B]" /> Galería
+                </h2>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {(store.gallery as string[]).map((url) => (
+                    <div key={url} className="aspect-square rounded-xl overflow-hidden border border-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={store.name} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

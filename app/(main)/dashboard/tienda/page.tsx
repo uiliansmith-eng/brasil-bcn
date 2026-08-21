@@ -15,6 +15,7 @@ import { QrRedeemPanel } from '@/components/tiendas/QrRedeemPanel'
 import { StoreAnalyticsPanel } from '@/components/tiendas/StoreAnalyticsPanel'
 import { PromotionsManager } from '@/components/tiendas/PromotionsManager'
 import { SubscriptionPanel } from '@/components/tiendas/SubscriptionPanel'
+import { GalleryManager } from '@/components/tiendas/GalleryManager'
 
 export const metadata: Metadata = { title: 'Mi tienda — Brasil BCN' }
 
@@ -118,6 +119,11 @@ export default async function MiTiendaPage() {
         <StoreInfoEditor company={company} />
         <StoreModulesManager companyId={company.id} modules={modules} />
         <StoreAvailabilityManager companyId={company.id} />
+        <GalleryManager
+          companyId={company.id}
+          initialGallery={company.gallery ?? []}
+          moduleActive={modules.some((m) => m.module_key === 'gallery' && m.is_active)}
+        />
         <StoreItemsManager companyId={company.id} items={items} />
         <CouponsManager companyId={company.id} coupons={coupons} />
         {modules.some((m) => m.module_key === 'qr' && m.is_active) && (
