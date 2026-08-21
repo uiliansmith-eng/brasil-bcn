@@ -2,12 +2,18 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { sendEmail, wrapEmail, absoluteUrl } from '@/lib/email'
 
 // Server-only: usado desde otras actions (orders, reservations,
 // reviews) para avisar a un usuario de un evento relevante. Se
 // inserta con la sesión del usuario que dispara la acción (no hay
 // service role), por eso notifications tiene una política de INSERT
 // abierta a cualquier autenticado — ver migración 20240022.
+//
+// Además del registro in-app, dispara un email real reutilizando
+// lib/email.ts (Resend) — sendEmail() ya no-opea sola si falta
+// RESEND_API_KEY o el destinatario, así que es seguro llamarla
+// siempre sin comprobaciones adicionales aquí.
 export async function notifyUser(
   userId: string,
   type: string,
@@ -17,6 +23,15 @@ export async function notifyUser(
 ) {
   const supabase = await createClient()
   await supabase.from('notifications').insert({ user_id: userId, type, title, body: body ?? null, meta: meta ?? null })
+
+  const { data: profile } = await supabase.from('profiles').select('email').eq('id', userId).maybeSingle()
+  if (profile?.email) {
+    await sendEmail({
+      to: profile.email,
+      subject: title,
+      html: wrapEmail(title, body ?? '', absoluteUrl('/dashboard/notificaciones'), 'Ver en Brasil BCN'),
+    })
+  }
 }
 
 export async function getMyNotifications() {
