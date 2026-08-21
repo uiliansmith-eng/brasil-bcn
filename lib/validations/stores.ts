@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { createCompanySchema } from './companies'
 
 export const activateStoreSchema = z.object({
   instagram: z.string().max(100).optional().or(z.literal('')),
@@ -8,6 +9,12 @@ export const activateStoreSchema = z.object({
 })
 
 export type ActivateStoreInput = z.infer<typeof activateStoreSchema>
+
+// Formulario completo de "Crear mi tienda" cuando el usuario todavía
+// no tiene ninguna empresa registrada: datos base de empresa + tienda.
+export const createStoreSchema = createCompanySchema.merge(activateStoreSchema)
+
+export type CreateStoreInput = z.infer<typeof createStoreSchema>
 
 export const storeItemSchema = z.object({
   item_type: z.enum(['product', 'service']),

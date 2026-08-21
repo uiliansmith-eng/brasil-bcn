@@ -2,8 +2,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getMyContent } from '@/actions/profile'
+import { getMyCompany } from '@/actions/stores'
 import type { Metadata } from 'next'
-import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink } from 'lucide-react'
+import { Briefcase, Calendar, ShoppingBag, Building2, Plus, Clock, CheckCircle2, XCircle, ExternalLink, Store, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DashboardItemActions } from '@/components/dashboard/DashboardItemActions'
 
@@ -48,9 +49,10 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const [profile, content] = await Promise.all([
+  const [profile, content, company] = await Promise.all([
     supabase.from('profiles').select('full_name, role').eq('id', user.id).single().then(r => r.data),
     getMyContent(),
+    getMyCompany(),
   ])
 
   if (!profile || !content) redirect('/auth/login')
@@ -112,6 +114,37 @@ export default async function DashboardPage() {
         </h1>
         <p className="text-gray-500 text-sm mt-1">Panel de control de tu actividad en BrasilBCN</p>
       </div>
+
+      {/* Mi Tienda */}
+      {company?.is_store ? (
+        <Link
+          href="/dashboard/tienda"
+          className="mb-6 flex items-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#009C3B]/30 transition-colors group"
+        >
+          <div className="w-11 h-11 rounded-xl bg-[#009C3B]/10 flex items-center justify-center shrink-0">
+            <Store className="w-5 h-5 text-[#009C3B]" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-gray-900 text-sm">Mi tienda</p>
+            <p className="text-gray-500 text-xs mt-0.5">{company.name} · gestiona productos, servicios y cupones</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#009C3B] transition-colors" />
+        </Link>
+      ) : (
+        <Link
+          href="/tiendas/crear"
+          className="mb-6 flex items-center gap-4 p-5 bg-[#002776]/5 border border-[#002776]/10 rounded-2xl hover:bg-[#002776]/10 transition-colors group"
+        >
+          <div className="w-11 h-11 rounded-xl bg-[#002776]/10 flex items-center justify-center shrink-0">
+            <Store className="w-5 h-5 text-[#002776]" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-gray-900 text-sm">¿Tienes un negocio?</p>
+            <p className="text-gray-500 text-xs mt-0.5">Crea tu tienda en Brasil BCN con catálogo y cupones</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#002776] transition-colors" />
+        </Link>
+      )}
 
       {/* Pending alert */}
       {totalPending > 0 && (

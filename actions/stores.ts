@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { activateStoreSchema, storeItemSchema, couponSchema, type ActivateStoreInput, type StoreItemInput, type CouponInput } from '@/lib/validations/stores'
+import { activateStoreSchema, createStoreSchema, storeItemSchema, couponSchema, type ActivateStoreInput, type CreateStoreInput, type StoreItemInput, type CouponInput } from '@/lib/validations/stores'
 import type { CompanyCategory } from '@/types'
 
 // ─── PUBLIC: DIRECTORY & DETAIL ───────────────────────────────
@@ -65,6 +65,52 @@ export async function getStoreBySlug(slug: string) {
 }
 
 // ─── OWNER: MY STORE ───────────────────────────────────────────
+
+// Crea una empresa nueva ya activada como tienda (para quien todavía
+// no tiene ninguna empresa registrada). No toca createCompanyAction.
+export async function createStoreAction(data: CreateStoreInput): Promise<{ error: string } | { ok: true; slug: string }> {
+  const parsed = createStoreSchema.safeParse(data)
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Debes iniciar sesión' }
+
+  const { data: company, error } = await supabase
+    .from('companies')
+    .insert({
+      name: parsed.data.name,
+      description: parsed.data.description,
+      category: parsed.data.category,
+      logo_url: parsed.data.logo_url || null,
+      website: parsed.data.website || null,
+      email: parsed.data.email || null,
+      phone: parsed.data.phone || null,
+      whatsapp: parsed.data.whatsapp || null,
+      address: parsed.data.address || null,
+      city: parsed.data.city,
+      owner_id: user.id,
+      slug: '',
+      is_store: true,
+      instagram: parsed.data.instagram || null,
+      business_hours: parsed.data.business_hours ? { text: parsed.data.business_hours } : null,
+      language: parsed.data.language,
+      extra_info: parsed.data.extra_info || null,
+    })
+    .select('slug')
+    .single()
+
+  if (error) {
+    if (error.message.includes('duplicate') || error.message.includes('unique')) {
+      return { error: 'Ya tienes un negocio registrado con ese nombre.' }
+    }
+    return { error: `Error al crear la tienda: ${error.message}` }
+  }
+
+  revalidatePath('/tiendas')
+  revalidatePath('/dashboard')
+  return { ok: true, slug: company.slug }
+}
 
 export async function getMyCompany() {
   const supabase = await createClient()
