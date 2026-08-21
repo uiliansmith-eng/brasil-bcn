@@ -1,4 +1,4 @@
-import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition } from '@/types'
+import type { JobCategory, JobType, CompanyCategory, EventCategory, GuideCategory, ListingCategory, ListingCondition, StoreItemType } from '@/types'
 
 export const JOB_TYPE_LABELS: Record<JobType, string> = {
   full_time: 'Jornada completa',
@@ -24,16 +24,50 @@ export const JOB_CATEGORY_LABELS: Record<JobCategory, string> = {
 
 export const COMPANY_CATEGORY_LABELS: Record<CompanyCategory, string> = {
   restaurantes: 'Restaurantes',
+  bar_cafeteria: 'Bar / Cafetería',
   abogados: 'Abogados',
-  peluquerias: 'Peluquerías',
+  peluquerias: 'Peluquería / Estética',
+  barberia: 'Barbería',
   construccion: 'Construcción',
   contables: 'Contables',
-  tiendas: 'Tiendas',
+  tiendas: 'Tienda de productos',
+  servicios_profesionales: 'Servicios profesionales',
   transporte: 'Transporte',
   educacion: 'Educación',
   salud: 'Salud',
   tecnologia: 'Tecnología',
   otro: 'Otro',
+}
+
+// ─── TIENDAS ────────────────────────────────────────────────────
+
+export const STORE_ITEM_TYPE_LABELS: Record<StoreItemType, string> = {
+  product: 'Producto',
+  service: 'Servicio',
+}
+
+// Categorías cuyo catálogo se presenta por defecto como "servicios"
+// (con duración) en vez de "productos". El propietario puede mezclar
+// ambos tipos igualmente — esto solo afecta la etiqueta/CTA por defecto.
+export const STORE_SERVICE_FIRST_CATEGORIES: CompanyCategory[] = [
+  'peluquerias', 'barberia', 'servicios_profesionales',
+]
+
+export const STORE_CATALOG_LABEL: Record<CompanyCategory, string> = {
+  restaurantes: 'Menú',
+  bar_cafeteria: 'Menú',
+  abogados: 'Servicios',
+  peluquerias: 'Servicios',
+  barberia: 'Servicios',
+  construccion: 'Servicios',
+  contables: 'Servicios',
+  tiendas: 'Catálogo',
+  servicios_profesionales: 'Servicios',
+  transporte: 'Servicios',
+  educacion: 'Servicios',
+  salud: 'Servicios',
+  tecnologia: 'Servicios',
+  otro: 'Catálogo',
 }
 
 export const EVENT_CATEGORY_LABELS: Record<EventCategory, string> = {

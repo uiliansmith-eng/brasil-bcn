@@ -3,7 +3,10 @@
 export type UserRole = 'user' | 'company' | 'admin'
 export type JobType = 'full_time' | 'part_time' | 'freelance' | 'internship' | 'temporary'
 export type JobCategory = 'hosteleria' | 'construccion' | 'limpieza' | 'belleza' | 'transporte' | 'comercio' | 'tecnologia' | 'educacion' | 'salud' | 'administracion' | 'otro'
-export type CompanyCategory = 'restaurantes' | 'abogados' | 'peluquerias' | 'construccion' | 'contables' | 'tiendas' | 'transporte' | 'educacion' | 'salud' | 'tecnologia' | 'otro'
+export type CompanyCategory = 'restaurantes' | 'abogados' | 'peluquerias' | 'construccion' | 'contables' | 'tiendas' | 'transporte' | 'educacion' | 'salud' | 'tecnologia' | 'bar_cafeteria' | 'barberia' | 'servicios_profesionales' | 'otro'
+export type StoreItemType = 'product' | 'service'
+export type StorePlan = 'free' | 'business' | 'premium'
+export type CouponDiscountType = 'percentage' | 'fixed'
 export type EventCategory = 'fiesta' | 'cultura' | 'deporte' | 'networking' | 'gastronomia' | 'arte' | 'musica' | 'otro'
 export type GuideCategory = 'nie' | 'empadronamiento' | 'autonomos' | 'seguridad_social' | 'bancos' | 'vivienda' | 'educacion' | 'sanidad' | 'ciudadania' | 'otro'
 export type AdPosition = 'home_hero' | 'sidebar' | 'footer' | 'jobs_top' | 'companies_top'
@@ -46,8 +49,45 @@ export interface Company {
   is_active: boolean
   is_approved: boolean
   views: number
+  instagram: string | null
+  business_hours: Record<string, string> | null
+  language: string
+  extra_info: string | null
+  is_store: boolean
+  store_plan: StorePlan
   created_at: string
   updated_at: string
+}
+
+export interface StoreItem {
+  id: string
+  company_id: string
+  item_type: StoreItemType
+  name: string
+  description: string | null
+  image_url: string | null
+  price: number | null
+  category: string | null
+  duration_min: number | null
+  is_active: boolean
+  display_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface Coupon {
+  id: string
+  company_id: string
+  title: string
+  code: string
+  discount_type: CouponDiscountType
+  discount_value: number
+  starts_at: string | null
+  ends_at: string | null
+  max_uses: number | null
+  used_count: number
+  is_active: boolean
+  created_at: string
 }
 
 export interface Job {
@@ -243,6 +283,11 @@ export interface CompanyWithOwner extends Company {
   owner: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>
 }
 
+export interface StoreWithItems extends Company {
+  items: StoreItem[]
+  coupons: Coupon[]
+}
+
 export interface EventWithOrganizer extends Event {
   organizer: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>
 }
@@ -262,6 +307,8 @@ export interface Database {
       guides: { Row: Guide; Insert: Omit<Guide, 'id' | 'created_at' | 'updated_at' | 'views' | 'published_at'>; Update: Partial<Omit<Guide, 'id' | 'created_at'>> }
       advertisements: { Row: Advertisement; Insert: Omit<Advertisement, 'id' | 'created_at' | 'updated_at' | 'clicks' | 'impressions'>; Update: Partial<Omit<Advertisement, 'id' | 'created_at'>> }
       listings: { Row: Listing; Insert: Omit<Listing, 'id' | 'created_at' | 'updated_at' | 'views'>; Update: Partial<Omit<Listing, 'id' | 'created_at'>> }
+      store_items: { Row: StoreItem; Insert: Omit<StoreItem, 'id' | 'created_at' | 'updated_at'>; Update: Partial<Omit<StoreItem, 'id' | 'created_at'>> }
+      coupons: { Row: Coupon; Insert: Omit<Coupon, 'id' | 'created_at' | 'used_count'>; Update: Partial<Omit<Coupon, 'id' | 'created_at'>> }
     }
     Enums: {
       user_role: UserRole
