@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CalendarDays, ExternalLink } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 import { getPendingEvents, approveEventAction, rejectEventAction } from '@/actions/admin'
 import { EVENT_CATEGORY_LABELS } from '@/lib/constants'
 
@@ -39,25 +39,22 @@ export default async function AdminEventosPage() {
             const organizer = event.organizer as { full_name?: string } | null
             return (
               <div key={event.id} className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-                  <CalendarDays className="w-5 h-5 text-purple-600" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="font-semibold text-gray-900 truncate">{event.title}</p>
-                    <Link href={`/eventos/${event.id}`} target="_blank">
-                      <ExternalLink className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 shrink-0" />
-                    </Link>
+                <Link href={`/admin/eventos/${event.id}`} className="flex items-center gap-4 flex-1 min-w-0 group">
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+                    <CalendarDays className="w-5 h-5 text-purple-600" />
                   </div>
-                  <p className="text-xs text-gray-400">
-                    {EVENT_CATEGORY_LABELS[event.category as keyof typeof EVENT_CATEGORY_LABELS] ?? event.category}
-                    {' · '}{event.city}
-                    {' · '}{formatEventDate(event.date_start)}
-                    {organizer?.full_name && ` · por ${organizer.full_name}`}
-                    {' · '}{timeAgo(event.created_at)}
-                  </p>
-                </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 truncate group-hover:underline">{event.title}</p>
+                    <p className="text-xs text-gray-400">
+                      {EVENT_CATEGORY_LABELS[event.category as keyof typeof EVENT_CATEGORY_LABELS] ?? event.category}
+                      {' · '}{event.city}
+                      {' · '}{formatEventDate(event.date_start)}
+                      {organizer?.full_name && ` · por ${organizer.full_name}`}
+                      {' · '}{timeAgo(event.created_at)}
+                    </p>
+                  </div>
+                </Link>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <form action={approveEventAction}>

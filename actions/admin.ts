@@ -102,6 +102,17 @@ export async function getPendingEvents() {
   return data ?? []
 }
 
+export async function getEventForAdmin(id: string) {
+  const ctx = await requireAdmin()
+  if (!ctx) return null
+  const { data } = await ctx.supabase
+    .from('events')
+    .select('*, organizer:profiles(id, full_name, avatar_url, email)')
+    .eq('id', id)
+    .single()
+  return data ?? null
+}
+
 export async function getAdminGuides() {
   const supabase = await createClient()
   const { data } = await supabase
