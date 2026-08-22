@@ -75,7 +75,7 @@ export function StoreAvailabilityManager({ companyId }: StoreAvailabilityManager
 
       <div className="space-y-2">
         {days.map((day) => (
-          <div key={day.weekday} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+          <div key={day.weekday} className="flex items-center flex-wrap gap-3 py-2 border-b border-gray-50 last:border-0">
             <span className="text-sm font-medium text-gray-700 w-24 shrink-0">{WEEKDAY_LABELS[day.weekday]}</span>
             <div className="flex items-center gap-2 shrink-0">
               <Checkbox
@@ -86,7 +86,7 @@ export function StoreAvailabilityManager({ companyId }: StoreAvailabilityManager
               <label htmlFor={`closed-${day.weekday}`} className="text-xs text-gray-500 cursor-pointer">Abierto</label>
             </div>
             {!day.is_closed && (
-              <div className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-2 flex-1 min-w-full sm:min-w-0">
                 <input
                   type="time"
                   value={day.open_time ?? ''}

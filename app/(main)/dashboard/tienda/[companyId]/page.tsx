@@ -64,7 +64,7 @@ export default async function MiTiendaPage({ params }: PageProps) {
         <ArrowLeft className="w-4 h-4" /> {hasMultipleStores ? 'Mis tiendas' : 'Volver al panel'}
       </Link>
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Mi tienda</h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -72,7 +72,7 @@ export default async function MiTiendaPage({ params }: PageProps) {
             {!isOwner && <span className="ml-2 text-xs font-semibold text-[#002776] bg-[#002776]/10 px-2 py-0.5 rounded-full align-middle">Empleado</span>}
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <Link
             href={`/dashboard/tienda/${company.id}/pedidos`}
             className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
