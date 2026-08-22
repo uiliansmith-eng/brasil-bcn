@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { sendEmail, wrapEmail, absoluteUrl } from '@/lib/email'
+import { sendPushToUser } from '@/lib/push'
 
 // Server-only: usado desde otras actions (orders, reservations,
 // reviews) para avisar a un usuario de un evento relevante. Se
@@ -32,6 +33,8 @@ export async function notifyUser(
       html: wrapEmail(title, body ?? '', absoluteUrl('/dashboard/notificaciones'), 'Ver en Brasil BCN'),
     })
   }
+
+  await sendPushToUser(userId, title, body ?? '', '/dashboard/notificaciones')
 }
 
 export async function getMyNotifications() {

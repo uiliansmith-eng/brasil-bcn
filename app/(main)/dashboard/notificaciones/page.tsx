@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { getMyNotifications } from '@/actions/notifications'
 import { NotificationsList } from '@/components/dashboard/NotificationsList'
+import { PushNotificationToggle } from '@/components/dashboard/PushNotificationToggle'
 
 export const metadata: Metadata = { title: 'Notificaciones — Brasil BCN' }
 
@@ -15,7 +16,10 @@ export default async function NotificacionesPage() {
         <ArrowLeft className="w-4 h-4" /> Volver al panel
       </Link>
 
-      <h1 className="text-2xl font-black text-gray-900 mb-8">Notificaciones</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-black text-gray-900">Notificaciones</h1>
+        <PushNotificationToggle />
+      </div>
 
       <NotificationsList notifications={notifications} />
     </div>
