@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { activateStoreSchema, createStoreSchema, storeItemSchema, storeItemVariantSchema, couponSchema, type ActivateStoreInput, type CreateStoreInput, type StoreItemInput, type StoreItemVariantInput, type CouponInput } from '@/lib/validations/stores'
 import type { CompanyCategory, StoreModuleKey, StoreEmployeeRole } from '@/types'
 import { STORE_MODULE_DEFAULTS } from '@/lib/constants'
+import { logAudit } from '@/lib/audit'
 
 // ─── CATEGORÍAS DEL MOTOR DE TIENDAS ───────────────────────────
 
@@ -511,11 +512,15 @@ export async function toggleStoreModuleAction(formData: FormData) {
   const moduleKey = formData.get('module_key') as StoreModuleKey
   const isActive = formData.get('is_active') === 'true'
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   await supabase
     .from('store_modules')
     .update({ is_active: !isActive })
     .eq('company_id', companyId)
     .eq('module_key', moduleKey)
+  if (user) {
+    await logAudit(supabase, user.id, isActive ? 'store_module_disabled' : 'store_module_enabled', 'store', companyId, { module_key: moduleKey })
+  }
   revalidatePath(`/dashboard/tienda/${companyId}`)
 }
 
@@ -556,6 +561,7 @@ export async function addStoreEmployeeAction(companyId: string, email: string, r
     return { error: 'Error al añadir el empleado. Inténtalo de nuevo.' }
   }
 
+  await logAudit(supabase, user.id, 'store_employee_added', 'store', companyId, { employee_id: profile.id, role })
   revalidatePath(`/dashboard/tienda/${companyId}`)
   return { ok: true }
 }
@@ -563,13 +569,19 @@ export async function addStoreEmployeeAction(companyId: string, email: string, r
 export async function removeStoreEmployeeAction(formData: FormData) {
   const employeeId = formData.get('id') as string
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   const { data: employee } = await supabase
     .from('store_employees')
     .delete()
     .eq('id', employeeId)
-    .select('company_id')
+    .select('company_id, user_id')
     .single()
-  if (employee) revalidatePath(`/dashboard/tienda/${employee.company_id}`)
+  if (employee) {
+    if (user) {
+      await logAudit(supabase, user.id, 'store_employee_removed', 'store', employee.company_id, { employee_id: employee.user_id })
+    }
+    revalidatePath(`/dashboard/tienda/${employee.company_id}`)
+  }
 }
 
 // ─── OWNER: GALERÍA ──────────────────────────────────────────────

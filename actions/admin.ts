@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createGuideSchema, type CreateGuideInput } from '@/lib/validations/guides'
 import { sendEmail, wrapEmail, absoluteUrl } from '@/lib/email'
+import { logAudit } from '@/lib/audit'
 
 // ─── AUTH GUARD ───────────────────────────────────────────────
 async function requireAdmin() {
@@ -144,6 +145,7 @@ export async function approveJobAction(formData: FormData) {
     .eq('id', id)
     .select('title, poster:profiles(email)')
     .single()
+  await logAudit(ctx.supabase, ctx.userId, 'job_approved', 'job', id)
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
 
@@ -174,6 +176,7 @@ export async function rejectJobAction(formData: FormData) {
     .eq('id', id)
     .select('title, poster:profiles(email)')
     .single()
+  await logAudit(ctx.supabase, ctx.userId, 'job_rejected', 'job', id)
   revalidatePath('/admin/empleos')
   revalidatePath('/empleos')
 
@@ -203,12 +206,7 @@ export async function approveCompanyAction(formData: FormData) {
     .eq('id', id)
     .select('name, slug, is_store, owner:profiles(email)')
     .single()
-  await ctx.supabase.from('audit_logs').insert({
-    actor_id: ctx.userId,
-    action: 'company_approved',
-    entity_type: company?.is_store ? 'store' : 'company',
-    entity_id: id,
-  })
+  await logAudit(ctx.supabase, ctx.userId, 'company_approved', company?.is_store ? 'store' : 'company', id)
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
 
@@ -238,12 +236,7 @@ export async function rejectCompanyAction(formData: FormData) {
     .eq('id', id)
     .select('name, is_store, owner:profiles(email)')
     .single()
-  await ctx.supabase.from('audit_logs').insert({
-    actor_id: ctx.userId,
-    action: 'company_rejected',
-    entity_type: company?.is_store ? 'store' : 'company',
-    entity_id: id,
-  })
+  await logAudit(ctx.supabase, ctx.userId, 'company_rejected', company?.is_store ? 'store' : 'company', id)
   revalidatePath('/admin/empresas')
   revalidatePath('/empresas')
 
@@ -272,6 +265,7 @@ export async function approveEventAction(formData: FormData) {
     .eq('id', id)
     .select('title, slug, organizer:profiles(email)')
     .single()
+  await logAudit(ctx.supabase, ctx.userId, 'event_approved', 'event', id)
   revalidatePath('/admin/eventos')
   revalidatePath('/eventos')
 
@@ -301,6 +295,7 @@ export async function rejectEventAction(formData: FormData) {
     .eq('id', id)
     .select('title, organizer:profiles(email)')
     .single()
+  await logAudit(ctx.supabase, ctx.userId, 'event_rejected', 'event', id)
   revalidatePath('/admin/eventos')
   revalidatePath('/eventos')
 
@@ -329,6 +324,7 @@ export async function toggleGuidePublishAction(formData: FormData) {
     is_published: !current,
     published_at: !current ? new Date().toISOString() : null,
   }).eq('id', id)
+  await logAudit(ctx.supabase, ctx.userId, current ? 'guide_unpublished' : 'guide_published', 'guide', id)
   revalidatePath('/admin/guias')
   revalidatePath('/guia')
 }
@@ -338,6 +334,7 @@ export async function deleteGuideAction(formData: FormData) {
   if (!ctx) return
   const id = formData.get('id') as string
   await ctx.supabase.from('guides').delete().eq('id', id)
+  await logAudit(ctx.supabase, ctx.userId, 'guide_deleted', 'guide', id)
   revalidatePath('/admin/guias')
   revalidatePath('/guia')
 }
@@ -449,6 +446,7 @@ export async function blockUser(userId: string, reason: string): Promise<{ error
     .eq('id', userId)
     .neq('role', 'admin')
   if (error) return { error: error.message }
+  await logAudit(ctx.supabase, ctx.userId, 'user_blocked', 'user', userId, reason ? { reason } : undefined)
   revalidatePath('/admin/usuarios')
   return { error: null }
 }
@@ -461,6 +459,7 @@ export async function unblockUser(userId: string): Promise<{ error: string | nul
     .update({ is_blocked: false, blocked_at: null, blocked_reason: null })
     .eq('id', userId)
   if (error) return { error: error.message }
+  await logAudit(ctx.supabase, ctx.userId, 'user_unblocked', 'user', userId)
   revalidatePath('/admin/usuarios')
   return { error: null }
 }

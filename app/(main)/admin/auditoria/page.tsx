@@ -14,6 +14,24 @@ function timeAgo(dateStr: string): string {
 const ACTION_LABELS: Record<string, string> = {
   company_approved: 'Aprobó',
   company_rejected: 'Rechazó',
+  job_approved: 'Aprobó',
+  job_rejected: 'Rechazó',
+  event_approved: 'Aprobó',
+  event_rejected: 'Rechazó',
+  guide_published: 'Publicó',
+  guide_unpublished: 'Despublicó',
+  guide_deleted: 'Eliminó',
+  user_blocked: 'Bloqueó',
+  user_unblocked: 'Desbloqueó',
+  ad_created: 'Creó',
+  ad_paused: 'Pausó',
+  ad_activated: 'Activó',
+  ad_deleted: 'Eliminó',
+  home_banner_created: 'Creó banner de portada',
+  store_module_enabled: 'Activó módulo en',
+  store_module_disabled: 'Desactivó módulo en',
+  store_employee_added: 'Añadió empleado a',
+  store_employee_removed: 'Quitó empleado de',
 }
 
 export default async function AdminAuditoriaPage() {

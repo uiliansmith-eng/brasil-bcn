@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdSchema, type CreateAdInput } from '@/lib/validations/advertisements'
+import { logAudit } from '@/lib/audit'
 import type { AdPosition } from '@/types'
 
 // ─── PUBLIC ───────────────────────────────────────────────────
@@ -80,7 +81,7 @@ async function requireAdmin() {
   const { data: profile } = await supabase
     .from('profiles').select('role').eq('id', user.id).single()
   if (profile?.role !== 'admin' && profile?.role !== 'super_admin') return null
-  return { supabase }
+  return { supabase, userId: user.id }
 }
 
 export async function getAdminAds() {
@@ -99,14 +100,15 @@ export async function createAdAction(data: CreateAdInput): Promise<{ error: stri
   const parsed = createAdSchema.safeParse(data)
   if (!parsed.success) return { error: parsed.error.issues[0].message }
 
-  const { error } = await ctx.supabase.from('advertisements').insert({
+  const { data: ad, error } = await ctx.supabase.from('advertisements').insert({
     ...parsed.data,
     description: parsed.data.description || null,
     is_active: true,
-  })
+  }).select('id').single()
 
   if (error) return { error: 'Error al crear el anuncio.' }
 
+  await logAudit(ctx.supabase, ctx.userId, 'ad_created', 'advertisement', ad?.id)
   revalidatePath('/admin/publicidad')
   return { success: true }
 }
@@ -117,6 +119,7 @@ export async function toggleAdAction(formData: FormData) {
   const id = formData.get('id') as string
   const current = formData.get('is_active') === 'true'
   await ctx.supabase.from('advertisements').update({ is_active: !current }).eq('id', id)
+  await logAudit(ctx.supabase, ctx.userId, current ? 'ad_paused' : 'ad_activated', 'advertisement', id)
   revalidatePath('/admin/publicidad')
 }
 
@@ -125,5 +128,6 @@ export async function deleteAdAction(formData: FormData) {
   if (!ctx) return
   const id = formData.get('id') as string
   await ctx.supabase.from('advertisements').delete().eq('id', id)
+  await logAudit(ctx.supabase, ctx.userId, 'ad_deleted', 'advertisement', id)
   revalidatePath('/admin/publicidad')
 }

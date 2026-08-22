@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { promotionSchema, homeBannerSchema, type PromotionInput, type HomeBannerInput } from '@/lib/validations/promotions'
+import { logAudit } from '@/lib/audit'
 import type { PromotionScope } from '@/types'
 
 // ─── TIENDA: PROMOCIONES (destacar tienda o producto) ───────────
@@ -126,7 +127,7 @@ async function requirePromotionsAdmin() {
   if (!user) return null
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
   if (profile?.role !== 'admin' && profile?.role !== 'super_admin') return null
-  return { supabase }
+  return { supabase, userId: user.id }
 }
 
 export async function getAdminHomeBanners() {
@@ -148,7 +149,7 @@ export async function createHomeBannerAction(data: HomeBannerInput): Promise<{ e
   const parsed = homeBannerSchema.safeParse(data)
   if (!parsed.success) return { error: parsed.error.issues[0].message }
 
-  const { error } = await ctx.supabase.from('promotions').insert({
+  const { data: banner, error } = await ctx.supabase.from('promotions').insert({
     scope: 'home_banner',
     company_id: null,
     title: parsed.data.title,
@@ -157,10 +158,11 @@ export async function createHomeBannerAction(data: HomeBannerInput): Promise<{ e
     starts_at: parsed.data.starts_at || null,
     ends_at: parsed.data.ends_at || null,
     is_active: parsed.data.is_active,
-  })
+  }).select('id').single()
 
   if (error) return { error: 'Error al crear el banner. Inténtalo de nuevo.' }
 
+  await logAudit(ctx.supabase, ctx.userId, 'home_banner_created', 'promotion', banner?.id)
   revalidatePath('/admin/promociones')
   revalidatePath('/')
   return { ok: true }
