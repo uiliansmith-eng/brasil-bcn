@@ -9,6 +9,7 @@ import { FeaturedCompaniesSection } from '@/components/home/FeaturedCompaniesSec
 import { BrazilNewsSection } from '@/components/home/BrazilNewsSection'
 import { CTASection } from '@/components/home/CTASection'
 import { AdSlot } from '@/components/ads/AdSlot'
+import { HomeBannerSlot } from '@/components/home/HomeBannerSlot'
 import { RegularizaBanner } from '@/components/shared/RegularizaBanner'
 import { getSettings } from '@/actions/settings'
 
@@ -21,6 +22,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection settings={settings.hero} brand={settings.brand} />
+      <HomeBannerSlot />
       <FlightSearchSection />
       <QuizBanner />
       {sec.election_banner && <ElectionBanner />}

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight, Users, Settings2, Sparkles, BarChart3, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Briefcase, Building2, CalendarDays, BookOpen, Megaphone, ShoppingBag, Map, ChevronRight, Users, Settings2, Sparkles, BarChart3, ClipboardList, Image as ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV = [
@@ -18,6 +18,7 @@ const NAV = [
   { href: '/admin/guias', label: 'Guías', icon: BookOpen },
   { href: '/admin/quizzes', label: 'Quizzes', icon: Sparkles },
   { href: '/admin/publicidad', label: 'Publicidad', icon: Megaphone },
+  { href: '/admin/promociones', label: 'Promociones', icon: ImageIcon },
   { href: '/admin/compraventa', label: 'Compra & Venta', icon: ShoppingBag },
 ]
 
